@@ -20,142 +20,146 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2024-02-04, work in progress</div>
+2024-02-05, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
 me@rochus-keller.ch</div>
-<h4 style="margin-left:27px"><span class="label"><a name="14068">1.4</a></span>
+<h4 style="margin-left:27px"><span class="label"><a name="14787">1.4</a></span>
+License</h4>
+<div style="margin-left:45px"><span class="label"><a name="14788">1.4.1</a></span>
+This file may be used under the terms of the GNU General Public License (GPL) versions 2.0 or 3.0 as published by the Free Software Foundation and appearing in the file LICENSE.GPL included in the packaging of this file. Please review the following information to ensure GNU General Public Licensing requirements will be met: http://www.fsf.org/licensing/licenses/info/GPLv2.html and http://www.gnu.org/copyleft/gpl.html.</div>
+<h4 style="margin-left:27px"><span class="label"><a name="14068">1.5</a></span>
 <b>Additional Credits</b></h4>
-<div style="margin-left:45px"><span class="label"><a name="14070">1.4.1</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14070">1.5.1</a></span>
 A lot of text is derived from the Oberon+ language specification <a href="#14631"><b>[OBX]</b></a>, which again is derived from the Oberon-2 language specification <a href="#14630"><b>[Mo91]</b></a>.</div>
-<div style="margin-left:45px"><span class="label"><a name="14071">1.4.2</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14071">1.5.2</a></span>
 This specification was written in CrossLine (see <a href="https://github.com/rochus-keller/CrossLine"><u>github.com/.../CrossLine</u></a>)</div>
-<h4 style="margin-left:27px"><span class="label"><a name="14072">1.5</a></span>
+<h4 style="margin-left:27px"><span class="label"><a name="14072">1.6</a></span>
 <b>Table of Contents</b></h4>
-<div style="margin-left:45px"><span class="label"><a name="14693">1.5.1</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14693">1.6.1</a></span>
 <a href="#14061">1 Front Matter</a></div>
-<div style="margin-left:45px"><span class="label"><a name="14699">1.5.2</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14699">1.6.2</a></span>
 <a href="#14060">2 Language Specification</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14700">1.5.2.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14700">1.6.2.1</a></span>
 <a href="#14125">2.1 Introduction</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14702">1.5.2.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14702">1.6.2.2</a></span>
 <a href="#14127">2.2 Syntax</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14703">1.5.2.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14703">1.6.2.3</a></span>
 <a href="#14126">2.3 Vocabulary and Representation</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14704">1.5.2.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14704">1.6.2.3.1</a></span>
 <a href="#14168">2.3.3 Identifiers</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14705">1.5.2.3.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14705">1.6.2.3.2</a></span>
 <a href="#14174">2.3.4 Numbers</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14706">1.5.2.3.3</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14706">1.6.2.3.3</a></span>
 <a href="#14181">2.3.5 Characters</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14707">1.5.2.3.4</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14707">1.6.2.3.4</a></span>
 <a href="#14186">2.3.6 Strings</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14708">1.5.2.3.4.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14708">1.6.2.3.4.1</a></span>
 <a href="#14192">2.3.6.4 Hex Strings</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14709">1.5.2.3.5</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14709">1.6.2.3.5</a></span>
 <a href="#14198">2.3.7 Operators and Delimiters</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14710">1.5.2.3.6</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14710">1.6.2.3.6</a></span>
 <a href="#14201">2.3.8 Reserved Words</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14711">1.5.2.3.7</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14711">1.6.2.3.7</a></span>
 <a href="#14204">2.3.9 Comments</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14712">1.5.2.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14712">1.6.2.4</a></span>
 <a href="#14160">2.4 Declarations and scope rules</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14713">1.5.2.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14713">1.6.2.5</a></span>
 <a href="#14210">2.5 Constant declarations</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14714">1.5.2.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14714">1.6.2.6</a></span>
 <a href="#14218">2.6 Type declarations</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14715">1.5.2.6.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14715">1.6.2.6.1</a></span>
 <a href="#14224">2.6.4 Basic types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14716">1.5.2.6.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14716">1.6.2.6.2</a></span>
 <a href="#14257">2.6.5 Array types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14717">1.5.2.6.3</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14717">1.6.2.6.3</a></span>
 <a href="#14270">2.6.6 Record types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14718">1.5.2.6.4</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14718">1.6.2.6.4</a></span>
 <a href="#14278">2.6.7 Pointer types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14719">1.5.2.6.5</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14719">1.6.2.6.5</a></span>
 <a href="#14285">2.6.8 Procedure types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14720">1.5.2.6.6</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14720">1.6.2.6.6</a></span>
 <a href="#14291">2.6.9 Enumeration and symbol types</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14721">1.5.2.7</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14721">1.6.2.7</a></span>
 <a href="#14298">2.7 Variable declarations</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14722">1.5.2.8</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14722">1.6.2.8</a></span>
 <a href="#14304">2.8 Expressions</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14723">1.5.2.8.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14723">1.6.2.8.1</a></span>
 <a href="#14306">2.8.2 Operands</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14724">1.5.2.8.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14724">1.6.2.8.2</a></span>
 <a href="#14322">2.8.3 Operators</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14725">1.5.2.8.2.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14725">1.6.2.8.2.1</a></span>
 <a href="#14325">2.8.3.3 Logical operators</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14726">1.5.2.8.2.2</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14726">1.6.2.8.2.2</a></span>
 <a href="#14328">2.8.3.4 Arithmetic operators</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14727">1.5.2.8.2.3</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14727">1.6.2.8.2.3</a></span>
 <a href="#14335">2.8.3.5 Set Operators</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14728">1.5.2.8.2.4</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14728">1.6.2.8.2.4</a></span>
 <a href="#14339">2.8.3.6 Relations</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14729">1.5.2.8.2.5</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14729">1.6.2.8.2.5</a></span>
 <a href="#14344">2.8.3.7 String operators</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14730">1.5.2.8.2.6</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14730">1.6.2.8.2.6</a></span>
 <a href="#14662">2.8.3.8 Address operator</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14731">1.5.2.8.2.7</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14731">1.6.2.8.2.7</a></span>
 <a href="#14349">2.8.3.9 Function Call</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14732">1.5.2.8.3</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14732">1.6.2.8.3</a></span>
 <a href="#14347">2.8.4 Constructors</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14733">1.5.2.9</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14733">1.6.2.9</a></span>
 <a href="#14355">2.9 Statements</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14734">1.5.2.9.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14734">1.6.2.9.1</a></span>
 <a href="#14359">2.9.3 Statement sequences</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14735">1.5.2.9.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14735">1.6.2.9.2</a></span>
 <a href="#14447">2.9.4 Statement block</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14736">1.5.2.9.3</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14736">1.6.2.9.3</a></span>
 <a href="#14363">2.9.5 Assignments</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14737">1.5.2.9.4</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14737">1.6.2.9.4</a></span>
 <a href="#14374">2.9.6 Procedure calls</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14738">1.5.2.9.5</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14738">1.6.2.9.5</a></span>
 <a href="#14381">2.9.7 If statements</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14739">1.5.2.9.6</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14739">1.6.2.9.6</a></span>
 <a href="#14387">2.9.8 Case statements</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14740">1.5.2.9.7</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14740">1.6.2.9.7</a></span>
 <a href="#14393">2.9.9 While statements</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14741">1.5.2.9.8</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14741">1.6.2.9.8</a></span>
 <a href="#14400">2.9.10 Repeat statements</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14742">1.5.2.9.9</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14742">1.6.2.9.9</a></span>
 <a href="#14404">2.9.11 For statements</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14743">1.5.2.9.10</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14743">1.6.2.9.10</a></span>
 <a href="#14415">2.9.12 Loop statements</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14744">1.5.2.9.11</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14744">1.6.2.9.11</a></span>
 <a href="#14422">2.9.13 Return, exit and goto statements</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14745">1.5.2.10</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14745">1.6.2.10</a></span>
 <a href="#14434">2.10 Exception handling</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14746">1.5.2.11</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14746">1.6.2.11</a></span>
 <a href="#14440">2.11 Procedure declarations</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14747">1.5.2.11.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14747">1.6.2.11.1</a></span>
 <a href="#14458">2.11.10 Formal parameters</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14748">1.5.2.11.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14748">1.6.2.11.2</a></span>
 <a href="#14493">2.11.11 Predeclared procedures</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14749">1.5.2.12</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14749">1.6.2.12</a></span>
 <a href="#14498">2.12 Modules</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14750">1.5.2.13</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14750">1.6.2.13</a></span>
 <a href="#14508">2.13 Generics</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14751">1.5.2.14</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14751">1.6.2.14</a></span>
 <a href="#14514">2.14 Source code directives</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14752">1.5.2.14.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14752">1.6.2.14.1</a></span>
 <a href="#14516">2.14.2 Configuration Variables</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14753">1.5.2.14.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14753">1.6.2.14.2</a></span>
 <a href="#14525">2.14.3 Conditional compilation</a></div>
-<div style="margin-left:45px"><span class="label"><a name="14754">1.5.3</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14754">1.6.3</a></span>
 <a href="#14532">3 Definition of terms</a></div>
-<div style="margin-left:45px"><span class="label"><a name="14769">1.5.4</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14769">1.6.4</a></span>
 <a href="#14590">4 Complete Micron Syntax</a></div>
-<div style="margin-left:45px"><span class="label"><a name="14770">1.5.5</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14770">1.6.5</a></span>
 <a href="#14650">5 Predeclared Types</a></div>
-<div style="margin-left:45px"><span class="label"><a name="14771">1.5.6</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14771">1.6.6</a></span>
 <a href="#14136">6 Predeclared Procedure Reference</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14783">1.5.6.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14783">1.6.6.1</a></span>
 <a href="#14775">6.1 Predeclared function procedures</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14784">1.5.6.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14784">1.6.6.2</a></span>
 <a href="#14777">6.2 Predeclared proper procedures</a></div>
-<div style="margin-left:45px"><span class="label"><a name="14772">1.5.7</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14772">1.6.7</a></span>
 <a href="#14628">7 References</a></div>
 <h4 style="margin-left:9px"><span class="label"><a name="14060">2</a></span>
 <b>Language Specification</b></h4>
@@ -180,13 +184,13 @@ In contrast to Oberon+, Micron has no garbage collector. Data allocated with NEW
 <div style="margin-left:63px"><span class="label"><a name="14228">2.1.7.2</a></span>
 There is no type extension (inheritance). But record embedding (similar to Go) using the INLINE keyword is supported.</div>
 <div style="margin-left:63px"><span class="label"><a name="14229">2.1.7.3</a></span>
-A POINTER can also point to simple types and to objects on the stack, or to record fields or array elements.</div>
+A pointer can also point to basic types, enums and to objects on the stack, or to record fields or array elements.</div>
 <div style="margin-left:63px"><span class="label"><a name="14230">2.1.7.4</a></span>
 The address of an designated object can be taken with the @ operator and assigned to a pointer.</div>
 <div style="margin-left:63px"><span class="label"><a name="14231">2.1.7.5</a></span>
-INC and DEC can also be applied to pointers. The difference of two pointers can be calculated using PTRDIFF().</div>
+INC and DEC can also be applied to pointers. The difference of two pointers can be calculated using ORD().</div>
 <div style="margin-left:63px"><span class="label"><a name="14232">2.1.7.6</a></span>
-There are no VAR parameters; instead a pointer to the lvalue has to be passed as a parameter.</div>
+There are no VAR parameters; instead a pointer to the variable has to be passed as a parameter.</div>
 <div style="margin-left:63px"><span class="label"><a name="14233">2.1.7.7</a></span>
 No DEFINITION modules; separate compilation fully depends on compiler-specific symbol files.</div>
 <div style="margin-left:63px"><span class="label"><a name="14234">2.1.7.8</a></span>
@@ -195,16 +199,14 @@ No WCHAR type.</div>
 Predeclared signed and unsigned types, INT8, UINT8, etc.; SIGNED() and UNSIGNED() cast built-in procedures.</div>
 <div style="margin-left:63px"><span class="label"><a name="14481">2.1.7.10</a></span>
 Integer literals are unsigned, and there are different suffix types.</div>
-<div style="margin-left:63px"><span class="label"><a name="14482">2.1.7.11</a></span>
-Octal and binary integer literals are supported in addition to hexadecimal.</div>
-<div style="margin-left:63px"><span class="label"><a name="14236">2.1.7.12</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14236">2.1.7.11</a></span>
 Only one-dimensional arrays (but array x of array y of T is still possible.</div>
-<div style="margin-left:63px"><span class="label"><a name="14237">2.1.7.13</a></span>
-There is a goto statement (mostly to easy porting existing C code)</div>
-<div style="margin-left:63px"><span class="label"><a name="14353">2.1.7.14</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14237">2.1.7.12</a></span>
+There is a goto statement (mostly to easy porting existing C code).</div>
+<div style="margin-left:63px"><span class="label"><a name="14353">2.1.7.13</a></span>
 String concatenation only allowed for string and character literals.</div>
-<div style="margin-left:63px"><span class="label"><a name="14785">2.1.7.15</a></span>
-Symbols, declared via enumeration type</div>
+<div style="margin-left:63px"><span class="label"><a name="14785">2.1.7.14</a></span>
+Symbols as internalized names, declared via enumeration type (e.g. for use with exceptions).</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14127">2.2</a></span>
 <a href=""><b>S</b></a><b>yntax</b></h4>
 <div style="margin-left:45px"><span class="label"><a name="14128">2.2.1</a></span>
@@ -824,7 +826,7 @@ Local variables of array type can have variable lengths calculated at runtime; i
 <div style="margin-left:63px"><span class="label"><a name="14267">2.6.5.7</a></span><span class="ident">NOTE</span>
 In contrast to array pointers allocated with NEW(), variable length arrays (VLA) can be allocated on the stack instead of the heap (depending on the compiler and supported options), which makes them attractive to low-resource embedded applications where dynamic memory allocation is not feasible. It is also interesting to note that already the length/range of ALGOL 60 arrays was defined using an ordinary arithmetic expression and thus could be calculated at runtime; even ALGOL W had this feature, but unfortunately it was removed in Pascal, and even Oberon-07 still uses a const expression for array lengths evaluated at compile time. </div>
 <div style="margin-left:63px"><span class="label"><a name="14268">2.6.5.8</a></span>
-Array lengths of at least MAX(INT32) shall be accepted by a compiler, for constant, dynamic and variable lengths.</div>
+Array lengths of at least MAX(UINT32) shall be accepted by a compiler, for constant, dynamic and variable lengths.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14270">2.6.6</a></span>
 Record types</h4>
 <div style="margin-left:63px"><span class="label"><a name="14271">2.6.6.1</a></span>
@@ -897,9 +899,7 @@ Examples:</div>
 <div style="margin-left:63px"><span class="label"><a name="14668">2.6.9.7</a></span>
 The elements of a symbol enumeration are of the predeclared type SYMBOL. Values of the SYMBOL type have a runtime representation and can be stored in variables of SYMBOL type, just like integers. An invalid symbol has the value NIL. An ident of a symbol enumeration is declared the first time it appears in the source text. It can reappear later in the source text in another symbol enumeration declaration; in that case, both idents represent the same symbol. Elements of symbol enumerations can be assigned to variables of SYMBOL type. Variables of SYMBOL type are initialized with NIL.</div>
 <div style="margin-left:63px"><span class="label"><a name="14670">2.6.9.8</a></span>
-TBD: symbol enumerations support the IN operator the check wheter a given value of SYMBOL type is part of the enum; this could be used to simulate inheritance relations.</div>
-<div style="margin-left:63px"><span class="label"><a name="14671">2.6.9.9</a></span>
-TBD: do we need INC and DEC for the elements of symbol enumerations?</div>
+TBD: symbol enumerations should support the IN operator to check whether a given value of SYMBOL type is part of the enum type or not; this could be used to simulate inheritance relations.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14298">2.7</a></span>
 <a href=""><b>V</b></a><b>ariable declarations</b></h4>
 <div style="margin-left:45px"><span class="label"><a name="14299">2.7.1</a></span>
@@ -1488,7 +1488,7 @@ A procedure body may have no statements in which case the ident after the END re
 <div style="margin-left:45px"><span class="label"><a name="14485">2.11.7</a></span>
 A procedure can be declared INLINE (or abbreviated IN) in which case the code of the procedure is embedded at the call site, and no call actually happens. Procedures declared INLINE don't support recursion, neither directly nor indirectly.</div>
 <div style="margin-left:45px"><span class="label"><a name="14486">2.11.8</a></span>
-A procedure can be declared CONST in which case it can be used in CONST declarations to derive a constant value at compile time. CONST procedures can only call other CONST procedures or predeclared procedures not depending on runtime information (TBD: why not all predeclareds?). CONST procedures cannot access module variables, but they can access CONST declarations in the same or other modules.</div>
+A procedure can be declared CONST in which case it can be used in CONST declarations to derive a constant value at compile time. CONST procedures can only call other CONST procedures or predeclared procedures not depending on runtime information. CONST procedures cannot access module variables, but they can access CONST declarations in the same or other modules.</div>
 <div style="margin-left:45px"><span class="label"><a name="14456">2.11.9</a></span>
 Syntax:</div>
 <div style="margin-left:63px"><span class="label"><a name="14457">2.11.9.1</a></span>
@@ -1601,7 +1601,7 @@ Example:</div>
 <div style="margin-left:63px"><span class="label"><a name="14523">2.14.2.5</a></span><span class="ident">NOTE</span>
 Usually the compiler provides the possibility to set configuration variables, e.g. via command line interface. </div>
 <div style="margin-left:63px"><span class="label"><a name="14524">2.14.2.6</a></span>
-TBD: import configuration files with a list of variables and values for project wide configuration</div>
+TBD: import configuration files with a list of flags for project wide configuration</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14525">2.14.3</a></span>
 Conditional compilation</h4>
 <div style="margin-left:63px"><span class="label"><a name="14526">2.14.3.1</a></span>
@@ -2097,7 +2097,7 @@ Opaque type representing the list of variable parameters, accessible by <a href=
 <b>Predeclared Procedure Reference</b></h4>
 <h4 style="margin-left:27px"><span class="label"><a name="14775">6.1</a></span>
 Predeclared function procedures</h4>
-<div style="margin-left:45px"><span class="label"><a name="14781">6.1.1</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14825">6.1.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 ><thead>
 <tr>
 <td>
@@ -2130,43 +2130,43 @@ Predeclared function procedures</h4>
 <td>
 <br>BITAND(x,y)</td>
 <td>
-<br>x, y: INT32 or INT64</td>
+<br>x, y: UINT32 or UINT64</td>
 <td>
-<br>INT32 or INT64</td>
+<br>UINT32 or UINT64</td>
 <td>
-<br>bitwise AND; result is INT64 if x or y is INT64, else INT32</td></tr>
+<br>bitwise AND; result is UINT64 if x or y is UINT64, else UINT32</td></tr>
 <tr>
 <td>
 <br>BITASR(x,n)</td>
 <td>
-<br>x: INT32 or INT64, n: INT32</td>
+<br>x: UINT32 or UINT64, n: UINT32</td>
 <td>
-<br>INT32 or INT64</td>
+<br>UINT32 or UINT64</td>
 <td>
-<br>arithmetic shift right by n bits, where n &gt;= 0 and n &lt; SIZE(x)*8; result is INT64 if x is INT64, else INT32</td></tr>
+<br>arithmetic shift right by n bits, where n &gt;= 0 and n &lt; SIZE(x)*8; result is UINT64 if x is UINT64, else UINT32</td></tr>
 <tr>
 <td>
 <br>BITNOT(x)</td>
 <td>
-<br>x: INT32 or INT64</td>
+<br>x: UINT32 or UINT64</td>
 <td>
-<br>INT32 or INT64</td>
+<br>INT32 or UINT64</td>
 <td>
-<br>bitwise NOT; result is INT64 if x or y is INT64, else INT32</td></tr>
+<br>bitwise NOT; result is UINT64 if x or y is UINT64, else UINT32</td></tr>
 <tr>
 <td>
 <br>BITOR(x,y)</td>
 <td>
-<br>x, y: INT32 or INT64</td>
+<br>x, y: UINT32 or UINT64</td>
 <td>
-<br>INT32 or INT64</td>
+<br>UINT32 or UINT64</td>
 <td>
-<br>bitwise OR; result is INT64 if x or y is INT64, else INT32</td></tr>
+<br>bitwise OR; result is UINT64 if x or y is UINT64, else UINT32</td></tr>
 <tr>
 <td>
 <br>BITS(x)</td>
 <td>
-<br>x: INT32</td>
+<br>x: UINT32</td>
 <td>
 <br>SET</td>
 <td>
@@ -2175,29 +2175,29 @@ Predeclared function procedures</h4>
 <td>
 <br>BITSHL(x,n)</td>
 <td>
-<br>x: INT32 or INT64, n: INT32</td>
+<br>x: UINT32 or UINT64, n: UINT32</td>
 <td>
-<br>INT32 or INT64</td>
+<br>UINT32 or UINT64</td>
 <td>
-<br>logical shift left by n bits, where n &gt;= 0 and n &lt; SIZE(x)*8; result is INT64 if x is INT64, else INT32</td></tr>
+<br>logical shift left by n bits, where n &gt;= 0 and n &lt; SIZE(x)*8; result is UINT64 if x is UINT64, else UINT32</td></tr>
 <tr>
 <td>
 <br>BITSHR(x,n)</td>
 <td>
-<br>x: INT32 or INT64, n: INT32</td>
+<br>x: UINT32 or UINT64, n: UINT32</td>
 <td>
-<br>INT32 or INT64</td>
+<br>UINT32 or UINT64</td>
 <td>
-<br>logical shift right by n bits, where n &gt;= 0 and n &lt; SIZE(x)*8; result is INT64 if x is INT64, else INT32</td></tr>
+<br>logical shift right by n bits, where n &gt;= 0 and n &lt; SIZE(x)*8; result is UINT64 if x is UINT64, else UINT32</td></tr>
 <tr>
 <td>
 <br>BITXOR(x,y)</td>
 <td>
-<br>x, y: INT32 or INT64</td>
+<br>x, y: UINT32 or UINT64</td>
 <td>
-<br>INT32 or INT64</td>
+<br>UINT32 or UINT64</td>
 <td>
-<br>bitwise XOR; result is INT64 if x or y is INT64, else INT32</td></tr>
+<br>bitwise XOR; result is UINT64 if x or y is UINT64, else UINT32</td></tr>
 <tr>
 <td>
 <br>CAST(T,x)</td>
@@ -2276,53 +2276,68 @@ Predeclared function procedures</h4>
 <td>
 <br>Convert integer to real type; result is LONGREAL if x was INT64, else REAL, accepting potential loss of information</td></tr>
 <tr>
+<td></td>
 <td>
-<br>LEN(v, n)</td>
+<br>x: UINT32 or UINT64</td>
 <td>
-<br>v: array n: INT32</td>
+<br>REAL or LONGREAL</td>
 <td>
-<br>INT32</td>
+<br>Convert integer to real type; result is LONGREAL if x was UINT64, else REAL, accepting potential loss of information</td></tr>
+<tr>
 <td>
-<br>length of v in dimension n (first dimension = 0)</td></tr>
+<br>GETENV(T,n)</td>
+<td>
+<br>T: basic, enumeration or char array type</td>
+<td>
+<br>T</td>
+<td>
+<br>get the value of the environment variable with name n or the default value</td></tr>
+<tr>
+<td></td>
+<td>
+<br>n: name string</td>
+<td></td>
+<td></td></tr>
+<tr>
+<td>
+<br>GETENV(T,n,d)</td>
+<td>
+<br>d: default of T</td>
+<td>
+<br>T</td>
+<td>
+<br>like GETENV(T,n), but with explicit default value if not set</td></tr>
 <tr>
 <td>
 <br>LEN(v)</td>
 <td>
-<br>v: array</td>
+<br>v: non-open array</td>
 <td>
-<br>INT32</td>
+<br>UINT32</td>
 <td>
-<br>equivalent to LEN(v, 0)</td></tr>
-<tr>
-<td></td>
-<td>
-<br>v: string</td>
-<td>
-<br>INT32</td>
-<td>
-<br>length of string (including the terminating 0X)</td></tr>
+<br>length of array v</td></tr>
 <tr>
 <td>
 <br>LONG(x)</td>
 <td>
-<br>x: INT8 or BYTE</td>
+<br>x: INT8 or UINT8</td>
 <td>
-<br>INT16</td>
+<br>INT16 or UINT16</td>
 <td>
 <br>identity</td></tr>
 <tr>
 <td></td>
 <td>
-<br>x: INT16</td>
+<br>x: INT16 or UINT16</td>
 <td>
-<br>INT32</td>
+<br>INT32 or UINT32</td>
 <td></td></tr>
 <tr>
 <td></td>
 <td>
-<br>x: INT32</td>
+<br>x: INT32 or UINT32</td>
 <td>
-<br>INT64</td>
+<br>INT64 or UINT64</td>
 <td></td></tr>
 <tr>
 <td></td>
@@ -2331,14 +2346,6 @@ Predeclared function procedures</h4>
 <td>
 <br>LONGREAL</td>
 <td></td></tr>
-<tr>
-<td></td>
-<td>
-<br>x: CHAR</td>
-<td>
-<br>WCHAR</td>
-<td>
-<br>projection</td></tr>
 <tr>
 <td>
 <br>MAX(T)</td>
@@ -2395,7 +2402,7 @@ Predeclared function procedures</h4>
 <td>
 <br>T = SET</td>
 <td>
-<br>INT32</td>
+<br>UINT32</td>
 <td>
 <br>0</td></tr>
 <tr>
@@ -2436,9 +2443,9 @@ Predeclared function procedures</h4>
 <td>
 <br>ORD(x)</td>
 <td>
-<br>x: CHAR or WCHAR</td>
+<br>x: CHAR</td>
 <td>
-<br>BYTE or SHORT</td>
+<br>BYTE</td>
 <td>
 <br>ordinal number of x</td></tr>
 <tr>
@@ -2446,7 +2453,7 @@ Predeclared function procedures</h4>
 <td>
 <br>x: enumeration type</td>
 <td>
-<br>INT32</td>
+<br>UINT32</td>
 <td>
 <br>ordinal number of the given identifier</td></tr>
 <tr>
@@ -2462,32 +2469,32 @@ Predeclared function procedures</h4>
 <td>
 <br>x: set type</td>
 <td>
-<br>INT32</td>
+<br>UINT32</td>
 <td>
 <br>number representing the set; the first element corresponds to the least significant digit of the number and the last element to the most significant digit.</td></tr>
 <tr>
 <td>
 <br>SHORT(x)</td>
 <td>
-<br>x: INT64</td>
+<br>x: INT64 or UINT64</td>
 <td>
-<br>INT32</td>
-<td>
-<br>identity</td></tr>
-<tr>
-<td></td>
-<td>
-<br>x: INT32</td>
-<td>
-<br>INT16</td>
+<br>INT32 or UINT32</td>
 <td>
 <br>identity</td></tr>
 <tr>
 <td></td>
 <td>
-<br>x: INT16</td>
+<br>x: INT32 or UINT32</td>
 <td>
-<br>INT8</td>
+<br>INT16 or UINT16</td>
+<td>
+<br>identity</td></tr>
+<tr>
+<td></td>
+<td>
+<br>x: INT16 or UINT16</td>
+<td>
+<br>INT8 or UINT8</td>
 <td>
 <br>identity</td></tr>
 <tr>
@@ -2498,14 +2505,6 @@ Predeclared function procedures</h4>
 <br>REAL</td>
 <td>
 <br>identity (truncation possible)</td></tr>
-<tr>
-<td></td>
-<td>
-<br>x: WCHAR</td>
-<td>
-<br>CHAR</td>
-<td>
-<br>projection (0x if there is no projection)</td></tr>
 <tr>
 <td>
 <br>SIGNED(x)</td>
@@ -2521,16 +2520,16 @@ Predeclared function procedures</h4>
 <td>
 <br>any type</td>
 <td>
-<br>INT32</td>
+<br>UINT32</td>
 <td>
 <br>number of bytes required by T</td></tr>
 <tr>
 <td>
 <br>STRLEN(s)</td>
 <td>
-<br>s: array of char or wchar</td>
+<br>s: array of char</td>
 <td>
-<br>INT32</td>
+<br>UINT32</td>
 <td>
 <br>dynamic length of the string up to and not including the terminating 0X</td></tr>
 <tr>
@@ -2576,7 +2575,7 @@ Predeclared function procedures</h4>
 <br>Returns an opaque value of the built-in type VA_LIST which can be passed as argument to another procedure. Only valid in a function declared with variable arguments.</td></tr></table></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14777">6.2</a></span>
 Predeclared proper procedures</h4>
-<div style="margin-left:45px"><span class="label"><a name="14782">6.2.1</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14823">6.2.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 ><thead>
 <tr>
 <td>
@@ -2614,9 +2613,15 @@ Predeclared proper procedures</h4>
 <tr>
 <td></td>
 <td>
-<br>enumeration type</td>
+<br>const enumeration type</td>
 <td>
 <br>previous ident in enumeration</td></tr>
+<tr>
+<td></td>
+<td>
+<br>pointer to T</td>
+<td>
+<br>decrement address by size of T</td></tr>
 <tr>
 <td>
 <br>DEC(v, n)</td>
@@ -2624,6 +2629,12 @@ Predeclared proper procedures</h4>
 <br>v, n: integer type</td>
 <td>
 <br>v := v - n</td></tr>
+<tr>
+<td></td>
+<td>
+<br>v: pointer to T</td>
+<td>
+<br>decrement address by n times size of T</td></tr>
 <tr>
 <td>
 <br>DISPOSE(p)</td>
@@ -2655,9 +2666,15 @@ Predeclared proper procedures</h4>
 <tr>
 <td></td>
 <td>
-<br>enumeration type</td>
+<br>const enumeration type</td>
 <td>
 <br>next ident in enumeration</td></tr>
+<tr>
+<td></td>
+<td>
+<br>pointer to T</td>
+<td>
+<br>increment address by size of T</td></tr>
 <tr>
 <td>
 <br>INC(v, n)</td>
@@ -2665,6 +2682,12 @@ Predeclared proper procedures</h4>
 <br>v, n: integer type</td>
 <td>
 <br>v := v + n</td></tr>
+<tr>
+<td></td>
+<td>
+<br>v: pointer to T</td>
+<td>
+<br>increment address by n times size of T</td></tr>
 <tr>
 <td>
 <br>INCL(v, x)</td>
@@ -2704,7 +2727,14 @@ Predeclared proper procedures</h4>
 <td>
 <br>e: SYMBOL</td>
 <td>
-<br>terminates the last protected function called and returns e as the exception value; RAISE() never returns</td></tr></table></div>
+<br>terminates the last protected function called and returns e as the exception value; RAISE() never returns</td></tr>
+<tr>
+<td>
+<br>SETENV(n,v)</td>
+<td>
+<br>n: name string, v: basic or const enum type or array of char</td>
+<td>
+<br>set the environment value</td></tr></table></div>
 <h4 style="margin-left:9px"><span class="label"><a name="14628">7</a></span>
 References</h4>
 <div style="margin-left:27px"><span class="label"><a name="14630">7.1</a></span><span class="ident">[Mo91]</span>
