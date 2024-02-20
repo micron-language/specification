@@ -158,8 +158,9 @@ procedure ::= 'PROCEDURE' | 'PROC'
 ProcedureType ::= procedure [FormalParameters] 
 	
 ProcedureDeclaration ::= 
-	\LL:2\ procedure '^' [inline_|'CONST']  identdef [ FormalParameters ]
+	\LL:2\ procedure '^' identdef [ FormalParameters ]
 	// OBN87/90 allows forward declarations (^) and external declarations (-)
+	| \LA: 1:('PROCEDURE' | 'PROC')&(3:'='|4:'=')\ procedure identdef '=' qualident
 	|  ProcedureHeading [ ';' ] ProcedureBody [ ident ]
 
 ProcedureHeading ::= procedure [inline_|'CONST']   
@@ -207,4 +208,6 @@ MetaSection ::= [ 'TYPE' | 'CONST' ] ident { \LL:2\ [','] ident } [ ':' NamedTyp
 %module ::= 'Micron'
 %namespace ::= 'Mic'
 %suppress ::= ';' ',' '.' ':'
+
+%no_syntree ::= 'true'
 
