@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2024-02-20, work in progress</div>
+2024-02-24, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -387,90 +387,92 @@ Operators and delimiters are the special characters, or character pairs listed b
 Reserved Words</h4>
 <div style="margin-left:63px"><span class="label"><a name="14202">2.3.8.1</a></span>
 The reserved words consist of either all capital or all lower case letters and cannot be used as identifiers. All words listed below are reserved (only capital letter versions shown).</div>
-<div style="margin-left:63px"><span class="label"><a name="14203">2.3.8.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15585">2.3.8.2</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
-ARRAY </td>
+ARRAY</td>
 <td>
-<br>BEGIN </td>
+<br>BEGIN</td>
 <td>
-<br>BY </td>
+<br>BY</td>
 <td>
-<br>CASE </td>
+<br>CASE</td>
 <td>
-<br>CONST </td></tr>
-<tr>
-<td></td>
-<td>
-<br>DIV </td>
-<td>
-<br>DO </td>
-<td>
-<br>ELSE </td>
-<td>
-<br>ELSIF </td></tr>
+<br>CONST</td></tr>
 <tr>
 <td>
-<br>END </td>
+<br>DIV</td>
 <td>
-<br>EXIT </td>
+<br>DO</td>
 <td>
-<br>FALSE </td>
+<br>ELSE</td>
 <td>
-<br>FOR </td>
+<br>ELSIF</td>
 <td>
-<br>IF </td></tr>
+<br>END</td></tr>
 <tr>
 <td>
-<br>IMPORT </td>
+<br>EXIT</td>
 <td>
-<br>IN </td>
+<br>EXTERN</td>
+<td>
+<br>FALSE</td>
+<td>
+<br>FOR</td>
+<td>
+<br>IF</td></tr>
+<tr>
+<td>
+<br>IMPORT</td>
+<td>
+<br>IN</td>
 <td>
 <br>INLINE</td>
 <td>
-<br>LOOP </td>
+<br>INVAR</td>
 <td>
-<br>MOD </td></tr>
+<br>LOOP</td></tr>
 <tr>
 <td>
-<br>MODULE </td>
+<br>MOD</td>
 <td>
-<br>NIL </td>
+<br>MODULE</td>
 <td>
-<br>OF </td>
+<br>NIL</td>
 <td>
-<br>OR </td>
+<br>OF</td>
 <td>
-<br>POINTER </td></tr>
+<br>OR</td></tr>
 <tr>
 <td>
-<br>PROC </td>
+<br>POINTER</td>
 <td>
-<br>PROCEDURE </td>
+<br>PROC</td>
 <td>
-<br>RECORD </td>
+<br>PROCEDURE</td>
 <td>
-<br>REPEAT </td>
+<br>RECORD</td>
 <td>
-<br>RETURN </td></tr>
+<br>REPEAT</td></tr>
 <tr>
 <td>
-<br>THEN </td>
+<br>RETURN</td>
 <td>
-<br>TO </td>
+<br>THEN</td>
 <td>
-<br>TRUE </td>
+<br>TO</td>
 <td>
-<br>TYPE </td>
+<br>TRUE</td>
 <td>
-<br>UNTIL </td></tr>
+<br>TYPE</td></tr>
 <tr>
 <td>
-<br>VAR </td>
+<br>UNTIL</td>
 <td>
-<br>WHILE </td>
-<td></td>
+<br>VAR</td>
+<td>
+<br>WHILE</td>
 <td></td>
 <td></td></tr></table></div>
 <h4 style="margin-left:45px"><span class="label"><a name="14204">2.3.9</a></span>
@@ -875,7 +877,7 @@ If p is a variable of type <code>P = POINTER TO T</code>, a call of the predecla
 <h4 style="margin-left:45px"><span class="label"><a name="14285">2.6.8</a></span>
 Procedure types</h4>
 <div style="margin-left:63px"><span class="label"><a name="14286">2.6.8.1</a></span>
-Variables of a procedure type T have a procedure (or NIL) as value. If a procedure P is assigned to a variable of type T, the formal parameter lists and result types (see <a href="#14458">2.11.12 Formal parameters</a>) of P and T must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). A procedure P assigned to a variable or a formal parameter must not be a predeclared, nor an inlined or const procedure, nor may it access local variables or parameters declared in outer procedures, or call procedures which access local variables or parameters declared in outer procedures.</div>
+Variables of a procedure type T have a procedure (or NIL) as value. If a procedure P is assigned to a variable of type T, the formal parameter lists and result types (see <a href="#14458">2.11.12 Formal parameters</a>) of P and T must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). A procedure P assigned to a variable or a formal parameter must not be a predeclared, nor an inlined procedure, nor may it access local variables or parameters declared in outer procedures, or call procedures which access local variables or parameters declared in outer procedures.</div>
 <div style="margin-left:63px"><span class="label"><a name="14288">2.6.8.2</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14289">2.6.8.2.1</a></span>
@@ -1464,7 +1466,7 @@ Example:</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14440">2.11</a></span>
 <a href=""><b>P</b></a><b>rocedure declarations</b></h4>
 <div style="margin-left:45px"><span class="label"><a name="14441">2.11.1</a></span>
-A procedure declaration consists of a procedure heading and a procedure body. The heading specifies the procedure identifier and the formal parameters (see <a href="#14458">2.11.12 Formal parameters</a>). The body contains declarations and statements. The procedure identifier must be repeated at the end of the procedure declaration unless it has no body.</div>
+A procedure declaration consists of a procedure heading and a procedure body. The heading specifies the procedure identifier and the formal parameters (see <a href="#14458">2.11.12 Formal parameters</a>). The body contains declarations and statements. The procedure identifier must be repeated at the end of the procedure declaration.</div>
 <div style="margin-left:45px"><span class="label"><a name="14452">2.11.2</a></span>
 There are two kinds of procedures: proper procedures and function procedures. The latter are activated by a function designator as a constituent of an expression and yield a result that is an operand of the expression. Proper procedures are activated by a procedure call. A procedure is a function procedure if its formal parameters specify a result type. Each control path of a function procedure must return a value.</div>
 <div style="margin-left:45px"><span class="label"><a name="14453">2.11.3</a></span>
@@ -1473,12 +1475,12 @@ All constants, variables, types, and procedures declared within a procedure body
 Objects declared in the environment of the procedure are also visible in those parts of the procedure in which they are not concealed by a locally declared object with the same name.</div>
 <div style="margin-left:45px"><span class="label"><a name="14455">2.11.5</a></span><span class="ident">NOTE</span>
 Procedures can be nested, and inner procedures have access to the parameters or local variables of outer procedures (&quot;non-local access&quot;). This feature was already supported in ALGOL 60 and adopted by Wirth in Pascal; it is also supported by Oberon, Oberon-2, and Oberon+, but not by Oberon 07.</div>
-<div style="margin-left:45px"><span class="label"><a name="14451">2.11.6</a></span>
-A procedure body may have no statements in which case the ident after the END reserved word can also be left out; in a function procedure with no statements a return statement with a default value is assumed.</div>
-<div style="margin-left:45px"><span class="label"><a name="14485">2.11.7</a></span>
-A procedure can be declared INLINE (or abbreviated IN) in which case the code of the procedure is embedded at the call site, and no call actually happens. Procedures declared INLINE don't support recursion, neither directly nor indirectly.</div>
-<div style="margin-left:45px"><span class="label"><a name="14486">2.11.8</a></span>
-A procedure can be declared CONST in which case it can be used in CONST declarations to derive a constant value at compile time. CONST procedures can only call other CONST procedures or predeclared procedures not depending on runtime information. CONST procedures cannot access module variables, but they can access CONST declarations in the same or other modules.</div>
+<div style="margin-left:45px"><span class="label"><a name="14485">2.11.6</a></span>
+A procedure can be declared INLINE in which case the code of the procedure is embedded at the call site, and no call actually happens. Procedures declared INLINE don't support recursion, neither directly nor indirectly.</div>
+<div style="margin-left:45px"><span class="label"><a name="14486">2.11.7</a></span>
+A procedure can be declared INVAR (invariable) in which case it can be used in CONST declarations to derive a constant value at compile time. INVAR procedures can only call other INVAR procedures or predeclared procedures not depending on runtime information. INVAR procedures cannot access module variables, but they can access CONST declarations in the same or other modules.</div>
+<div style="margin-left:45px"><span class="label"><a name="15572">2.11.8</a></span>
+A procedure can be declared EXTERN to indicate that it is implemented in an external library with C calling conventions. EXTERN can be followed by the name the procedure has in that external library, otherwise the same name as in the identdef is assumed. </div>
 <div style="margin-left:45px"><span class="label"><a name="15362">2.11.9</a></span>
 A procedure can be forward declared in which case the formal parameters must be identical with the actual procedure declaration. Forward declarations are marked by '^'.</div>
 <div style="margin-left:45px"><span class="label"><a name="15363">2.11.10</a></span>
@@ -1486,10 +1488,7 @@ A procedure can be an alias of another procedure. The other procedure is referen
 <div style="margin-left:45px"><span class="label"><a name="14456">2.11.11</a></span>
 Syntax:</div>
 <div style="margin-left:63px"><span class="label"><a name="14457">2.11.11.1</a></span>
-<pre><code>ProcedureDeclaration = ProcedureHeading [';'] ProcedureBody END [ ident ]<br />                       | ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br />                       | ( PROCEDURE | PROC ) identdef '=' qualident</code></pre>
-<pre><code>ProcedureHeading     = ( PROCEDURE | PROC )[ INLINE | CONST ] <br />                        identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence</code></pre>
-<pre><code>                       [ BEGIN StatementSequence</code></pre>
-<pre><code>                       | ReturnStatement [';'] ]</code></pre>
+<pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br />                                        [ INLINE | INVAR | EXTERN ]<br />                       | ( PROCEDURE | PROC ) identdef '=' qualident<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence END ident</code></pre>
 <pre><code>DeclarationSequence  = { CONST { ConstDeclaration [';'] }</code></pre>
 <pre><code>	           | TYPE { TypeDeclaration [';'] }</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
@@ -2007,10 +2006,7 @@ The result types of two procedures match if they are either the <i>same type</i>
 <pre><code>GotoStatement = 'GOTO' ident</code></pre>
 <pre><code>gotoLabel = ident ':'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14622">4.32</a></span><a href="#14457">&#x21B3;</a>
-<pre><code>ProcedureDeclaration = ProcedureHeading [';'] ProcedureBody END [ ident ]<br />                       | ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br />                       | ( PROCEDURE | PROC ) identdef '=' qualident</code></pre>
-<pre><code>ProcedureHeading     = ( PROCEDURE | PROC )[ INLINE | CONST ] <br />                        identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence</code></pre>
-<pre><code>                       [ BEGIN StatementSequence</code></pre>
-<pre><code>                       | ReturnStatement [';'] ]</code></pre>
+<pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br />                                        [ INLINE | INVAR | EXTERN ]<br />                       | ( PROCEDURE | PROC ) identdef '=' qualident<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence END ident</code></pre>
 <pre><code>DeclarationSequence  = { CONST { ConstDeclaration [';'] }</code></pre>
 <pre><code>	           | TYPE { TypeDeclaration [';'] }</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>

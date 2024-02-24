@@ -158,18 +158,15 @@ procedure ::= 'PROCEDURE' | 'PROC'
 ProcedureType ::= procedure [FormalParameters] 
 	
 ProcedureDeclaration ::= 
-	\LL:2\ procedure '^' identdef [ FormalParameters ]
-	// OBN87/90 allows forward declarations (^) and external declarations (-)
+	  \LL:2\ procedure '^' identdef [ FormalParameters ] ['INLINE'|'INVAR'|'EXTERN']
 	| \LA: 1:('PROCEDURE' | 'PROC')&(3:'='|4:'=')\ procedure identdef '=' qualident
-	|  ProcedureHeading [ ';' ] ProcedureBody [ ident ]
-
-ProcedureHeading ::= procedure [inline_|'CONST']   
-                                        identdef [ FormalParameters ]  // no receivers in Micron
+	|  ProcedureHeading ( ['INLINE'| 'INVAR'] [ ';' ] ProcedureBody | \LL:2\ [ ';' ] 'EXTERN' [ident] )
+	
+ProcedureHeading ::= procedure identdef [ FormalParameters ]  // no receivers in Micron
 
 block ::= 'BEGIN' StatementSequence
 
-ProcedureBody ::= DeclarationSequence 
-	[ block | ReturnStatement [ ';' ] ] 'END'
+ProcedureBody ::= DeclarationSequence block 'END' ident
 	
 DeclarationSequence ::= 
 	{ 'CONST' { ConstDeclaration [';'] } 

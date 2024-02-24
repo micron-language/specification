@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2024-02-21, work in progress</div>
+2024-02-24, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -187,7 +187,7 @@ The basic types are denoted by predeclared identifiers. Either all capital or al
 <td>
 <br>char </td>
 <td>
-<br>Latin-1 8-bit char</td></tr>
+<br>Latin-1 8-bit char </td></tr>
 <tr>
 <td>
 <br>float32 </td>
@@ -252,7 +252,7 @@ An array is a structure consisting of a number of elements which are all of the 
 <div style="margin-left:81px"><span class="label"><a name="15422">2.4.4.1.2</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:99px"><span class="label"><a name="15423">2.4.4.1.2.1</a></span>
-<code>ArrayType  = ARRAY [ length ] OF type | '[' [ length ] ']' type</code>
+<code>ArrayType  = ARRAY [ length ] OF NamedType | '[' [ length ] ']' NamedType</code>
 <br><code>length     = unsigned</code></div>
 <div style="margin-left:81px"><span class="label"><a name="15424">2.4.4.1.3</a></span>
 Arrays declared without length are called <i>open arrays</i>. They are restricted to pointer base types, and element types of open array types.</div>
@@ -268,7 +268,7 @@ A union type is declared like a struct type, but in contrast to the latter all f
 Syntax of textual representation:</div>
 <div style="margin-left:99px"><span class="label"><a name="15427">2.4.4.2.4.1</a></span>
 <code>StructUnionType = (STRUCT | UNION) { FieldList [';'] } END</code>
-<br><code>FieldList  = IdentList ':' type</code>
+<br><code>FieldList  = IdentList ':' NamedType</code>
 <br><code>IdentList  = identdef { [','] identdef }</code></div>
 <h4 style="margin-left:45px"><span class="label"><a name="15432">2.4.5</a></span>
 <b>Pointer types</b></h4>
@@ -277,7 +277,7 @@ Variables of a pointer type P assume as values pointers to variables of some typ
 <div style="margin-left:63px"><span class="label"><a name="15435">2.4.5.2</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:81px"><span class="label"><a name="15436">2.4.5.2.1</a></span>
-<pre><code>PointerType = ( POINTER TO | '^' ) type</code></pre></div>
+<pre><code>PointerType = ( POINTER TO | '^' ) NamedType</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="15437">2.4.5.3</a></span>
 Any pointer variable or parameter may assume the value NIL, which points to no variable at all. </div>
 <h4 style="margin-left:45px"><span class="label"><a name="15433">2.4.6</a></span>
@@ -2204,15 +2204,15 @@ There are two kinds of procedures: proper procedures and function procedures. Th
 All variables declared within a procedure body are local to the procedure. The variable names are optional. If present, they must be unique within the local variable list. Local variables are numbered from left to right, starting from zero. Local variables can be referenced by their name or by their number.</div>
 <div style="margin-left:45px"><span class="label"><a name="15466">2.8.4</a></span>
 The call of a procedure within its declaration implies recursive activation.</div>
-<div style="margin-left:45px"><span class="label"><a name="15460">2.8.5</a></span>
-A procedure can be declared INLINE (or abbreviated IN) in which case the code of the procedure is embedded at the call site, and no call actually happens. Procedures declared INLINE don't support recursion, neither directly nor indirectly.</div>
+<div style="margin-left:45px"><span class="label"><a name="15586">2.8.5</a></span>
+A procedure can be declared EXTERN to indicate that it is implemented in an external library with C calling conventions. EXTERN can be followed by the name the procedure has in that external library, otherwise the same name as in the identdef is assumed. </div>
 <div style="margin-left:45px"><span class="label"><a name="15463">2.8.6</a></span>
 A procedure can be an alias of another procedure. The other procedure is referenced with a qualident. If the other procedure is in another module, it must be exported.</div>
 <div style="margin-left:45px"><span class="label"><a name="15464">2.8.7</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15465">2.8.7.1</a></span>
-<pre><code>ProcedureDeclaration = ProcedureHeading [';'] ProcedureBody END [ ident ]<br />                       | ( PROCEDURE | PROC ) identdef '=' qualident</code></pre>
-<pre><code>ProcedureHeading     = ( PROCEDURE | PROC )[INLINE] <br />                        identdef [ FormalParameters ]<br /><br />ProcedureBody        = [VAR { LocalDeclaration [';'] }]<br />                       BEGIN StatementSequence<br /><br />LocalDeclaration     = [IdentList ':'] VariableType</code></pre></div>
+<pre><code>ProcedureDeclaration = ProcedureHeading [';'] ( ProcedureBody | EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) identdef '=' qualident</code></pre>
+<pre><code>ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br /><br />ProcedureBody        = [VAR { LocalDeclaration [';'] }]<br />                       BEGIN StatementSequence END ident<br /><br />LocalDeclaration     = [IdentList ':'] VariableType</code></pre></div>
 <h4 style="margin-left:45px"><span class="label"><a name="15468">2.8.8</a></span>
 Formal parameters</h4>
 <div style="margin-left:63px"><span class="label"><a name="15469">2.8.8.1</a></span>
@@ -2271,7 +2271,7 @@ Call pop if the function returns a value.</div>
 <td>
 <br>Free memory previously allocated by Newarr or Newobj. </td></tr></table></div>
 <div style="margin-left:63px"><span class="label"><a name="15317">2.9.5.2</a></span>
-<code>…,-&gt; …,</code></div>
+<code>…,addr-&gt; …,</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15305">2.9.5.3</a></span>
 TODO: type to dispose</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15196">2.9.6</a></span>
@@ -2922,11 +2922,9 @@ A module is a collection of declarations of constants, types, variables, and pro
 <div style="margin-left:45px"><span class="label"><a name="15498">2.10.2</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15499">2.10.2.1</a></span>
-<pre><code>module     = MODULE ident [';'] [ImportList]</code></pre>
-<pre><code>             { DeclarationSequence }</code></pre>
-<pre><code>	 [ BEGIN StatementSequence ] END ident ['.']</code></pre>
+<pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 [ BEGIN StatementSequence ] END ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
-<pre><code>import     = [ ident ':=' ] ImportPath ident</code></pre>
+<pre><code>import     = [ ident ':=' ] ImportPath ident [ MetaActuals ]</code></pre>
 <pre><code>ImportPath = { ident '.' }<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
 <pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
@@ -2942,12 +2940,27 @@ A module must not import itself (neither directly nor indirectly).</div>
 Identifiers that are to be exported (i.e. that are to be visible in client modules) must be marked by an export mark in their declaration.</div>
 <div style="margin-left:45px"><span class="label"><a name="15511">2.10.8</a></span>
 The statement sequence following the symbol BEGIN is executed when the module is loaded, which is done after the imported modules have been loaded. It follows that cyclic import of modules is illegal.</div>
-<div style="margin-left:45px"><span class="label"><a name="15334">2.10.9</a></span>
-TODO: concrete vs generic modules</div>
-<div style="margin-left:45px"><span class="label"><a name="15335">2.10.10</a></span>
-TODO: interface modules to integrate existing C libraries </div>
+<h4 style="margin-left:45px"><span class="label"><a name="15587">2.10.9</a></span>
+<b>Generic Modules</b></h4>
+<div style="margin-left:63px"><span class="label"><a name="15588">2.10.9.1</a></span>
+Modules can be made generic by adding formal meta parameters. Meta parameters represent types or constants; the latter include procedure names. Meta parameters default to types, but can be explicitly prefixed with the TYPE reserved word; the CONST prefix designates a constant meta parameter. A meta parameter can be constrained with a named type, in which case the actual meta parameter must correspond to this type; the correspondence is established when the generic module is instantiated; the type of the actual meta parameter must be compatible with the constraint type.</div>
+<div style="margin-left:63px"><span class="label"><a name="15589">2.10.9.2</a></span>
+Generic modules can be instantiated with different sets of meta actuals which enables the design of reusable algorithms and data structures. The instantiation of a generic module occurs when importing it. A generic module can be instantiated more than once in the same module with different actual meta parameters. </div>
+<div style="margin-left:63px"><span class="label"><a name="15590">2.10.9.3</a></span>
+Syntax of textual representation:</div>
+<div style="margin-left:81px"><span class="label"><a name="15591">2.10.9.3.1</a></span>
+<pre><code>MetaParams       = '(' MetaSection { [';'] MetaSection } ')'</code></pre>
+<pre><code>MetaSection      = [ TYPE | CONST ] ident { [','] ident } [ ':' TypeConstraint ]</code></pre>
+<pre><code>TypeConstraint   = NamedType | ProcedureType</code></pre>
+<pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'<br /><br />ConstExpression  = qualident | integer | real | string | hexstring </code></pre></div>
+<div style="margin-left:63px"><span class="label"><a name="15592">2.10.9.4</a></span>
+Meta parameters can be used within the generic module like normal types or constants. If no type constraint is present, the types and constants can be used wherever no information about the actual type is required; otherwise the type constraint determines the permitted operations. </div>
+<div style="margin-left:63px"><span class="label"><a name="15595">2.10.9.5</a></span><span class="ident">NOTE</span>
+Generics in MIL are useful to transport generic implementations in symbol files for later instantiations (instead of the source code).</div>
+<div style="margin-left:27px"><span class="label"><a name="15596">2.11</a></span>
+TODO: type checking rules, structral compatibility, packing</div>
 <h4 style="margin-left:9px"><span class="label"><a name="15512">3</a></span>
-Complete Syntax</h4>
+<b>Complete syntax of the textual representation</b></h4>
 <div style="margin-left:27px"><span class="label"><a name="15514">3.1</a></span><a href="#15373">&#x21B3;</a>
 <pre><code>ident  = ( letter | '_' ) { letter | digit | '_' | '$' }</code></pre>
 <pre><code>letter = 'A' ... 'Z' | 'a' ... 'z'</code></pre>
@@ -2972,14 +2985,14 @@ Complete Syntax</h4>
 <pre><code>type            = NamedType | ArrayType | StructUnionType | PointerType | ProcedureType</code></pre>
 <pre><code>NamedType       = qualident</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15521">3.8</a></span><a href="#15423">&#x21B3;</a>
-<code>ArrayType  = ARRAY [ length ] OF type | '[' [ length ] ']' type</code>
+<code>ArrayType  = ARRAY [ length ] OF NamedType | '[' [ length ] ']' NamedType</code>
 <br><code>length     = unsigned</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15522">3.9</a></span><a href="#15427">&#x21B3;</a>
 <code>StructUnionType = (STRUCT | UNION) { FieldList [';'] } END</code>
-<br><code>FieldList  = IdentList ':' type</code>
+<br><code>FieldList  = IdentList ':' NamedType</code>
 <br><code>IdentList  = identdef { [','] identdef }</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15523">3.10</a></span><a href="#15436">&#x21B3;</a>
-<pre><code>PointerType = ( POINTER TO | '^' ) type</code></pre></div>
+<pre><code>PointerType = ( POINTER TO | '^' ) NamedType</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15524">3.11</a></span><a href="#15441">&#x21B3;</a>
 <pre><code>ProcedureType = (PROCEDURE|PROC) [FormalParameters]</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15551">3.12</a></span><a href="#15550">&#x21B3;</a>
@@ -3009,8 +3022,8 @@ Complete Syntax</h4>
 <div style="margin-left:27px"><span class="label"><a name="15525">3.13</a></span><a href="#15503">&#x21B3;</a>
 <pre><code>VariableDeclaration = IdentList ':' VariableType<br />VariableType = [ POINTER TO | '^' ] NamedType</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15526">3.14</a></span><a href="#15465">&#x21B3;</a>
-<pre><code>ProcedureDeclaration = ProcedureHeading [';'] ProcedureBody END [ ident ]<br />                       | ( PROCEDURE | PROC ) identdef '=' qualident</code></pre>
-<pre><code>ProcedureHeading     = ( PROCEDURE | PROC )[INLINE] <br />                        identdef [ FormalParameters ]<br /><br />ProcedureBody        = [VAR { LocalDeclaration [';'] }]<br />                       BEGIN StatementSequence<br /><br />LocalDeclaration     = [IdentList ':'] VariableType</code></pre></div>
+<pre><code>ProcedureDeclaration = ProcedureHeading [';'] ( ProcedureBody | EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) identdef '=' qualident</code></pre>
+<pre><code>ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br /><br />ProcedureBody        = [VAR { LocalDeclaration [';'] }]<br />                       BEGIN StatementSequence END ident<br /><br />LocalDeclaration     = [IdentList ':'] VariableType</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15527">3.15</a></span><a href="#15473">&#x21B3;</a>
 <pre><code>FormalParameters = '(' [ FPSection { ';' FPSection } [ ';' '..'] ] ')'<br />                   [ ':' ReturnType ]</code></pre>
 <pre><code>ReturnType       = FormalType</code></pre>
@@ -3019,23 +3032,26 @@ Complete Syntax</h4>
 <div style="margin-left:27px"><span class="label"><a name="15531">3.16</a></span><a href="#15530">&#x21B3;</a>
 <code>StatementSequence = { Statement }<br />Statement = ('call' | 'calli') qualident | 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' qualident '.' ident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' qualident '.' ident | Switch | WhileDo</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15528">3.17</a></span><a href="#15499">&#x21B3;</a>
-<pre><code>module     = MODULE ident [';'] [ImportList]</code></pre>
-<pre><code>             { DeclarationSequence }</code></pre>
-<pre><code>	 [ BEGIN StatementSequence ] END ident ['.']</code></pre>
+<pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 [ BEGIN StatementSequence ] END ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
-<pre><code>import     = [ ident ':=' ] ImportPath ident</code></pre>
+<pre><code>import     = [ ident ':=' ] ImportPath ident [ MetaActuals ]</code></pre>
 <pre><code>ImportPath = { ident '.' }<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
 <pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="15534">3.18</a></span><a href="#15533">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15594">3.18</a></span><a href="#15591">&#x21B3;</a>
+<pre><code>MetaParams       = '(' MetaSection { [';'] MetaSection } ')'</code></pre>
+<pre><code>MetaSection      = [ TYPE | CONST ] ident { [','] ident } [ ':' TypeConstraint ]</code></pre>
+<pre><code>TypeConstraint   = NamedType | ProcedureType</code></pre>
+<pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'<br /><br />ConstExpression  = qualident | integer | real | string | hexstring </code></pre></div>
+<div style="margin-left:27px"><span class="label"><a name="15534">3.19</a></span><a href="#15533">&#x21B3;</a>
 <code>IfThenElse = 'IF' Expression 'THEN' StatementSequence <br />[ 'ELSE' StatementSequence ] 'END'</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15546">3.19</a></span><a href="#15545">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15546">3.20</a></span><a href="#15545">&#x21B3;</a>
 <code>Loop = 'LOOP' StatementSequence 'END'</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15537">3.20</a></span><a href="#15536">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15537">3.21</a></span><a href="#15536">&#x21B3;</a>
 <code>RepeatUntil = 'REPEAT' StatementSequence 'UNTIL' Expression 'END'</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15540">3.21</a></span><a href="#15539">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15540">3.22</a></span><a href="#15539">&#x21B3;</a>
 <code>Switch = 'SWITCH' Expression { 'CASE' Expression 'THEN' StatementSequence } <br />[ 'ELSE' StatementSequence ] 'END'</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15543">3.22</a></span><a href="#15542">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15543">3.23</a></span><a href="#15542">&#x21B3;</a>
 <code>WhileDo = 'WHILE' Expression 'DO' StatementSequence 'END'</code></div>
 <h4 style="margin-left:9px"><span class="label"><a name="14962">4</a></span>
 <b>References</b></h4>

@@ -51,12 +51,12 @@ ProcedureType ::= ('PROCEDURE'|'PROC') [FormalParameters]
 VariableDeclaration ::= IdentList ':' VariableType
 VariableType ::= [ 'POINTER' 'TO' | '^' ] NamedType
 
-ProcedureDeclaration ::= ProcedureHeading (
-                       [ FormalParameters ] [';'] ProcedureBody 'END' [ ident ]
+ProcedureDeclaration ::= ( 'PROCEDURE' | 'PROC' ) identdef  (
+                       [ FormalParameters ] [';'] ( ProcedureBody  | 'EXTERN' [ident] )
                        | '=' qualident )
-ProcedureHeading     ::= ( 'PROCEDURE' | 'PROC' ) ['INLINE'] identdef 
 
-ProcedureBody        ::= ['VAR' { \LA: 1:(ident&!'BEGIN')\ LocalDeclaration [';'] }] 'BEGIN' StatementSequence
+ProcedureBody        ::= ['VAR' { \LA: 1:(ident&!'BEGIN')\ LocalDeclaration [';'] }] 
+                                        'BEGIN' StatementSequence 'END' ident
 
 LocalDeclaration     ::= IdentList ':' VariableType
 
@@ -65,10 +65,11 @@ ReturnType       ::= FormalType
 FPSection        ::= ident { [','] ident } ':' FormalType
 FormalType       ::= [ 'POINTER' 'TO' | '^' ] NamedType
 
-module     ::= 'MODULE' ident [';'] [ImportList] { DeclarationSequence }
-	               [ 'BEGIN' StatementSequence ] 'END' ident ['.']
+module     ::= 'MODULE' ident [ MetaParams ] [';'] 
+                        { ImportList | DeclarationSequence }
+	                [ 'BEGIN' StatementSequence ] 'END' ident ['.']
 ImportList ::= 'IMPORT' import { [','] import } [';']
-import     ::= [ \LL:2\ ident ':=' ] ImportPath ident
+import     ::= [ \LL:2\ ident ':=' ] ImportPath ident [ MetaActuals ] 
 ImportPath ::= { \LA: 1:ident&2:'.'\ ident '.' }
 
 DeclarationSequence  ::= { 'TYPE' { \LA: 1:(ident&!('PROC'|'PROCEDURE'|'VAR'))\ TypeDeclaration [';'] }
@@ -120,6 +121,13 @@ Switch ::= 'SWITCH' Expression { 'CASE' Expression 'THEN' StatementSequence }
 RepeatUntil ::= 'REPEAT' StatementSequence 'UNTIL' Expression 'END'
 WhileDo ::= 'WHILE' Expression 'DO' StatementSequence 'END'
 
+MetaActuals ::= '(' ConstExpression { [','] ConstExpression } ')' 
+
+MetaParams ::= '(' MetaSection { [';'] MetaSection } ')'
+
+MetaSection ::= [ 'TYPE' | 'CONST' ] ident { \LL:2\ [','] ident } [ ':' NamedType ]
+
+ConstExpression  ::= qualident | integer | real | string | hexstring
 
 /// Pragmas
 %module ::= 'Micron'
