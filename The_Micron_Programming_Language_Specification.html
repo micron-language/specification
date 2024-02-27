@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2024-02-24, work in progress</div>
+2024-02-26, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -136,9 +136,9 @@ This specification was written in CrossLine (see <a href="https://github.com/roc
 <div style="margin-left:63px"><span class="label"><a name="14746">1.6.2.11</a></span>
 <a href="#14440">2.11 Procedure declarations</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14747">1.6.2.11.1</a></span>
-<a href="#14458">2.11.12 Formal parameters</a></div>
+<a href="#14458">2.11.11 Formal parameters</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14748">1.6.2.11.2</a></span>
-<a href="#14493">2.11.13 Predeclared procedures</a></div>
+<a href="#14493">2.11.12 Predeclared procedures</a></div>
 <div style="margin-left:63px"><span class="label"><a name="14749">1.6.2.12</a></span>
 <a href="#14498">2.12 Modules</a></div>
 <div style="margin-left:63px"><span class="label"><a name="14750">1.6.2.13</a></span>
@@ -213,6 +213,8 @@ Symbols as internalized names, declared via enumeration type (e.g. for use with 
 The WHILE statement has no ELSIF part in Micron.</div>
 <div style="margin-left:63px"><span class="label"><a name="15425">2.1.7.16</a></span>
 Procedure aliasses: collect all required types, constants and procedures in one module which is the interface of the shared library.</div>
+<div style="margin-left:63px"><span class="label"><a name="15600">2.1.7.17</a></span>
+Non-local access is not supported. Nested procedures only have access to the objects declared on module level, but not to declarations in the outer (nesting) procedures.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14127">2.2</a></span>
 <a href=""><b>S</b></a><b>yntax</b></h4>
 <div style="margin-left:45px"><span class="label"><a name="14128">2.2.1</a></span>
@@ -877,7 +879,7 @@ If p is a variable of type <code>P = POINTER TO T</code>, a call of the predecla
 <h4 style="margin-left:45px"><span class="label"><a name="14285">2.6.8</a></span>
 Procedure types</h4>
 <div style="margin-left:63px"><span class="label"><a name="14286">2.6.8.1</a></span>
-Variables of a procedure type T have a procedure (or NIL) as value. If a procedure P is assigned to a variable of type T, the formal parameter lists and result types (see <a href="#14458">2.11.12 Formal parameters</a>) of P and T must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). A procedure P assigned to a variable or a formal parameter must not be a predeclared, nor an inlined procedure, nor may it access local variables or parameters declared in outer procedures, or call procedures which access local variables or parameters declared in outer procedures.</div>
+Variables of a procedure type T have a procedure (or NIL) as value. If a procedure P is assigned to a variable of type T, the formal parameter lists and result types (see <a href="#14458">2.11.11 Formal parameters</a>) of P and T must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). A procedure P assigned to a variable or a formal parameter must not be a predeclared, nor an inlined procedure, nor may it access local variables or parameters declared in outer procedures, or call procedures which access local variables or parameters declared in outer procedures.</div>
 <div style="margin-left:63px"><span class="label"><a name="14288">2.6.8.2</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14289">2.6.8.2.1</a></span>
@@ -961,7 +963,7 @@ If <code>a</code> or <code>r</code> are read-only, then also <code>a[e]</code> a
 <div style="margin-left:63px"><span class="label"><a name="14314">2.8.2.7</a></span>
 A type cast <code>v(T)</code> converts the original type of <code>v</code> to T. Within the designator, <code>v</code> is then regarded as having the type T instead of the original type. The cast is applicable, if <code>v</code> is a pointer to record type.</div>
 <div style="margin-left:63px"><span class="label"><a name="14315">2.8.2.8</a></span>
-If the designated object is a constant or a variable, then the designator refers to its current value. If it is a procedure, the designator refers to that procedure unless it is followed by a (possibly empty) parameter list in which case it implies an activation of that procedure and stands for the value resulting from its execution. The actual parameters must correspond to the formal parameters as in proper procedure calls (see <a href="#14458">2.11.12 Formal parameters</a>).</div>
+If the designated object is a constant or a variable, then the designator refers to its current value. If it is a procedure, the designator refers to that procedure unless it is followed by a (possibly empty) parameter list in which case it implies an activation of that procedure and stands for the value resulting from its execution. The actual parameters must correspond to the formal parameters as in proper procedure calls (see <a href="#14458">2.11.11 Formal parameters</a>).</div>
 <div style="margin-left:63px"><span class="label"><a name="14319">2.8.2.9</a></span>
 Examples:</div>
 <div style="margin-left:81px"><span class="label"><a name="14320">2.8.2.9.1</a></span>
@@ -1195,7 +1197,7 @@ If <code>a[e]</code> designates an array element of type T at index <code>e</cod
 <h4 style="margin-left:63px"><span class="label"><a name="14349">2.8.3.9</a></span>
 Function Call</h4>
 <div style="margin-left:81px"><span class="label"><a name="14350">2.8.3.9.1</a></span>
-A function call is a factor in an expression. In contrast to <a href="#14374">2.9.6 Procedure calls</a> in a function call the actual parameter list is mandatory. Each expression in the actual parameters list (if any) is used to initialize a corresponding formal parameter. The number of expressions in the actual parameter list must correspond the number of formal parameters. See also <a href="#14458">2.11.12 Formal parameters</a>.</div>
+A function call is a factor in an expression. In contrast to <a href="#14374">2.9.6 Procedure calls</a> in a function call the actual parameter list is mandatory. Each expression in the actual parameters list (if any) is used to initialize a corresponding formal parameter. The number of expressions in the actual parameter list must correspond the number of formal parameters. See also <a href="#14458">2.11.11 Formal parameters</a>.</div>
 <div style="margin-left:81px"><span class="label"><a name="14351">2.8.3.9.2</a></span>
 Syntax:</div>
 <div style="margin-left:99px"><span class="label"><a name="14352">2.8.3.9.2.1</a></span>
@@ -1284,7 +1286,7 @@ Procedure calls</h4>
 <div style="margin-left:63px"><span class="label"><a name="14375">2.9.6.1</a></span>
 A procedure call activates a procedure. It may contain a list of actual parameters which replace the corresponding formal parameter list defined in the procedure declaration (see <a href="#14440">2.11 Procedure declarations</a>). The correspondence is established by the positions of the parameters in the actual and formal parameter lists. </div>
 <div style="margin-left:63px"><span class="label"><a name="14376">2.9.6.2</a></span>
-Each actual parameter must be an expression. This expression is evaluated before the procedure activation, and the resulting value is assigned to the formal parameter (see also <a href="#14458">2.11.12 Formal parameters</a>).</div>
+Each actual parameter must be an expression. This expression is evaluated before the procedure activation, and the resulting value is assigned to the formal parameter (see also <a href="#14458">2.11.11 Formal parameters</a>).</div>
 <div style="margin-left:63px"><span class="label"><a name="14377">2.9.6.3</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14378">2.9.6.3.1</a></span>
@@ -1466,56 +1468,52 @@ Example:</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14440">2.11</a></span>
 <a href=""><b>P</b></a><b>rocedure declarations</b></h4>
 <div style="margin-left:45px"><span class="label"><a name="14441">2.11.1</a></span>
-A procedure declaration consists of a procedure heading and a procedure body. The heading specifies the procedure identifier and the formal parameters (see <a href="#14458">2.11.12 Formal parameters</a>). The body contains declarations and statements. The procedure identifier must be repeated at the end of the procedure declaration.</div>
+A procedure declaration consists of a procedure heading and a procedure body. The heading specifies the procedure identifier and the formal parameters (see <a href="#14458">2.11.11 Formal parameters</a>). The body contains declarations and statements. The procedure identifier must be repeated at the end of the procedure declaration.</div>
 <div style="margin-left:45px"><span class="label"><a name="14452">2.11.2</a></span>
 There are two kinds of procedures: proper procedures and function procedures. The latter are activated by a function designator as a constituent of an expression and yield a result that is an operand of the expression. Proper procedures are activated by a procedure call. A procedure is a function procedure if its formal parameters specify a result type. Each control path of a function procedure must return a value.</div>
 <div style="margin-left:45px"><span class="label"><a name="14453">2.11.3</a></span>
-All constants, variables, types, and procedures declared within a procedure body are local to the procedure. Since procedures may be declared as local objects too, procedure declarations may be nested. The call of a procedure within its declaration implies recursive activation.</div>
-<div style="margin-left:45px"><span class="label"><a name="14454">2.11.4</a></span>
-Objects declared in the environment of the procedure are also visible in those parts of the procedure in which they are not concealed by a locally declared object with the same name.</div>
-<div style="margin-left:45px"><span class="label"><a name="14455">2.11.5</a></span><span class="ident">NOTE</span>
-Procedures can be nested, and inner procedures have access to the parameters or local variables of outer procedures (&quot;non-local access&quot;). This feature was already supported in ALGOL 60 and adopted by Wirth in Pascal; it is also supported by Oberon, Oberon-2, and Oberon+, but not by Oberon 07.</div>
-<div style="margin-left:45px"><span class="label"><a name="14485">2.11.6</a></span>
-A procedure can be declared INLINE in which case the code of the procedure is embedded at the call site, and no call actually happens. Procedures declared INLINE don't support recursion, neither directly nor indirectly.</div>
-<div style="margin-left:45px"><span class="label"><a name="14486">2.11.7</a></span>
+All constants, variables, types, and procedures declared within a procedure body are local to the procedure. The values of local variables are undefined upon entry to the procedure. Since procedures may be declared as local objects too, procedure declarations may be nested. The call of a procedure within its declaration implies recursive activation.</div>
+<div style="margin-left:45px"><span class="label"><a name="15599">2.11.4</a></span>
+In addition to its formal parameters and locally declared objects, the objects declared globally are also visible in the procedure.</div>
+<div style="margin-left:45px"><span class="label"><a name="14485">2.11.5</a></span>
+A procedure can be declared INLINE in which case the code of the procedure is embedded at the call site, and no call actually happens. Procedures declared INLINE don't support  recursion, neither directly nor indirectly. INLINE procedures neither support variable length array local variables.</div>
+<div style="margin-left:45px"><span class="label"><a name="14486">2.11.6</a></span>
 A procedure can be declared INVAR (invariable) in which case it can be used in CONST declarations to derive a constant value at compile time. INVAR procedures can only call other INVAR procedures or predeclared procedures not depending on runtime information. INVAR procedures cannot access module variables, but they can access CONST declarations in the same or other modules.</div>
-<div style="margin-left:45px"><span class="label"><a name="15572">2.11.8</a></span>
+<div style="margin-left:45px"><span class="label"><a name="15572">2.11.7</a></span>
 A procedure can be declared EXTERN to indicate that it is implemented in an external library with C calling conventions. EXTERN can be followed by the name the procedure has in that external library, otherwise the same name as in the identdef is assumed. </div>
-<div style="margin-left:45px"><span class="label"><a name="15362">2.11.9</a></span>
+<div style="margin-left:45px"><span class="label"><a name="15362">2.11.8</a></span>
 A procedure can be forward declared in which case the formal parameters must be identical with the actual procedure declaration. Forward declarations are marked by '^'.</div>
-<div style="margin-left:45px"><span class="label"><a name="15363">2.11.10</a></span>
+<div style="margin-left:45px"><span class="label"><a name="15363">2.11.9</a></span>
 A procedure can be an alias of another procedure. The other procedure is referenced with a qualident. If the other procedure is in another module, it must be exported.</div>
-<div style="margin-left:45px"><span class="label"><a name="14456">2.11.11</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14456">2.11.10</a></span>
 Syntax:</div>
-<div style="margin-left:63px"><span class="label"><a name="14457">2.11.11.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14457">2.11.10.1</a></span>
 <pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br />                                        [ INLINE | INVAR | EXTERN ]<br />                       | ( PROCEDURE | PROC ) identdef '=' qualident<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence END ident</code></pre>
 <pre><code>DeclarationSequence  = { CONST { ConstDeclaration [';'] }</code></pre>
 <pre><code>	           | TYPE { TypeDeclaration [';'] }</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
 <pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
-<h4 style="margin-left:45px"><span class="label"><a name="14458">2.11.12</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="14458">2.11.11</a></span>
 Formal parameters</h4>
-<div style="margin-left:63px"><span class="label"><a name="14459">2.11.12.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14459">2.11.11.1</a></span>
 Formal parameters are identifiers declared in the formal parameter list of a procedure. They correspond to actual parameters specified in the procedure call. The correspondence between formal and actual parameters is established when the procedure is called. </div>
-<div style="margin-left:63px"><span class="label"><a name="14484">2.11.12.2</a></span><span class="ident">NOTE</span>
+<div style="margin-left:63px"><span class="label"><a name="14484">2.11.11.2</a></span><span class="ident">NOTE</span>
 Oberon and Oberon+ support VAR parameters, which are not necessary in Micron, because the formal parameter can be a pointer instead and the '@' operator can be applied to the designator passed as actual parameter.</div>
-<div style="margin-left:63px"><span class="label"><a name="14483">2.11.12.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14483">2.11.11.3</a></span>
 The scope of a formal parameter extends from its declaration to the end of the procedure block in which it is declared. A function procedure without parameters must have an empty parameter list. It must be called by a function designator whose actual parameter list is empty too. The result type of a procedure cannot be an open array.</div>
-<div style="margin-left:63px"><span class="label"><a name="14488">2.11.12.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14488">2.11.11.4</a></span>
 Syntax:</div>
-<div style="margin-left:81px"><span class="label"><a name="14489">2.11.12.4.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14489">2.11.11.4.1</a></span>
 <pre><code>FormalParameters = '(' [ FPSection { [';'] FPSection } [ [';'] '..'] ] ')'</code></pre>
 <pre><code>                   [ ':' ReturnType ]</code></pre>
 <pre><code>ReturnType       = [ POINTER TO | '^' ] NamedType</code></pre>
 <pre><code>FPSection        = ident { [','] ident } ':' FormalType</code></pre>
 <pre><code>FormalType       = type</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="14490">2.11.12.5</a></span>
-Module level procedures can have a variable number of parameters, which is indicated by <code>'..'</code> (ellipsis). In that case the additional parameters (called &quot;variable parameters&quot;) can be accessed in the procedure body using the VARARG() and VARARGS() predeclared procedures. Only actual parameters of basic or pointer type (including enumerations and procedure types) can be passed as variable parameters.</div>
-<div style="margin-left:63px"><span class="label"><a name="14657">2.11.12.6</a></span><span class="ident">NOTE</span>
-Nested procedures cannot have a variable number of arguments because this would interfere with the access to non-local variables and parameters, see <a href="#14440">2.11 Procedure declarations</a>.</div>
-<div style="margin-left:63px"><span class="label"><a name="14491">2.11.12.7</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14490">2.11.11.5</a></span>
+Procedures can have a variable number of parameters, which is indicated by '..' (ellipsis). In that case the additional parameters (called &quot;variable parameters&quot;) can be accessed in the procedure body using the VARARG() and VARARGS() predeclared procedures. Only actual parameters of basic or pointer type (including enumerations and procedure types) can be passed as variable parameters.</div>
+<div style="margin-left:63px"><span class="label"><a name="14491">2.11.11.6</a></span>
 Examples:</div>
-<div style="margin-left:81px"><span class="label"><a name="14492">2.11.12.7.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14492">2.11.11.6.1</a></span>
 <pre><code>proc ReadInt(x: pointer to integer)</code></pre>
 <pre><code>  var i: integer; ch: char</code></pre>
 <pre><code>begin i := 0; Read(ch)</code></pre>
@@ -1524,11 +1522,11 @@ Examples:</div>
 <pre><code>  end</code></pre>
 <pre><code>  x^ := i</code></pre>
 <pre><code>end ReadInt</code></pre></div>
-<h4 style="margin-left:45px"><span class="label"><a name="14493">2.11.13</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="14493">2.11.12</a></span>
 Predeclared procedures</h4>
-<div style="margin-left:63px"><span class="label"><a name="14495">2.11.13.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14495">2.11.12.1</a></span>
 Predeclared procedures are provided by the compiler and accessible without extra imports. Some are generic procedures, i.e. they apply to several types of operands.</div>
-<div style="margin-left:63px"><span class="label"><a name="14494">2.11.13.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14494">2.11.12.2</a></span>
 See <a href="#14136">6 Predeclared Procedure Reference</a> for the list of predeclared procedures each Micron compiler has to provide.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14498">2.12</a></span>
 Modules</h4>
@@ -2077,7 +2075,7 @@ Opaque type representing an internalized identifier. Values of the type exist at
 <div style="margin-left:27px"><span class="label"><a name="14651">5.9</a></span>
 <b>VA_LIST</b></div>
 <div style="margin-left:45px"><span class="label"><a name="14683">5.9.1</a></span>
-Opaque type representing the list of variable parameters, accessible by <a href="xoid://14141@003526b9-5a79-4133-afbf-9bcd57214e0c">&lt;null reference&gt;</a>, see <a href="#14458">2.11.12 Formal parameters</a>.</div>
+Opaque type representing the list of variable parameters, accessible by <a href="xoid://14141@003526b9-5a79-4133-afbf-9bcd57214e0c">&lt;null reference&gt;</a>, see <a href="#14458">2.11.11 Formal parameters</a>.</div>
 <h4 style="margin-left:9px"><span class="label"><a name="14136">6</a></span>
 <b>Predeclared Procedure Reference</b></h4>
 <h4 style="margin-left:27px"><span class="label"><a name="14775">6.1</a></span>
