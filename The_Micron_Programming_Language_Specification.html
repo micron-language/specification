@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2024-02-26, work in progress</div>
+2024-02-27, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -215,6 +215,8 @@ The WHILE statement has no ELSIF part in Micron.</div>
 Procedure aliasses: collect all required types, constants and procedures in one module which is the interface of the shared library.</div>
 <div style="margin-left:63px"><span class="label"><a name="15600">2.1.7.17</a></span>
 Non-local access is not supported. Nested procedures only have access to the objects declared on module level, but not to declarations in the outer (nesting) procedures.</div>
+<div style="margin-left:63px"><span class="label"><a name="15623">2.1.7.18</a></span>
+The initial values of module and local variables are undefined in Micron.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14127">2.2</a></span>
 <a href=""><b>S</b></a><b>yntax</b></h4>
 <div style="margin-left:45px"><span class="label"><a name="14128">2.2.1</a></span>
@@ -875,17 +877,17 @@ Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14283">2.6.7.2.1</a></span>
 <pre><code>PointerType = ( POINTER TO | '^' ) type</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="14284">2.6.7.3</a></span>
-If p is a variable of type <code>P = POINTER TO T</code>, a call of the predeclared procedure <code>NEW(p)</code> (see <a href="#14136">6 Predeclared Procedure Reference</a>) allocates a variable of type T in free storage. If T is a record type or an array type with fixed length, the allocation has to be done with <code>NEW(p)</code>; if T is an open array type, the allocation has to be done with <code>NEW(p, e)</code> where T is allocated with the length given by the expression e. In either case a pointer to the allocated variable is assigned to <code>p</code>. <code>p</code> is of type P. The referenced variable <code>p^</code> is of type T. Any pointer variable may assume the value NIL, which points to no variable at all. All pointer fields or elements of a newly allocated record or array are set to NIL. If an allocated record or array is no longer used, it has to be explicitly deallocated with <code>DISPOSE(p)</code>.</div>
+If p is a variable of type <code>P = POINTER TO T</code>, a call of the predeclared procedure <code>NEW(p)</code> (see <a href="#14136">6 Predeclared Procedure Reference</a>) allocates a variable of type T in free storage. If T is a record type or an array type with fixed length, the allocation has to be done with <code>NEW(p)</code>; if T is an open array type, the allocation has to be done with <code>NEW(p, e)</code> where T is allocated with the length given by the expression e. In either case a pointer to the allocated variable is assigned to <code>p</code>. <code>p</code> is of type P. The referenced variable <code>p^</code> is of type T. Any pointer variable may assume the value NIL, which points to no variable at all. If an allocated record or array is no longer used, it has to be explicitly deallocated with <code>DISPOSE(p)</code>.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14285">2.6.8</a></span>
 Procedure types</h4>
 <div style="margin-left:63px"><span class="label"><a name="14286">2.6.8.1</a></span>
-Variables of a procedure type T have a procedure (or NIL) as value. If a procedure P is assigned to a variable of type T, the formal parameter lists and result types (see <a href="#14458">2.11.11 Formal parameters</a>) of P and T must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). A procedure P assigned to a variable or a formal parameter must not be a predeclared, nor an inlined procedure, nor may it access local variables or parameters declared in outer procedures, or call procedures which access local variables or parameters declared in outer procedures.</div>
+Variables of a procedure type T have a procedure (or NIL) as value. If a procedure P is assigned to a variable of type T, the formal parameter lists and result types (see <a href="#14458">2.11.11 Formal parameters</a>) of P and T must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). A procedure P assigned to a variable or a formal parameter must not be a predeclared, nor an inlined procedure.</div>
 <div style="margin-left:63px"><span class="label"><a name="14288">2.6.8.2</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14289">2.6.8.2.1</a></span>
 <pre><code>ProcedureType = PROCEDURE [FormalParameters]</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="14287">2.6.8.3</a></span><span class="ident">NOTE</span>
-Traditional Oberon versions don’t support assignment of procedures local to another procedure to a procedure type variable. Oberon+ as well as Micron don’t make this restriction, as long as the local procedure (or one of its nested procedures) isn’t nested and doesn’t depend on local variables or parameters declared in its enclosing procedure. </div>
+Traditional Oberon versions don’t support assignment of procedures local to another procedure to a procedure type variable. Oberon+ as well as Micron don’t make this restriction.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14291">2.6.9</a></span>
 <b>Enumeration and symbol types</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="14292">2.6.9.1</a></span>
@@ -904,7 +906,7 @@ The ordinal number of a constant enumeration element can be obtained using the <
 Examples:</div>
 <div style="margin-left:81px"><span class="label"><a name="14296">2.6.9.6.1</a></span>
 <pre><code>(red, green, blue)</code></pre>
-<pre><code>(club, diamond, heart, spade)</code></pre>
+<pre><code>(:club, :diamond, :heart, :spade)</code></pre>
 <pre><code>(Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="14668">2.6.9.7</a></span>
 The elements of a symbol enumeration are of the predeclared type SYMBOL. Values of the SYMBOL type have a runtime representation and can be stored in variables of SYMBOL type, just like integers. An invalid symbol has the value NIL. An ident of a symbol enumeration is declared the first time it appears in the source text. It can reappear later in the source text in another symbol enumeration declaration; in that case, both idents represent the same symbol. Elements of symbol enumerations can be assigned to variables of SYMBOL type. Variables of SYMBOL type are initialized with NIL.</div>
@@ -919,7 +921,7 @@ If the other type is an enumeration type in another module M, the elements e of 
 <h4 style="margin-left:27px"><span class="label"><a name="14298">2.7</a></span>
 <a href=""><b>V</b></a><b>ariable declarations</b></h4>
 <div style="margin-left:45px"><span class="label"><a name="14299">2.7.1</a></span>
-Variable declarations introduce variables by defining an identifier and a data type for them.</div>
+Variable declarations introduce variables by defining an identifier and a data type for them. The initial value of a variable is undefined.</div>
 <div style="margin-left:45px"><span class="label"><a name="14300">2.7.2</a></span>
 Syntax:</div>
 <div style="margin-left:63px"><span class="label"><a name="14301">2.7.2.1</a></span>
@@ -1439,26 +1441,23 @@ Exception handling in Micron is implemented using the predeclared procedures PCA
 <div style="margin-left:45px"><span class="label"><a name="14436">2.10.2</a></span>
 An exception is just a value of type SYMBOL The symbol representing the exception is passed as an actual argument to RAISE. RAISE may be called without an argument in which case the compiler provides an internal symbol. RAISE never returns, but control is transferred from the place where RAISE is called to the nearest dynamically-enclosing call of PCALL. When calling RAISE without a dynamically-enclosing call of PCALL the program execution is aborted.</div>
 <div style="margin-left:45px"><span class="label"><a name="14437">2.10.3</a></span>
-PCALL executes a protected call of the procedure or procedure type P. P is passed as the second argument to PCALL. P cannot have a return type. P can be a nested procedure, even if it accesses local variables or parameters of an outer procedure. If P has formal parameters the corresponding actual parameters are passed to PCALL immediately after P. The actual parameters must be <i>parameter compatible</i> with the formal parameters of P (see <a href="#14532">3 Definition of terms</a>). The first parameter R of PCALL is a variable of type SYMBOL; if RAISE(E) is called in the course of P, then R is set to E; otherwise R is set to NIL. The state of VAR parameters of P or local variables or parameters of an outer procedure accessed by P is non-deterministic in case RAISE is called in the course of P.</div>
+PCALL executes a protected call of the procedure or procedure type P. P is passed as the second argument to PCALL. P cannot have a return type. P can be a nested procedure. If P has formal parameters the corresponding actual parameters are passed to PCALL immediately after P. The actual parameters must be <i>parameter compatible</i> with the formal parameters of P (see <a href="#14532">3 Definition of terms</a>). The first parameter R of PCALL is a variable of type SYMBOL; if RAISE(E) is called in the course of P, then R is set to E; otherwise R is set to NIL. The state of VAR parameters of P or local variables or parameters of an outer procedure accessed by P is non-deterministic in case RAISE is called in the course of P.</div>
 <div style="margin-left:45px"><span class="label"><a name="14438">2.10.4</a></span>
 Example:</div>
 <div style="margin-left:63px"><span class="label"><a name="14439">2.10.4.1</a></span>
 <pre><code>module ExceptionExample</code></pre>
-<pre><code>  type Exception = record end</code></pre>
+<pre><code>  type Exceptions = ( :ex1 :ex2 )</code></pre>
 <pre><code>  proc Print(in str: array of char)</code></pre>
-<pre><code>    var e: pointer to Exception</code></pre>
 <pre><code>  begin</code></pre>
 <pre><code>    println(str)</code></pre>
-<pre><code>    new(e)</code></pre>
-<pre><code>    raise(e)</code></pre>
+<pre><code>    raise(ex1)</code></pre>
 <pre><code>    println(&quot;this is not printed&quot;)</code></pre>
 <pre><code>  end Print</code></pre>
-<pre><code>  var res: pointer to anyrec</code></pre>
+<pre><code>  var res: SYMBOL</code></pre>
 <pre><code>begin</code></pre>
 <pre><code>  pcall(res, Print, &quot;Hello World&quot;)</code></pre>
 <pre><code>  case res of</code></pre>
-<pre><code>  | Exception: println(&quot;got Exception&quot;)</code></pre>
-<pre><code>  | anyrec: println(&quot;got anyrec&quot;)</code></pre>
+<pre><code>  | ex1: println(&quot;got ex1&quot;)</code></pre>
 <pre><code>  | nil: println(&quot;no exception&quot;)</code></pre>
 <pre><code>  else</code></pre>
 <pre><code>    println(&quot;unknown exception&quot;)</code></pre>
@@ -1556,14 +1555,14 @@ The statement sequence following the symbol BEGIN is executed when the module is
 <h4 style="margin-left:27px"><span class="label"><a name="14508">2.13</a></span>
 Generics</h4>
 <div style="margin-left:45px"><span class="label"><a name="14509">2.13.1</a></span>
-Micron, as Oberon+, supports generic programming. Modules can be made generic by adding formal meta parameters. Meta parameters represent types or constants; the latter include procedures. Meta parameters default to types, but can be explicitly prefixed with the TYPE reserved word; the CONST prefix designates a constant meta parameter. A meta parameter can be constrained with a named type, in which case the actual meta parameter must correspond to this type; the correspondence is established when the generic module is instantiated; the type of the actual meta parameter must be assignment compatible with the constraint type (see <a href="#14532">3 Definition of terms</a>).</div>
+Micron, as Oberon+, supports generic programming. Modules can be made generic by adding formal meta parameters. Meta parameters represent types or constants; the latter include procedures. Meta parameters default to types, but can be explicitly prefixed with the TYPE reserved word; the CONST prefix designates a constant meta parameter. A CONST meta parameter can be constrained with a named type, in which case the actual meta parameter must correspond to this type; the correspondence is established when the generic module is instantiated; the type of the actual meta parameter must be assignment compatible with the constraint type (see <a href="#14532">3 Definition of terms</a>).</div>
 <div style="margin-left:45px"><span class="label"><a name="14510">2.13.2</a></span>
 Generic modules can be instantiated with different sets of meta actuals which enables the design of reusable algorithms and data structures. The instantiation of a generic module occurs when importing it. A generic module can be instantiated more than once in the same module with different actual meta parameters. See also <a href="#14498">2.12 Modules</a>.</div>
 <div style="margin-left:45px"><span class="label"><a name="14511">2.13.3</a></span>
 Syntax:</div>
 <div style="margin-left:63px"><span class="label"><a name="14512">2.13.3.1</a></span>
 <pre><code>MetaParams       = '(' MetaSection { [';'] MetaSection } ')'</code></pre>
-<pre><code>MetaSection      = [ TYPE | CONST ] ident { [','] ident } [ ':' TypeConstraint ]</code></pre>
+<pre><code>MetaSection      = CONST ident { [','] ident } ':' NamedType <br />                   | [ TYPE ] ident { [','] ident }</code></pre>
 <pre><code>TypeConstraint   = NamedType</code></pre>
 <pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
 <div style="margin-left:45px"><span class="label"><a name="14513">2.13.4</a></span>
@@ -2024,7 +2023,7 @@ The result types of two procedures match if they are either the <i>same type</i>
 <pre><code>ImportPath = { ident '.' }</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14625">4.35</a></span><a href="#14512">&#x21B3;</a>
 <pre><code>MetaParams       = '(' MetaSection { [';'] MetaSection } ')'</code></pre>
-<pre><code>MetaSection      = [ TYPE | CONST ] ident { [','] ident } [ ':' TypeConstraint ]</code></pre>
+<pre><code>MetaSection      = CONST ident { [','] ident } ':' NamedType <br />                   | [ TYPE ] ident { [','] ident }</code></pre>
 <pre><code>TypeConstraint   = NamedType</code></pre>
 <pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14626">4.36</a></span><a href="#14519">&#x21B3;</a>
