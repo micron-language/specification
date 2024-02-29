@@ -72,7 +72,7 @@ designator ::= qualident {selector}
 
 selector ::= '.' ident | '[' expression ']' | '^'  | '(' [ ExpList ] ')' 
 
-ExpList ::= expression {',' expression}
+ExpList ::= expression { [','] expression }
 
 expression ::= SimpleExpression [ relation SimpleExpression ]
 
@@ -88,9 +88,9 @@ MulOperator ::= '*' | '/' | 'DIV' | 'MOD' | '&'
 
 literal ::= number | string | hexstring | hexchar | 'NIL' | set | 'TRUE' | 'FALSE'
 
-constructor ::= NamedType '{' [ component {',' component} ] '}' // for arrays, records or fixed address pointers
+constructor ::= NamedType '{' [ component {[','] component} ] '}' // for arrays, records or fixed address pointers
 
-component ::= ConstExpression
+component ::= [\LL:2\ ident '='] ConstExpression
 
 factor ::= 
         \LA: 1:ident & 2:'{'\ constructor
@@ -102,7 +102,7 @@ factor ::=
 
 variableOrFunctionCall ::= designator // designator includes [ ActualParameters ] 
 	
-set ::= '{' [ element {',' element} ] '}'
+set ::= '{' [ element {[','] element} ] '}'
 
 element ::= expression ['..' expression]
 
@@ -133,7 +133,7 @@ CaseStatement ::= 'CASE' expression 'OF' [Case] { '|' Case }
 
 Case ::= [ CaseLabelList ':' StatementSequence ]
 
-CaseLabelList ::= LabelRange { ',' LabelRange }
+CaseLabelList ::= LabelRange { [','] LabelRange }
 
 LabelRange ::= label [ '..' label ]
 

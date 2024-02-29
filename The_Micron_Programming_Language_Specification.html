@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2024-02-27, work in progress</div>
+2024-02-29, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -174,9 +174,9 @@ The name &quot;Micron&quot; is an abbreviation of &quot;MicroOberon&quot;.</div>
 <div style="margin-left:45px"><span class="label"><a name="14157">2.1.3</a></span>
 The most important features of Micron are block structure, modularity, separate compilation, static typing with strong type checking, and generic programming.</div>
 <div style="margin-left:45px"><span class="label"><a name="14158">2.1.4</a></span>
-Like Oberon+, the language allows several simplifications compared to previous Oberon versions: reserved words can be written in lower case, all semicolons are optional, and for some reserved words there are shorter variants; a declaration sequence can contain more than one CONST, TYPE and VAR section in arbitrary order, interleaved with procedures. </div>
+Like Oberon+, the language allows several simplifications compared to previous Oberon versions: reserved words can be written in lower case, all semicolons and commas are optional, and for some reserved words there are shorter variants; a declaration sequence can contain more than one CONST, TYPE and VAR section in arbitrary order, interleaved with procedures. </div>
 <div style="margin-left:45px"><span class="label"><a name="14149">2.1.5</a></span>
-CONST and INLINE procedures, together with generic modules offer most of the capabilities of C preprocessor macros: running calculations at compile time, and substituting procedure calls by inline code, or creating code depending on compile time parametrization.</div>
+INVAR and INLINE procedures, together with generic modules offer most of the capabilities of C preprocessor macros: running calculations at compile time, and substituting procedure calls by inline code, or creating code depending on compile time parametrization.</div>
 <div style="margin-left:45px"><span class="label"><a name="14159">2.1.6</a></span>
 The language is designed to work with a single-pass compiler. ABI compatibility with C on the target platform is assumed.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14227">2.1.7</a></span>
@@ -953,7 +953,7 @@ Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14309">2.8.2.2.1</a></span>
 <pre><code>designator = qualident {selector}</code></pre>
 <pre><code>selector   = '.' ident | '[' expression ']' | '^' | '(' qualident ')'</code></pre>
-<pre><code>ExpList    = expression {',' expression}</code></pre></div>
+<pre><code>ExpList    = expression {[','] expression}</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="14310">2.8.2.3</a></span>
 If <code>a</code> designates an array, then <code>a[e]</code> denotes that element of <code>a</code> whose index is the current value of the expression <code>e</code>. The type of <code>e</code> must be an <i>integer type</i>. </div>
 <div style="margin-left:63px"><span class="label"><a name="14311">2.8.2.4</a></span>
@@ -995,7 +995,7 @@ Syntax:</div>
 <pre><code>	       | '(' expression ')' | '~' factor</code></pre>
 <pre><code>	       | '@' designator | constructor</code></pre>
 <pre><code>ActualParameters = '(' [ ExpList ] ')'</code></pre>
-<pre><code>set              = '{' [ element {',' element} ] '}'</code></pre>
+<pre><code>set              = '{' [ element {[','] element} ] '}'</code></pre>
 <pre><code>element          = expression ['..' expression]</code></pre></div>
 <h4 style="margin-left:63px"><span class="label"><a name="14325">2.8.3.3</a></span>
 Logical operators</h4>
@@ -1211,19 +1211,21 @@ With constructors, record, array and pointer literals can be declared. </div>
 <div style="margin-left:63px"><span class="label"><a name="14354">2.8.4.2</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14632">2.8.4.2.1</a></span>
-<code>constructor ::= NamedType '{' [ component {',' component} ] '}' </code>
-<br><code>component ::= ConstExpression</code></div>
-<div style="margin-left:63px"><span class="label"><a name="14633">2.8.4.3</a></span>
-If NamedType is a record type, then there is a component for each field of the record in the order of declaration. </div>
-<div style="margin-left:63px"><span class="label"><a name="14634">2.8.4.4</a></span>
-If NamedType is an array type, then there is a componend for each element of the array. The array type may be an open array in which case the number of elements is determined by the number of components.</div>
-<div style="margin-left:63px"><span class="label"><a name="14635">2.8.4.5</a></span>
-If NamedType is a pointer type, then there is exactly one component which is an unsigned integer type constant representing the address. </div>
-<div style="margin-left:63px"><span class="label"><a name="14636">2.8.4.6</a></span>
-For each field or element which is of record, array or pointer type, an embedded constructor is declared. Since the exact type of the field or element is known, the NamedType prefix can be left out.</div>
-<div style="margin-left:63px"><span class="label"><a name="14637">2.8.4.7</a></span>
+<code>constructor ::= NamedType '{' [ component {[','] component} ] '}' </code>
+<br><code>component ::= [ident '='] ConstExpression</code></div>
+<div style="margin-left:63px"><span class="label"><a name="15629">2.8.4.3</a></span>
+A constructor consists of an explicit type and a list of either named or anonymous components. Named and anonymous components cannot be mixed in the list.</div>
+<div style="margin-left:63px"><span class="label"><a name="14633">2.8.4.4</a></span>
+If NamedType is a record type, then there is either an anonymous component for each field of the record in the order of declaration, or there is a named component for each field in arbitrary order. If the record type has a variant part, only named component can be used, and only one option of the variant part can be initialized in the constructor.</div>
+<div style="margin-left:63px"><span class="label"><a name="14634">2.8.4.5</a></span>
+If NamedType is an array type, then there is an anonymous componend for each element of the array. The array type may be an open array in which case the number of elements is determined by the number of components.</div>
+<div style="margin-left:63px"><span class="label"><a name="14635">2.8.4.6</a></span>
+If NamedType is a pointer type, then there is exactly one anonymous component which is an unsigned integer type constant representing the address. </div>
+<div style="margin-left:63px"><span class="label"><a name="14636">2.8.4.7</a></span>
+For each field or element which is of record, array or pointer type, an embedded constructor is required. Since the exact type of the field or element is known, the NamedType prefix can be left out.</div>
+<div style="margin-left:63px"><span class="label"><a name="14637">2.8.4.8</a></span>
 Example:</div>
-<div style="margin-left:81px"><span class="label"><a name="14638">2.8.4.7.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14638">2.8.4.8.1</a></span>
 <code>myVal := Rect{0,0,x1,y1};</code></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14355">2.9</a></span>
 <a href=""><b>S</b></a><b>tatements</b></h4>
@@ -1328,7 +1330,7 @@ Syntax:</div>
 <pre><code>CaseStatement = CASE expression OF ['|'] Case { '|' Case }</code></pre>
 <pre><code>	    [ ELSE StatementSequence ] END</code></pre>
 <pre><code>Case          = [ CaseLabelList ':' StatementSequence ]</code></pre>
-<pre><code>CaseLabelList = LabelRange { ',' LabelRange }</code></pre>
+<pre><code>CaseLabelList = LabelRange { [','] LabelRange }</code></pre>
 <pre><code>LabelRange    = label [ '..' label ]</code></pre>
 <pre><code>label         = ConstExpression</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="14391">2.9.8.3</a></span>
@@ -1567,6 +1569,8 @@ Syntax:</div>
 <pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
 <div style="margin-left:45px"><span class="label"><a name="14513">2.13.4</a></span>
 Meta parameters can be used within the generic module like normal types or constants. If no type constraint is present, the types and constants can be used wherever no information about the actual type is required; otherwise the type constraint determines the permitted operations. The rules for <i>same types</i> and <i>equal types</i> apply analogously to meta parameters, and subsequently also the corresponding assignment, parameter and array compatibility rules.</div>
+<div style="margin-left:45px"><span class="label"><a name="15624">2.13.5</a></span><span class="ident">NOTE</span>
+The type constraint of a CONST parameter can only be a built-in (i.e. basic) type in the current version of Micron which is designed for a single-pass compiler.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14514">2.14</a></span>
 Source code directives</h4>
 <div style="margin-left:45px"><span class="label"><a name="14515">2.14.1</a></span>
@@ -1938,7 +1942,7 @@ The result types of two procedures match if they are either the <i>same type</i>
 <div style="margin-left:27px"><span class="label"><a name="14606">4.15</a></span><a href="#14309">&#x21B3;</a>
 <pre><code>designator = qualident {selector}</code></pre>
 <pre><code>selector   = '.' ident | '[' expression ']' | '^' | '(' qualident ')'</code></pre>
-<pre><code>ExpList    = expression {',' expression}</code></pre></div>
+<pre><code>ExpList    = expression {[','] expression}</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14607">4.16</a></span><a href="#14321">&#x21B3;</a>
 <pre><code>expression       = SimpleExpression [ relation SimpleExpression ]</code></pre>
 <pre><code>relation         = '=' | '#' | '&lt;' | '&lt;=' | '&gt;' | '&gt;=' | IN</code></pre>
@@ -1954,13 +1958,13 @@ The result types of two procedures match if they are either the <i>same type</i>
 <pre><code>	       | '(' expression ')' | '~' factor</code></pre>
 <pre><code>	       | '@' designator | constructor</code></pre>
 <pre><code>ActualParameters = '(' [ ExpList ] ')'</code></pre>
-<pre><code>set              = '{' [ element {',' element} ] '}'</code></pre>
+<pre><code>set              = '{' [ element {[','] element} ] '}'</code></pre>
 <pre><code>element          = expression ['..' expression]</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14608">4.17</a></span><a href="#14352">&#x21B3;</a>
 <pre><code>FunctionCall           = designator ActualParameters</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14639">4.18</a></span><a href="#14632">&#x21B3;</a>
-<code>constructor ::= NamedType '{' [ component {',' component} ] '}' </code>
-<br><code>component ::= ConstExpression</code></div>
+<code>constructor ::= NamedType '{' [ component {[','] component} ] '}' </code>
+<br><code>component ::= [ident '='] ConstExpression</code></div>
 <div style="margin-left:27px"><span class="label"><a name="14609">4.19</a></span><a href="#14358">&#x21B3;</a>
 <pre><code>statement = [ assignment | ProcedureCall | IfStatement</code></pre>
 <pre><code>            | CaseStatement  | WithStatement | LoopStatement</code></pre>
@@ -1981,7 +1985,7 @@ The result types of two procedures match if they are either the <i>same type</i>
 <pre><code>CaseStatement = CASE expression OF ['|'] Case { '|' Case }</code></pre>
 <pre><code>	    [ ELSE StatementSequence ] END</code></pre>
 <pre><code>Case          = [ CaseLabelList ':' StatementSequence ]</code></pre>
-<pre><code>CaseLabelList = LabelRange { ',' LabelRange }</code></pre>
+<pre><code>CaseLabelList = LabelRange { [','] LabelRange }</code></pre>
 <pre><code>LabelRange    = label [ '..' label ]</code></pre>
 <pre><code>label         = ConstExpression</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14615">4.25</a></span><a href="#14396">&#x21B3;</a>
@@ -2683,14 +2687,14 @@ Predeclared proper procedures</h4>
 <td>
 <br>p: pointer to T</td>
 <td>
-<br>allocate p^ of type T</td></tr>
+<br>allocate p^ of type T; initial values of fields and elements are undefined</td></tr>
 <tr>
 <td>
 <br>NEW(p,n)</td>
 <td>
 <br>p: pointer to open array</td>
 <td>
-<br>allocate p^ with length n</td></tr>
+<br>allocate p^ with length n; initial values of elements are undefined</td></tr>
 <tr>
 <td></td>
 <td>
