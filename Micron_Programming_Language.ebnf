@@ -84,7 +84,7 @@ AddOperator ::= '+' | '-' | 'OR'
 
 term ::= factor {MulOperator factor}
 
-MulOperator ::= '*' | '/' | 'DIV' | 'MOD' | '&'
+MulOperator ::= '*' | '/' | 'DIV' | 'MOD' | '&' | 'AND'
 
 literal ::= number | string | hexstring | hexchar | 'NIL' | set | 'TRUE' | 'FALSE'
 
@@ -97,7 +97,7 @@ factor ::=
         | literal
 	| variableOrFunctionCall // replaces: designator [ActualParameters]
 	| '(' expression ')' 
-	| '~' factor // negation
+	| ('~'|'NOT') factor // negation
 	| '@' designator // address of operator
 
 variableOrFunctionCall ::= designator // designator includes [ ActualParameters ] 
@@ -139,8 +139,7 @@ LabelRange ::= label [ '..' label ]
 
 label ::= ConstExpression
 
-WhileStatement ::= 'WHILE' expression 'DO' StatementSequence {ElsifStatement2} 'END'
-ElsifStatement2 ::= 'ELSIF' expression 'DO' StatementSequence 
+WhileStatement ::= 'WHILE' expression 'DO' StatementSequence 'END'
 
 RepeatStatement ::= 'REPEAT' StatementSequence 'UNTIL' expression
 
