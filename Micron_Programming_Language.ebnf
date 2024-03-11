@@ -13,9 +13,9 @@ Micron ::=  module
 
 ident ::= // ( letter | '_' ) {letter | digit | '_'}
 
-integer ::= // digit {digit} | digit {hexDigit} 'H'
+integer ::= // digit {hexDigit|'_'} ['O'|'B'|'H'] ['U1'|'U2'|'U4'|'U8'|'I1'|'I2'|'I4'|'I8']
 
-real ::= // digit {digit} '.' {digit} ['E' ['+' | '-'] digit {digit}]
+real ::= // digit {digit|'_'} '.' {digit} [('E' | 'D' | 'F' ) ['+' | '-'] digit {digit}]
 
 number ::= integer | real
 

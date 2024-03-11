@@ -82,12 +82,12 @@ ExpInstr ::= 'ADD' | 'AND' | ('CALL' | 'CALLI') qualident | 'CASTPTR' qualident
                       | 'CEQ' | 'CGT' | 'CGT_UN' | 'CLT' | 'CLT_UN' 
                       | 'CONV_I1' | 'CONV_I2' | 'CONV_I4' | 'CONV_I8' | 'CONV_R4' | 'CONV_R8'
                       | 'CONV_U1' | 'CONV_U2' | 'CONV_U4' | 'CONV_U8' | 'CONV_IP'
-                      | 'DIV' | 'DUP' | ('LDARG'|'LDARG_S') (unsigned|ident) 
+                      | 'DIV' | 'DUP' | 'INITOBJ' qualident | ('LDARG'|'LDARG_S') (unsigned|ident) 
                       | 'LDARG_0' | 'LDARG_1' | 'LDARG_2' | 'LDARG_3'
                       | ('LDARGA'|'LDARGA_S') (unsigned|ident)
                       | ('LDC_I4'|'LDC_I8'|'LDC_I4_S') integer | ('LDC_R4'|'LDC_R8') real
                       | 'LDC_I4_0' | 'LDC_I4_1' | 'LDC_I4_2' | 'LDC_I4_3' | 'LDC_I4_4' | 'LDC_I4_5'
-                      | 'LDC_I4_6' | 'LDC_I4_7' | 'LDC_I4_8' | 'LDC_I4_M1'
+                      | 'LDC_I4_6' | 'LDC_I4_7' | 'LDC_I4_8' | 'LDC_I4_M1' | 'LDC_OBJ' constructor
                       | ('LDELEM'|'LDELEMA') qualident | 'LDELEM_I1' | 'LDELEM_I2'
                       | 'LDELEM_I4' | 'LDELEM_I8' | 'LDELEM_U1' | 'LDELEM_U2' 
                       | 'LDELEM_U4' | 'LDELEM_U8' | 'LDELEM_R4' | 'LDELEM_R8' | 'LDELEM_IP'
@@ -128,6 +128,10 @@ MetaParams ::= '(' MetaSection { [';'] MetaSection } ')'
 MetaSection ::= 'CONST' ident { \LL:2\ [','] ident } ':' NamedType | [ 'TYPE' ] ident { \LL:2\ [','] ident }
 
 ConstExpression  ::= qualident | integer | real | string | hexstring
+
+constructor ::= NamedType component_list
+component_list ::= '{' [ component {[','] component} ] '}' 
+component ::= [\LL:2\ ident '='] ( ConstExpression | component_list )
 
 /// Pragmas
 %module ::= 'Micron'

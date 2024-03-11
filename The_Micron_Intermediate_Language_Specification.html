@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2024-02-26, work in progress</div>
+2024-03-11, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -362,12 +362,12 @@ Syntax of textual representation:</div>
 <br><code>| 'ceq' | 'cgt' | 'cgt_un' | 'clt' | 'clt_un' </code>
 <br><code>| 'conv_i1' | 'conv_i2' | 'conv_i4' | 'conv_i8' | 'conv_r4' | 'conv_r8'</code>
 <br><code>| 'conv_u1' | 'conv_u2' | 'conv_u4' | 'conv_u8' | 'conv_ip'</code>
-<br><code>| 'div' | 'dup' | ('ldarg'|'ldarg_s') (unsigned|ident) </code>
+<br><code>| 'div' | 'dup' | 'initobj' qualident | ('ldarg'|'ldarg_s') (unsigned|ident) </code>
 <br><code>| 'ldarg_0' | 'ldarg_1' | 'ldarg_2' | 'ldarg_3'</code>
 <br><code>| ('ldarga'|'ldarga_s') (unsigned|ident)</code>
 <br><code>| ('ldc_i4'|'ldc_i8'|'ldc_i4_s') integer | ('ldc_r4'|'ldc_r8') real</code>
 <br><code>| 'ldc_i4_0' | 'ldc_i4_1' | 'ldc_i4_2' | 'ldc_i4_3' | 'ldc_i4_4' | 'ldc_i4_5'</code>
-<br><code>| 'ldc_i4_6' | 'ldc_i4_7' | 'ldc_i4_8' | 'ldc_i4_m1'</code>
+<br><code>| 'ldc_i4_6' | 'ldc_i4_7' | 'ldc_i4_8' | 'ldc_i4_m1' | 'ldc_obj' constructor</code>
 <br><code>| ('ldelem'|'ldelema') qualident | 'ldelem_i1' | 'ldelem_i2'</code>
 <br><code>| 'ldelem_i4' | 'ldelem_i8' | 'ldelem_u1' | 'ldelem_u2' </code>
 <br><code>| 'ldelem_u4' | 'ldelem_u8' | 'ldelem_r4' | 'ldelem_r8' | 'ldelem_ip'</code>
@@ -380,11 +380,31 @@ Syntax of textual representation:</div>
 <br><code>| ('ldvar'|'ldvara') qualident | 'mul' | 'neg' </code>
 <br><code>| ('newarr'|'newvla'|'newobj') qualident </code>
 <br><code>| 'not' | 'or' | 'rem' | 'shl' | 'shr' | 'shr_un' | 'sub' | 'xor'</code></div>
+<div style="margin-left:63px"><span class="label"><a name="15733">2.5.5.2</a></span>
+<code>ConstExpression  = qualident | integer | real | string | hexstring </code></div>
 <div style="margin-left:45px"><span class="label"><a name="15340">2.5.6</a></span>
 TODO: keep designators to ease alias analysis.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="14964">2.5.7</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15734">2.5.7</a></span>
+Constructors</h4>
+<div style="margin-left:63px"><span class="label"><a name="15735">2.5.7.1</a></span>
+With constructors, struct, union, array and pointer literals can be declared. </div>
+<div style="margin-left:63px"><span class="label"><a name="15736">2.5.7.2</a></span>
+Syntax of textual representation:</div>
+<div style="margin-left:81px"><span class="label"><a name="15737">2.5.7.2.1</a></span>
+<code>constructor = NamedType component_list<br />component_list = '{' [ component {[','] component} ] '}' <br />component = [ident '='] ( ConstExpression | component_list )</code></div>
+<div style="margin-left:63px"><span class="label"><a name="15738">2.5.7.3</a></span>
+A constructor consists of an explicit type and a list of either named or anonymous components. Named and anonymous components cannot be mixed in the list.</div>
+<div style="margin-left:63px"><span class="label"><a name="15739">2.5.7.4</a></span>
+If NamedType is a struct type, then there is either an anonymous component for each field of the struct in the order of declaration, or there is a named component for each field in arbitrary order. For union types, only named components can be used, and only one option of the union can be initialized in the constructor.</div>
+<div style="margin-left:63px"><span class="label"><a name="15740">2.5.7.5</a></span>
+If NamedType is an array type, then there is an anonymous componend for each element of the array. The array type may be an open array in which case the number of elements is determined by the number of components.</div>
+<div style="margin-left:63px"><span class="label"><a name="15741">2.5.7.6</a></span>
+If NamedType is a pointer type, then there is exactly one anonymous component which is an unsigned integer type constant representing the address. </div>
+<div style="margin-left:63px"><span class="label"><a name="15742">2.5.7.7</a></span>
+For each field or element which is of struct, union, array or pointer type, an embedded constructor is required. Since the exact type of the field or element is known, the NamedType prefix is not required.</div>
+<h4 style="margin-left:45px"><span class="label"><a name="14964">2.5.8</a></span>
 <b>add</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15067">2.5.7.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15067">2.5.8.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -400,13 +420,13 @@ TODO: keep designators to ease alias analysis.</div>
 <br>add </td>
 <td>
 <br>Add two values, returning a new value. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="14982">2.5.7.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14982">2.5.8.2</a></span>
 <code>…, value1, value2 -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="14983">2.5.7.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14983">2.5.8.3</a></span>
 The add instruction adds <i>value2 </i>to<i> value1 </i>and pushes the result on the stack. Overflow is not detected for integral operations; floating-point overflow returns +inf or -inf.</div>
-<div style="margin-left:63px"><span class="label"><a name="14984">2.5.7.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14984">2.5.8.4</a></span>
 The acceptable operand types and their corresponding result data type are encapsulated as follows:</div>
-<div style="margin-left:81px"><span class="label"><a name="14996">2.5.7.4.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14996">2.5.8.4.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 ><thead>
 <tr>
 <td rowspan="2">
@@ -476,9 +496,9 @@ The acceptable operand types and their corresponding result data type are encaps
 <br>F </td>
 <td>
 <br><br /></td></tr></table></div>
-<h4 style="margin-left:45px"><span class="label"><a name="14987">2.5.8</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="14987">2.5.9</a></span>
 and – bitwise AND </h4>
-<div style="margin-left:63px"><span class="label"><a name="15068">2.5.8.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15068">2.5.9.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -494,11 +514,11 @@ and – bitwise AND </h4>
 <br>and </td>
 <td>
 <br>Bitwise and of two integral values, returns an integral value. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="14988">2.5.8.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14988">2.5.9.2</a></span>
 <code>…, value1, value2 -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="14989">2.5.8.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14989">2.5.9.3</a></span>
 The and instruction computes the bitwise and of <i>value1</i> and <i>value2 </i>and pushes the result on the stack. The acceptable operand types and their corresponding result data type are encapsulated as follows:</div>
-<div style="margin-left:81px"><span class="label"><a name="14997">2.5.8.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14997">2.5.9.3.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 ><thead>
 <tr>
 <td>
@@ -555,9 +575,9 @@ The and instruction computes the bitwise and of <i>value1</i> and <i>value2 </i>
 <br>x </td>
 <td>
 <br>x </td></tr></table></div>
-<h4 style="margin-left:45px"><span class="label"><a name="14991">2.5.9</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="14991">2.5.10</a></span>
 <b>call – call a function </b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15069">2.5.9.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15069">2.5.10.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -573,17 +593,17 @@ The and instruction computes the bitwise and of <i>value1</i> and <i>value2 </i>
 <br>call <i>function</i> </td>
 <td>
 <br>Call function described by <i>function.</i> </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="14999">2.5.9.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14999">2.5.10.2</a></span>
 <code>…, arg1, arg2 … argN -&gt; …, retVal</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15006">2.5.9.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15006">2.5.10.3</a></span>
 <code>…, arg1, arg2 … argN -&gt; …</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15000">2.5.9.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15000">2.5.10.4</a></span>
 The call instruction calls the function indicated by the descriptor. The latter indicates the function to call, and the number, type, and order of the arguments that have been placed on the stack to be passed to that function, or possibly returned from the function. The arguments are placed on the stack in left-to-right order. That is, the first argument is computed and placed on the stack, then the second argument, and so on</div>
-<div style="margin-left:63px"><span class="label"><a name="15001">2.5.9.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15001">2.5.10.5</a></span>
 TODO: tail calls</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15008">2.5.10</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15008">2.5.11</a></span>
 <b>calli – indirect function call </b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15070">2.5.10.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15070">2.5.11.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -599,17 +619,17 @@ TODO: tail calls</div>
 <br>calli <i>function</i> </td>
 <td>
 <br>Call function indicated on the stack with arguments described by <i>function</i>. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15010">2.5.10.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15010">2.5.11.2</a></span>
 <code>…, arg1, arg2 … argN, ftn -&gt; …, retVal</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15009">2.5.10.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15009">2.5.11.3</a></span>
 <code>…, arg1, arg2 … argN, ftn -&gt; …</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15011">2.5.10.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15011">2.5.11.4</a></span>
 The calli instruction calls <i>ftn</i> (a pointer to a function entry point) with the arguments arg1 … argN. The types of these arguments, and a possible return type, are described by the signature. The <i>ftn</i> argument is assumed to be a pointer to native code (of the target machine) that can be legitimately called with the arguments described by the signature. Such a pointer can be created using the ldftn instruction, or could have been passed in from external code. The arguments are placed on the stack in left-to-right order. That is, the first argument is computed and placed on the stack, then the second argument, and so on.</div>
-<div style="margin-left:63px"><span class="label"><a name="15012">2.5.10.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15012">2.5.11.5</a></span>
 TODO: tail call</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15233">2.5.11</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15233">2.5.12</a></span>
 <b>castptr – cast a pointer to a type </b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15234">2.5.11.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15234">2.5.12.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -625,15 +645,15 @@ TODO: tail call</div>
 <br>castptr <i>type </i></td>
 <td>
 <br>Cast pointer <i>ptr</i> to <i>type</i></td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15235">2.5.11.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15235">2.5.12.2</a></span>
 <code>…, ptr -&gt; …, ptr2</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15236">2.5.11.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15236">2.5.12.3</a></span>
 The castptr instruction reinterprets the pointer to type1 on the stack as a pointer to type2. </div>
-<div style="margin-left:63px"><span class="label"><a name="15237">2.5.11.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15237">2.5.12.4</a></span>
 If <i>ptr</i> is null, castptr succeeds and returns null.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15014">2.5.12</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15014">2.5.13</a></span>
 <b>ceq – compare equal</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15071">2.5.12.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15071">2.5.13.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -649,13 +669,13 @@ If <i>ptr</i> is null, castptr succeeds and returns null.</div>
 <br>ceq </td>
 <td>
 <br>Push 1 (of type int32) if <i>value1</i> equals <i>value2</i>, else push 0. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15015">2.5.12.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15015">2.5.13.2</a></span>
 <code>…, value1, value2 -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15016">2.5.12.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15016">2.5.13.3</a></span>
 The ceq instruction compares <i>value</i>1 and <i>value</i>2. If <i>value</i>1 is equal to <i>value</i>2, then 1 (of type int32) is pushed on the stack. Otherwise, 0 (of type int32) is pushed on the stack. For floating-point numbers, ceq will return 0 if the numbers are unordered (either or both are NaN). The infinite values are equal to themselves.</div>
-<div style="margin-left:63px"><span class="label"><a name="15017">2.5.12.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15017">2.5.13.4</a></span>
 The acceptable operand types are encapsulated as follows:</div>
-<div style="margin-left:81px"><span class="label"><a name="15018">2.5.12.4.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15018">2.5.13.4.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -712,9 +732,9 @@ The acceptable operand types are encapsulated as follows:</div>
 <br>x</td>
 <td>
 <br>ok</td></tr></table></div>
-<h4 style="margin-left:45px"><span class="label"><a name="15019">2.5.13</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15019">2.5.14</a></span>
 <b>cgt – compare greater than</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15072">2.5.13.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15072">2.5.14.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -730,13 +750,13 @@ The acceptable operand types are encapsulated as follows:</div>
 <br>cgt </td>
 <td>
 <br>Push 1 (of type int32) if <i>value1</i> &gt; <i>value2</i>, else push 0. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15020">2.5.13.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15020">2.5.14.2</a></span>
 The cgt instruction compares <i>value1</i> and <i>value2</i>. If <i>value1</i> is strictly greater than <i>value2</i>, then 1 (of type int32) is pushed on the stack. Otherwise, 0 (of type int32) is pushed on the stack. For floating-point numbers, cgt returns 0 if the numbers are unordered (that is, if one or both of the arguments are NaN). As with IEC 60559:1989, infinite values are ordered with respect to normal numbers (e.g., +infinity &gt; 5.0 &gt; -infinity).</div>
-<div style="margin-left:63px"><span class="label"><a name="15021">2.5.13.3</a></span>
-The acceptable operand types are encapsulated in table <a href="#15018">2.5.12.4.1</a>.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15022">2.5.14</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15021">2.5.14.3</a></span>
+The acceptable operand types are encapsulated in table <a href="#15018">2.5.13.4.1</a>.</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15022">2.5.15</a></span>
 <b>cgt_un – compare greater than, unsigned or unordered</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15073">2.5.14.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15073">2.5.15.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -752,21 +772,21 @@ The acceptable operand types are encapsulated in table <a href="#15018">2.5.12.4
 <br>cgt_un </td>
 <td>
 <br>Push 1 (of type int32) if <i>value1</i> &gt; <i>value2</i>, unsigned or unordered, else push 0. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15023">2.5.14.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15023">2.5.15.2</a></span>
 <code>…, value1, value2 -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15024">2.5.14.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15024">2.5.15.3</a></span>
 The cgt.un instruction compares <i>value1</i> and <i>value2</i>. A value of 1 (of type int32) is pushed on the stack if</div>
-<div style="margin-left:81px"><span class="label"><a name="15025">2.5.14.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15025">2.5.15.3.1</a></span>
 for floating-point numbers, either value1 is strictly greater than value2, or value1 is not ordered with respect to value2. </div>
-<div style="margin-left:81px"><span class="label"><a name="15026">2.5.14.3.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15026">2.5.15.3.2</a></span>
 for integer values, value1 is strictly greater than value2 when considered as unsigned numbers. Otherwise, 0 (of type int32) is pushed on the stack. </div>
-<div style="margin-left:63px"><span class="label"><a name="15027">2.5.14.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15027">2.5.15.4</a></span>
 As per IEC 60559:1989, infinite values are ordered with respect to normal numbers (e.g., +infinity &gt; 5.0 &gt; -infinity). </div>
-<div style="margin-left:63px"><span class="label"><a name="15029">2.5.14.5</a></span>
-The acceptable operand types are encapsulated in table <a href="#15018">2.5.12.4.1</a>.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15028">2.5.15</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15029">2.5.15.5</a></span>
+The acceptable operand types are encapsulated in table <a href="#15018">2.5.13.4.1</a>.</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15028">2.5.16</a></span>
 clt – compare less than</h4>
-<div style="margin-left:63px"><span class="label"><a name="15074">2.5.15.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15074">2.5.16.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -782,15 +802,15 @@ clt – compare less than</h4>
 <br>clt </td>
 <td>
 <br>Push 1 (of type int32) if <i>value1</i> &lt; <i>value2</i>, else push 0. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15030">2.5.15.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15030">2.5.16.2</a></span>
 <code>…, value1, value2 -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15031">2.5.15.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15031">2.5.16.3</a></span>
 The clt instruction compares <i>value1</i> and <i>value2</i>. If <i>value1</i> is strictly less than <i>value2</i>, then 1 (of type int32) is pushed on the stack. Otherwise, 0 (of type int32) is pushed on the stack. For floating-point numbers, clt will return 0 if the numbers are unordered (that is, one or both of the arguments are NaN). As per IEC 60559:1989, infinite values are ordered with respect to normal numbers (e.g., +infinity &gt; 5.0 &gt; -infinity).</div>
-<div style="margin-left:63px"><span class="label"><a name="15032">2.5.15.4</a></span>
-The acceptable operand types are encapsulated in table <a href="#15018">2.5.12.4.1</a>.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15033">2.5.16</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15032">2.5.16.4</a></span>
+The acceptable operand types are encapsulated in table <a href="#15018">2.5.13.4.1</a>.</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15033">2.5.17</a></span>
 <b>clt_un – compare less than, unsigned or unordered</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15075">2.5.16.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15075">2.5.17.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -806,21 +826,21 @@ The acceptable operand types are encapsulated in table <a href="#15018">2.5.12.4
 <br>clt_un </td>
 <td>
 <br>Push 1 (of type int32) if <i>value1</i> &lt; <i>value2</i>, unsigned or unordered, else push 0. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15034">2.5.16.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15034">2.5.17.2</a></span>
 <code>…, value1, value2 -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15035">2.5.16.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15035">2.5.17.3</a></span>
 The clt.un instruction compares <i>value1</i> and <i>value2</i>. A value of 1 (of type int32) is pushed on the stack if </div>
-<div style="margin-left:81px"><span class="label"><a name="15036">2.5.16.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15036">2.5.17.3.1</a></span>
 for floating-point numbers, either value1 is strictly less than value2, or value1 is not ordered with respect to value2.</div>
-<div style="margin-left:81px"><span class="label"><a name="15037">2.5.16.3.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15037">2.5.17.3.2</a></span>
 for integer values, value1 is strictly less than value2 when considered as unsigned numbers. Otherwise, 0 (of type int32) is pushed on the stack.</div>
-<div style="margin-left:63px"><span class="label"><a name="15038">2.5.16.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15038">2.5.17.4</a></span>
 As per IEC 60559:1989, infinite values are ordered with respect to normal numbers (e.g., +infinity &gt; 5.0 &gt; -infinity).</div>
-<div style="margin-left:63px"><span class="label"><a name="15039">2.5.16.5</a></span>
-The acceptable operand types are encapsulated in table <a href="#15018">2.5.12.4.1</a>.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15040">2.5.17</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15039">2.5.17.5</a></span>
+The acceptable operand types are encapsulated in table <a href="#15018">2.5.13.4.1</a>.</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15040">2.5.18</a></span>
 <b>conv – data conversion</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15076">2.5.17.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15076">2.5.18.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -906,17 +926,17 @@ The acceptable operand types are encapsulated in table <a href="#15018">2.5.12.4
 <br>conv_ip</td>
 <td>
 <br>Convert to intptr, pushing intptr on stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15041">2.5.17.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15041">2.5.18.2</a></span>
 <code>…, value -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15043">2.5.17.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15043">2.5.18.3</a></span>
 Convert the value on top of the stack to the type specified in the opcode, and leave that converted value on the top of the stack. Note that integer values of less than 4 bytes are extended to int32 (not intptr) when they are loaded onto the evaluation stack, and floating-point values are converted to the F type.</div>
-<div style="margin-left:63px"><span class="label"><a name="15044">2.5.17.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15044">2.5.18.4</a></span>
 Conversion from floating-point numbers to integral values truncate the number toward zero. When converting from a float64 to a float32, precision might be lost. If <i>value </i>is too large to fit in a float32, the IEC 60559:1989 positive infinity (if <i>value</i> is positive) or IEC 60559:1989 negative infinity (if <i>value</i> is negative) is returned. If overflow occurs when converting one integer type to another, the high-order bits are silently truncated. If the result is smaller than an int32, then the value is sign-extended to fill the slot.</div>
-<div style="margin-left:63px"><span class="label"><a name="15045">2.5.17.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15045">2.5.18.5</a></span>
 If overflow occurs converting a floating-point type to an integer, or if the floating-point value being converted to an integer is a NaN, the value returned is unspecified. </div>
-<div style="margin-left:63px"><span class="label"><a name="15046">2.5.17.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15046">2.5.18.6</a></span>
 The acceptable operand types and their corresponding result data type is encapsulated as follows:</div>
-<div style="margin-left:81px"><span class="label"><a name="15047">2.5.17.6.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15047">2.5.18.6.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 ><thead>
 <tr>
 <td rowspan="2">
@@ -1012,15 +1032,15 @@ The acceptable operand types and their corresponding result data type is encapsu
 <td>
 <br>Change precision<sup>3</sup> </td>
 <td></td></tr></table></div>
-<div style="margin-left:81px"><span class="label"><a name="15048">2.5.17.6.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15048">2.5.18.6.2</a></span>
 1) “Truncate” means that the number is truncated to the desired size (i.e., the most significant bytes of the input value are simply ignored). If the result is narrower than the minimum stack width of 4 bytes, then this result is zero extended (if the target type is unsigned) or sign-extended (if the target type is signed). Thus, converting the value 0x1234 ABCD from the evaluation stack to an 8-bit datum yields the result 0xCD; if the target type were int8, this is sign-extended to give 0xFFFF FFCD; if, instead, the target type were unsigned int8, this is zero-extended to give 0x0000 00CD. </div>
-<div style="margin-left:81px"><span class="label"><a name="15049">2.5.17.6.3</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15049">2.5.18.6.3</a></span>
 2) “Truncate to zero” means that the floating-point number will be converted to an integer by truncation toward zero. Thus 1.1 is converted to 1, and –1.1 is converted to –1. </div>
-<div style="margin-left:81px"><span class="label"><a name="15050">2.5.17.6.4</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15050">2.5.18.6.4</a></span>
 3) Converts from the current precision available on the evaluation stack to the precision specified by the instruction. If the stack has more precision than the output size the conversion is performed using the IEC 60559:1989 “round-to-nearest” mode to compute the low order bit of the result.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15051">2.5.18</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15051">2.5.19</a></span>
 div – divide values</h4>
-<div style="margin-left:63px"><span class="label"><a name="15077">2.5.18.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15077">2.5.19.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1036,31 +1056,31 @@ div – divide values</h4>
 <br>div </td>
 <td>
 <br>Divide two values to return a quotient or floating-point result. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15052">2.5.18.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15052">2.5.19.2</a></span>
 <code>…, value1, value2 -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15053">2.5.18.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15053">2.5.19.3</a></span>
 <i>result = value1 </i>div<i> value2</i> satisfies the following conditions:</div>
-<div style="margin-left:81px"><span class="label"><a name="15054">2.5.18.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15054">2.5.19.3.1</a></span>
 <i>|result| = |value1| </i><b>/</b><i> |value2|</i>, and</div>
-<div style="margin-left:81px"><span class="label"><a name="15055">2.5.18.3.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15055">2.5.19.3.2</a></span>
 <i>sign(result) = +, if sign(value1) = sign(value2), </i>or<br />–,<i> if sign(value1) ~= sign(value2)</i></div>
-<div style="margin-left:63px"><span class="label"><a name="15056">2.5.18.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15056">2.5.19.4</a></span>
 The div instruction computes <i>result</i> and pushes it on the stack. </div>
-<div style="margin-left:63px"><span class="label"><a name="15057">2.5.18.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15057">2.5.19.5</a></span>
 Integer division truncates towards zero.</div>
-<div style="margin-left:63px"><span class="label"><a name="15058">2.5.18.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15058">2.5.19.6</a></span>
 Floating-point division is per IEC 60559:1989. In particular, division of a finite number by 0 produces the correctly signed infinite value and</div>
-<div style="margin-left:81px"><span class="label"><a name="15059">2.5.18.6.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15059">2.5.19.6.1</a></span>
 0 / 0 = NaN</div>
-<div style="margin-left:81px"><span class="label"><a name="15060">2.5.18.6.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15060">2.5.19.6.2</a></span>
 infinity / infinity = <b>NaN</b></div>
-<div style="margin-left:81px"><span class="label"><a name="15061">2.5.18.6.3</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15061">2.5.19.6.3</a></span>
 X / infinity = 0</div>
-<div style="margin-left:63px"><span class="label"><a name="15062">2.5.18.7</a></span>
-The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14996">2.5.7.4.1</a>.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15064">2.5.19</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15062">2.5.19.7</a></span>
+The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14996">2.5.8.4.1</a>.</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15064">2.5.20</a></span>
 dup – duplicate the top value of the stack </h4>
-<div style="margin-left:63px"><span class="label"><a name="15078">2.5.19.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15078">2.5.20.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1076,13 +1096,37 @@ dup – duplicate the top value of the stack </h4>
 <br>dup </td>
 <td>
 <br>Duplicate the value on the top of the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15065">2.5.19.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15065">2.5.20.2</a></span>
 <code>…, value -&gt; …, value, value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15066">2.5.19.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15066">2.5.20.3</a></span>
 The dup instruction duplicates the top element of the stack.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15093">2.5.20</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15725">2.5.21</a></span>
+initobj – initialize the value at an address </h4>
+<div style="margin-left:63px"><span class="label"><a name="15726">2.5.21.1</a></span>
+<table border=1 cellspacing=0 CELLPADDING=3 >
+<tr>
+<td>
+<b>Binary</b> </td>
+<td>
+<br><b>Text Format</b> </td>
+<td>
+<br><b>Description</b> </td></tr>
+<tr>
+<td>
+<br>FE 15 &lt;<i>T</i>&gt; </td>
+<td>
+<br>initobj <i>type</i> </td>
+<td>
+<br>Initialize the value at address <i>dest</i>. </td></tr></table></div>
+<div style="margin-left:63px"><span class="label"><a name="15727">2.5.21.2</a></span>
+<code>…, dest -&gt; …,</code></div>
+<div style="margin-left:63px"><span class="label"><a name="15728">2.5.21.3</a></span>
+The initobj instruction initializes a record or fixed length array with a default value. <i>type </i>is a reference to the declaration. <i>dest</i> is a pointer to the record or array. The initobj instruction initializes each field/element of <i>dest</i> to null or a zero of the appropriate built-in type. </div>
+<div style="margin-left:63px"><span class="label"><a name="15731">2.5.21.4</a></span>
+TODO: do we really need this?</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15093">2.5.22</a></span>
 ldarg – load argument onto the stack</h4>
-<div style="margin-left:63px"><span class="label"><a name="15094">2.5.20.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15094">2.5.22.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1133,19 +1177,19 @@ ldarg – load argument onto the stack</h4>
 <br>ldarg_3 </td>
 <td>
 <br>Load argument 3 onto the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15095">2.5.20.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15095">2.5.22.2</a></span>
 <code>… -&gt; …, value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15096">2.5.20.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15096">2.5.22.3</a></span>
 The ldarg <i>num</i> instruction pushes onto the evaluation stack, the <i>num</i>’th incoming argument, where arguments are numbered 0 onwards. The ldarg instruction can be used to load a value type or a built-in value onto the stack by copying it from an incoming argument. The type of the value is the same as the type of the argument, as specified by the current method’s signature.</div>
-<div style="margin-left:63px"><span class="label"><a name="15097">2.5.20.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15097">2.5.22.4</a></span>
 The ldarg.0, ldarg.1, ldarg.2, and ldarg.3 instructions are efficient encodings for loading any one of the first 4 arguments. The ldarg.s instruction is an efficient encoding for loading argument numbers 4–255.</div>
-<div style="margin-left:63px"><span class="label"><a name="15098">2.5.20.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15098">2.5.22.5</a></span>
 For procedures that take a variable-length argument list, the ldarg instructions can be used only for the initial fixed arguments, not those in the variable part of the signature.</div>
-<div style="margin-left:63px"><span class="label"><a name="15099">2.5.20.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15099">2.5.22.6</a></span>
 Arguments that hold an integer value smaller than 4 bytes long are expanded to type int32 when they are loaded onto the stack. Floating-point values are expanded to their native size (type F).</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15100">2.5.21</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15100">2.5.23</a></span>
 <b>ldarga – load an argument address</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15101">2.5.21.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15101">2.5.23.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1168,15 +1212,15 @@ Arguments that hold an integer value smaller than 4 bytes long are expanded to 
 <br>ldarga_s <i>argNum</i> </td>
 <td>
 <br>Fetch the address of argument <i>argNum</i>, short form. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15102">2.5.21.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15102">2.5.23.2</a></span>
 <code>…, -&gt; …, address of argument number </code><i><code>argNum</code></i></div>
-<div style="margin-left:63px"><span class="label"><a name="15103">2.5.21.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15103">2.5.23.3</a></span>
 The ldarga instruction fetches the address (of type intptr) of the <i>argNum</i>’th argument, where arguments are numbered 0 onwards. The address will always be aligned to a natural boundary on the target machine. The short form (ldarga.s) should be used for argument numbers 0–255.</div>
-<div style="margin-left:63px"><span class="label"><a name="15104">2.5.21.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15104">2.5.23.4</a></span>
 For procedures that take a variable-length argument list, the ldarga instructions can be used only for the initial fixed arguments, not those in the variable part of the signature.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15105">2.5.22</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15105">2.5.24</a></span>
 <b>ldc – load numeric constant</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15106">2.5.22.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15106">2.5.24.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1294,23 +1338,45 @@ For procedures that take a variable-length argument list, the ldarga instruction
 <td></td>
 <td></td>
 <td></td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15107">2.5.22.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15107">2.5.24.2</a></span>
 <code>… -&gt; …, num</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15108">2.5.22.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15108">2.5.24.3</a></span>
 The ldc <i>num</i> instruction pushes number <i>num</i> or some constant onto the stack. There are special short encodings for the integers –128 through 127 (with especially short encodings for –1 through 8). All short encodings push 4-byte integers on the stack. Longer encodings are used for 8-byte integers and 4- and 8-byte floating-point numbers, as well as 4-byte values that do not fit in the short forms.</div>
-<div style="margin-left:63px"><span class="label"><a name="15109">2.5.22.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15109">2.5.24.4</a></span>
 There are three ways to push an 8-byte integer constant onto the stack</div>
-<div style="margin-left:81px"><span class="label"><a name="15110">2.5.22.4.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15110">2.5.24.4.1</a></span>
 For constants that shall be expressed in more than 32 bits, use the ldc.i8 instruction.</div>
-<div style="margin-left:81px"><span class="label"><a name="15111">2.5.22.4.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15111">2.5.24.4.2</a></span>
 For constants that require 9–32 bits, use the ldc.i4 instruction followed by a conv.i8. </div>
-<div style="margin-left:81px"><span class="label"><a name="15112">2.5.22.4.3</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15112">2.5.24.4.3</a></span>
 For constants that can be expressed in 8 or fewer bits, use a short form instruction followed by a conv.i8. </div>
-<div style="margin-left:63px"><span class="label"><a name="15113">2.5.22.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15113">2.5.24.5</a></span>
 There is no way to express a floating-point constant that has a larger range or greater precision than a 64-bit IEC 60559:1989 number, since these representations are not portable across architectures. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15238">2.5.23</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15747">2.5.25</a></span>
+<b>ldc_obj – load a literal object to the stack </b></h4>
+<div style="margin-left:63px"><span class="label"><a name="15748">2.5.25.1</a></span>
+<table border=1 cellspacing=0 CELLPADDING=3 >
+<tr>
+<td>
+<b>Binary</b> </td>
+<td>
+<br><b>Text Format</b> </td>
+<td>
+<br><b>Description</b> </td></tr>
+<tr>
+<td>
+<br>EE 12 &lt;<i>T</i>&gt; </td>
+<td>
+<br>ldc_obj <i>constructor</i> </td>
+<td>
+<br>Load the constructed literal object to the stack. </td></tr></table></div>
+<div style="margin-left:63px"><span class="label"><a name="15749">2.5.25.2</a></span>
+<code>… -&gt; …, val</code></div>
+<div style="margin-left:63px"><span class="label"><a name="15750">2.5.25.3</a></span>
+The ldc_obj instruction pushes the object literal constructed by <i>constructor</i> onto the stack. </div>
+<h4 style="margin-left:45px"><span class="label"><a name="15238">2.5.26</a></span>
 ldelem – load element from array </h4>
-<div style="margin-left:63px"><span class="label"><a name="15239">2.5.23.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15239">2.5.26.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1326,7 +1392,7 @@ ldelem – load element from array </h4>
 <br>ldelem <i>type</i> </td>
 <td>
 <br>Load the element at <i>index</i> onto the top of the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15242">2.5.23.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15242">2.5.26.2</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1405,13 +1471,13 @@ ldelem – load element from array </h4>
 <br>ldelem_ip</td>
 <td>
 <br>Load the element with type intptr at <i>index</i> onto the top of the stack as a intptr. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15240">2.5.23.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15240">2.5.26.3</a></span>
 <code>…, pointer to array, index -&gt; …, value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15241">2.5.23.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15241">2.5.26.4</a></span>
 The ldelem instruction loads the value of the element with index <i>index</i> (of type intptr or int32) in the zero-based one-dimensional array (pointed to by the intptr on the stack), and places it on the top of the stack. The type of the return value is indicated by the type<i> </i>in the instruction. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15243">2.5.24</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15243">2.5.27</a></span>
 ldelema – load address of an element of an array </h4>
-<div style="margin-left:63px"><span class="label"><a name="15244">2.5.24.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15244">2.5.27.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1427,13 +1493,13 @@ ldelema – load address of an element of an array </h4>
 <br>ldelema <i>type</i> </td>
 <td>
 <br>Load the address of element at <i>index</i> of type onto the top of the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15245">2.5.24.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15245">2.5.27.2</a></span>
 <code>…, pointer to array, index -&gt; …, address</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15246">2.5.24.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15246">2.5.27.3</a></span>
 The ldelema instruction loads the address of the element with index <i>index</i> (of type int32 or intptr) in the zero-based one-dimensional array <i>array</i> (pointed to by the intptr on the stack, of element type <i>type) </i>and places it on the top of the stack. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15247">2.5.25</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15247">2.5.28</a></span>
 ldfld – load field of a struct or union</h4>
-<div style="margin-left:63px"><span class="label"><a name="15248">2.5.25.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15248">2.5.28.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1449,13 +1515,13 @@ ldfld – load field of a struct or union</h4>
 <br>ldfld <i>field</i> </td>
 <td>
 <br>Push the value of <i>field</i> of struct or union <i>ptr,</i> onto the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15249">2.5.25.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15249">2.5.28.2</a></span>
 <code>…, ptr -&gt; …, value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15250">2.5.25.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15250">2.5.28.3</a></span>
 The ldfld instruction pushes onto the stack the value of a field of <i>ptr</i>. <i>ptr</i> shall be an of type intptr. <i>field</i> is a reference to an element of a structured type. The return type is that associated with <i>field</i>. ldfld pops the pointer off the stack and pushes the value for the field in its place. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15251">2.5.26</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15251">2.5.29</a></span>
 ldflda – load field address </h4>
-<div style="margin-left:63px"><span class="label"><a name="15252">2.5.26.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15252">2.5.29.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1471,13 +1537,13 @@ ldflda – load field address </h4>
 <br>ldflda <i>field</i> </td>
 <td>
 <br>Push the address of <i>field</i> of struct or union <i>ptr</i> on the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15253">2.5.26.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15253">2.5.29.2</a></span>
 <code>…, ptr -&gt; …, address</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15254">2.5.26.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15254">2.5.29.3</a></span>
 The ldflda instruction pushes the address of a field of <i>ptr. ptr</i> is of type intptr. The value returned by ldflda is an intptr. <i>field</i> is a reference to an element of a structured type</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15119">2.5.27</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15119">2.5.30</a></span>
 ldind – load value indirect onto the stack</h4>
-<div style="margin-left:63px"><span class="label"><a name="15120">2.5.27.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15120">2.5.30.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1563,17 +1629,17 @@ ldind – load value indirect onto the stack</h4>
 <br>ldind_ip </td>
 <td>
 <br>Indirect load value of type intptr on the stack </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15121">2.5.27.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15121">2.5.30.2</a></span>
 <code>…, addr -&gt; …, value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15122">2.5.27.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15122">2.5.30.3</a></span>
 The ldind instruction indirectly loads a value from address <i>addr</i> (an intptr) onto the stack. The source value is indicated by the instruction suffix. </div>
-<div style="margin-left:63px"><span class="label"><a name="15124">2.5.27.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15124">2.5.30.4</a></span>
 Note that integer values of less than 4 bytes are extended to int32 when they are loaded onto the evaluation stack. Floating-point values are converted to F type when loaded onto the evaluation stack.</div>
-<div style="margin-left:63px"><span class="label"><a name="15123">2.5.27.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15123">2.5.30.5</a></span>
 The address specified by <i>addr</i> shall be to a location with the natural alignment of &lt;<i>type</i>&gt;. The results of all CIL instructions that return addresses (e.g., ldloca and ldarga) are safely aligned. For data types larger than 1 byte, the byte ordering is dependent on the target CPU. Code that depends on byte ordering might not run on all platforms.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15126">2.5.28</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15126">2.5.31</a></span>
 ldloc – load local variable onto the stack</h4>
-<div style="margin-left:63px"><span class="label"><a name="15127">2.5.28.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15127">2.5.31.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1624,17 +1690,17 @@ ldloc – load local variable onto the stack</h4>
 <br>ldloc_3 </td>
 <td>
 <br>Load local variable 3 onto stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15128">2.5.28.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15128">2.5.31.2</a></span>
 <code>… -&gt; …, value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15129">2.5.28.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15129">2.5.31.3</a></span>
 The ldloc <i>indx</i> instruction pushes the contents of the local variable number <i>indx</i> onto the evaluation stack, where local variables are numbered 0 onwards. The ldloc.0, ldloc.1, ldloc.2, and ldloc.3 instructions provide an efficient encoding for accessing the first 4 local variables. The ldloc.s instruction provides an efficient encoding for accessing local variables 4–255.</div>
-<div style="margin-left:63px"><span class="label"><a name="15130">2.5.28.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15130">2.5.31.4</a></span>
 The type of the value is the same as the type of the local variable, which is specified in the method header.</div>
-<div style="margin-left:63px"><span class="label"><a name="15131">2.5.28.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15131">2.5.31.5</a></span>
 Local variables that are smaller than 4 bytes are expanded to type int32 when they are loaded onto the stack. Floating-point values are expanded to their native size (type F).</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15132">2.5.29</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15132">2.5.32</a></span>
 <b>ldloca – load local variable address</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15133">2.5.29.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15133">2.5.32.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1657,13 +1723,13 @@ Local variables that are smaller than 4 bytes are expanded to type int32 when t
 <br>ldloca_s <i>indx</i> </td>
 <td>
 <br>Load address of local variable with index <i>indx, short form.</i> </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15134">2.5.29.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15134">2.5.32.2</a></span>
 <code>… -&gt; …, address</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15135">2.5.29.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15135">2.5.32.3</a></span>
 The ldloca instruction pushes the address of the local variable number <i>indx</i> onto the stack, where local variables are numbered 0 onwards. The value pushed on the stack is already aligned correctly for use with instructions like ldind and stind. The result is a pointer (type intptr). The ldloca.s instruction provides an efficient encoding for use with the local variables 0–255. (Local variables that are the subject of ldloca shall be aligned as described in the ldind instruction, since the address obtained by ldloca can be used as an argument to ldind.)</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15136">2.5.30</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15136">2.5.33</a></span>
 ldnull – load a null pointer</h4>
-<div style="margin-left:63px"><span class="label"><a name="15137">2.5.30.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15137">2.5.33.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1679,15 +1745,15 @@ ldnull – load a null pointer</h4>
 <br>ldnull </td>
 <td>
 <br>Push a null reference on the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15138">2.5.30.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15138">2.5.33.2</a></span>
 <code>… -&gt; …, null value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15139">2.5.30.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15139">2.5.33.3</a></span>
 The ldnull<i> </i>pushes a null pointer (type intptr) on the stack. </div>
-<div style="margin-left:63px"><span class="label"><a name="15445">2.5.30.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15445">2.5.33.4</a></span>
 TODO: type of the null pointer</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15255">2.5.31</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15255">2.5.34</a></span>
 ldobj – copy a value from an address to the stack </h4>
-<div style="margin-left:63px"><span class="label"><a name="15256">2.5.31.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15256">2.5.34.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1703,13 +1769,13 @@ ldobj – copy a value from an address to the stack </h4>
 <br>ldobj <i>type</i> </td>
 <td>
 <br>Copy the value stored at address <i>src</i> to the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15257">2.5.31.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15257">2.5.34.2</a></span>
 <code>…, src -&gt; …, val</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15258">2.5.31.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15258">2.5.34.3</a></span>
 The ldobj instruction dereferences src and copies its value to the stack. <i>type </i>is a reference to the struct or union. <i>src</i> is an intptr. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15114">2.5.32</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15114">2.5.35</a></span>
 <b>ldproc – load procedure pointer</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15115">2.5.32.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15115">2.5.35.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1725,15 +1791,15 @@ The ldobj instruction dereferences src and copies its value to the stack. <i>typ
 <br>ldproc <i>proc</i> </td>
 <td>
 <br>Push a pointer to a procedure referenced by <i>proc,</i> on the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15116">2.5.32.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15116">2.5.35.2</a></span>
 <code>… -&gt; …, ftn</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15117">2.5.32.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15117">2.5.35.3</a></span>
 The ldproc instruction pushes a pointer (type intptr) to the native code implementing the procedure described by <i>proc </i>(a descriptor) onto the stack. The value pushed can be called using the calli instruction.</div>
-<div style="margin-left:63px"><span class="label"><a name="15118">2.5.32.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15118">2.5.35.4</a></span>
 A method pointer can be passed to external code (e.g., as a callback routine). </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15259">2.5.33</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15259">2.5.36</a></span>
 ldstr – load a literal string </h4>
-<div style="margin-left:63px"><span class="label"><a name="15260">2.5.33.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15260">2.5.36.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1749,17 +1815,17 @@ ldstr – load a literal string </h4>
 <br>ldstr <i>string</i> </td>
 <td>
 <br>Push the address of the literal <i>string</i>. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15261">2.5.33.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15261">2.5.36.2</a></span>
 <code>…, -&gt; …, address</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15262">2.5.33.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15262">2.5.36.3</a></span>
 The ldstr instruction pushes the address (intptr) representing the zero-terminated string literal as a pointer to an open array of char.</div>
-<div style="margin-left:63px"><span class="label"><a name="15263">2.5.33.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15263">2.5.36.4</a></span>
 The result of two ldstr instructions referring to the same string literal return precisely the same address.</div>
-<div style="margin-left:63px"><span class="label"><a name="15548">2.5.33.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15548">2.5.36.5</a></span>
 TODO: the equivalent for binary strings, but this time with byte count</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15485">2.5.34</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15485">2.5.37</a></span>
 ldvar – load module variable</h4>
-<div style="margin-left:63px"><span class="label"><a name="15486">2.5.34.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15486">2.5.37.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1775,13 +1841,13 @@ ldvar – load module variable</h4>
 <br>ldvar <i>var </i></td>
 <td>
 <br>Push the value of <i>var</i> on the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15487">2.5.34.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15487">2.5.37.2</a></span>
 <code>…, -&gt; …, value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15488">2.5.34.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15488">2.5.37.3</a></span>
 The ldvar instruction pushes the value of a module variable on the stack. <i>var</i> is a reference to the variable. The return type is that associated with <i>var</i>.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15489">2.5.35</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15489">2.5.38</a></span>
 ldvara – load module variable address</h4>
-<div style="margin-left:63px"><span class="label"><a name="15490">2.5.35.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15490">2.5.38.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1797,13 +1863,13 @@ ldvara – load module variable address</h4>
 <br>ldvara <i>var </i></td>
 <td>
 <br>Push the address of the module variable, <i>var,</i> on the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15491">2.5.35.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15491">2.5.38.2</a></span>
 <code>…, -&gt; …, address</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15492">2.5.35.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15492">2.5.38.3</a></span>
 The ldvara instruction pushes the address (a intptr) referring to a module variable. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15140">2.5.36</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15140">2.5.39</a></span>
 mul – multiply values</h4>
-<div style="margin-left:63px"><span class="label"><a name="15141">2.5.36.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15141">2.5.39.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1819,15 +1885,15 @@ mul – multiply values</h4>
 <br>mul </td>
 <td>
 <br>Multiply values. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15142">2.5.36.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15142">2.5.39.2</a></span>
 <code>…, value1, value2 -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15143">2.5.36.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15143">2.5.39.3</a></span>
 The mul instruction multiplies <i>value1 </i>by <i>value2 </i>and pushes the result on the stack. Integral operations silently truncate the upper bits on overflow. For floating-point types, 0 × infinity = NaN.</div>
-<div style="margin-left:63px"><span class="label"><a name="15146">2.5.36.4</a></span>
-The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14996">2.5.7.4.1</a>.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15145">2.5.37</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15146">2.5.39.4</a></span>
+The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14996">2.5.8.4.1</a>.</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15145">2.5.40</a></span>
 neg – negate</h4>
-<div style="margin-left:63px"><span class="label"><a name="15147">2.5.37.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15147">2.5.40.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1843,13 +1909,13 @@ neg – negate</h4>
 <br>neg </td>
 <td>
 <br>Negate <i>value</i>. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15148">2.5.37.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15148">2.5.40.2</a></span>
 <code>…, value -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15149">2.5.37.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15149">2.5.40.3</a></span>
 The neg instruction negates <i>value</i> and pushes the result on top of the stack. The return type is the same as the operand type. Negation of integral values is standard twos-complement negation. In particular, negating the most negative number (which does not have a positive counterpart) yields the most negative number. Negating a floating-point number cannot overflow; negating NaN returns NaN.</div>
-<div style="margin-left:63px"><span class="label"><a name="15150">2.5.37.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15150">2.5.40.4</a></span>
 The acceptable operand types and their corresponding result data types are encapsulated as follows:</div>
-<div style="margin-left:81px"><span class="label"><a name="15151">2.5.37.4.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15151">2.5.40.4.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1873,9 +1939,9 @@ The acceptable operand types and their corresponding result data types are encap
 <br>intptr</td>
 <td>
 <br>F </td></tr></table></div>
-<h4 style="margin-left:45px"><span class="label"><a name="15265">2.5.38</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15265">2.5.41</a></span>
 newarr – create a zero-based, one-dimensional array </h4>
-<div style="margin-left:63px"><span class="label"><a name="15266">2.5.38.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15266">2.5.41.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1891,13 +1957,13 @@ newarr – create a zero-based, one-dimensional array </h4>
 <br>newarr <i>etype</i> </td>
 <td>
 <br>Create a new array with elements of type <i>etype.</i> </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15267">2.5.38.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15267">2.5.41.2</a></span>
 <code>…, numElems</code><i><code> </code></i><code>-&gt; …, pointer to array</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15268">2.5.38.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15268">2.5.41.3</a></span>
 The newarr instruction pushes a pointer to a new zero-based, one-dimensional array whose elements are of type <i>etype. numElems</i> (of type intptr or int32) specifies the number of elements in the array. Valid array indexes are 0 ≤ index &lt; <i>numElems</i>. The elements of an array can be any type. Elements of the array are initialized to the default value of the appropriate type.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15328">2.5.39</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15328">2.5.42</a></span>
 newvla <b>– create a variable-length array on stack</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15330">2.5.39.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15330">2.5.42.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1913,13 +1979,15 @@ newvla <b>– create a variable-length array on stack</b></h4>
 <br>newvla <i>etype</i> </td>
 <td>
 <br>Create a new VLA with elements of type <i>etype.</i> </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15331">2.5.39.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15331">2.5.42.2</a></span>
 <code>…, numElems</code><i><code> </code></i><code>-&gt; …, pointer to array</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15332">2.5.39.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15332">2.5.42.3</a></span>
 The newvla instruction pushes a pointer to a new zero-based, one-dimensional array whose elements are of type <i>etype. numElems</i> (of type intptr or int32) specifies the number of elements in the array. In contrast to newarr, newvla tries to allocated the array on the stack, and the memory is automatically disposed when the function finishes. Valid array indexes are 0 ≤ index &lt; <i>numElems</i>. The elements of an array can be any type. Elements of the array are initialized to the default value of the appropriate type.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15269">2.5.40</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15732">2.5.42.4</a></span>
+TODO: how can we</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15269">2.5.43</a></span>
 newobj – create a new object </h4>
-<div style="margin-left:63px"><span class="label"><a name="15270">2.5.40.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15270">2.5.43.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1935,13 +2003,13 @@ newobj – create a new object </h4>
 <br>newobj <i>type</i> </td>
 <td>
 <br>Allocate an instance of type (struct or union)<i>.</i> </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15273">2.5.40.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15273">2.5.43.2</a></span>
 <code>…,</code><i><code> </code></i><code>-&gt; …, pointer to instance</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15271">2.5.40.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15271">2.5.43.3</a></span>
 The newobj instruction creates a new instance of <i>type</i> and initializes all the fields in the new instance to 0 (of the proper type) or null as appropriate.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15152">2.5.41</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15152">2.5.44</a></span>
 not – bitwise complement</h4>
-<div style="margin-left:63px"><span class="label"><a name="15153">2.5.41.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15153">2.5.44.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1957,15 +2025,15 @@ not – bitwise complement</h4>
 <br>not </td>
 <td>
 <br>Bitwise complement. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15154">2.5.41.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15154">2.5.44.2</a></span>
 <code>…, value -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15155">2.5.41.3</a></span>
-The not instruction computes the bitwise complement of the integer value on top of the stack and leaves the result on top of the stack. The return type is the same as the operand type.</div>
-<div style="margin-left:63px"><span class="label"><a name="15156">2.5.41.4</a></span>
-The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14997">2.5.8.3.1</a>.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15157">2.5.42</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15155">2.5.44.3</a></span>
+The <i>not</i> instruction computes the bitwise complement of the integer value on top of the stack and leaves the result on top of the stack. The return type is the same as the operand type.</div>
+<div style="margin-left:63px"><span class="label"><a name="15156">2.5.44.4</a></span>
+The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14997">2.5.9.3.1</a>.</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15157">2.5.45</a></span>
 or – bitwise OR</h4>
-<div style="margin-left:63px"><span class="label"><a name="15162">2.5.42.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15162">2.5.45.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1981,15 +2049,15 @@ or – bitwise OR</h4>
 <br>or </td>
 <td>
 <br>Bitwise or of two integer values, returns an integer. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15163">2.5.42.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15163">2.5.45.2</a></span>
 <code>…, value1, value2 -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15164">2.5.42.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15164">2.5.45.3</a></span>
 The or instruction computes the bitwise or of the top two values on the stack and leaves the result on the stack.</div>
-<div style="margin-left:63px"><span class="label"><a name="15165">2.5.42.4</a></span>
-The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14997">2.5.8.3.1</a>.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15166">2.5.43</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15165">2.5.45.4</a></span>
+The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14997">2.5.9.3.1</a>.</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15166">2.5.46</a></span>
 rem – compute remainder</h4>
-<div style="margin-left:63px"><span class="label"><a name="15171">2.5.43.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15171">2.5.46.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2005,31 +2073,31 @@ rem – compute remainder</h4>
 <br>rem </td>
 <td>
 <br>Remainder when dividing one value by another. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15172">2.5.43.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15172">2.5.46.2</a></span>
 <code>…, value1, value2 -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15173">2.5.43.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15173">2.5.46.3</a></span>
 The rem instruction divides <i>value1 </i>by <i>value2 </i>and pushes the remainder <i>result</i> on the stack.</div>
-<div style="margin-left:63px"><span class="label"><a name="15174">2.5.43.4</a></span>
-The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14996">2.5.7.4.1</a>.</div>
-<div style="margin-left:63px"><span class="label"><a name="15175">2.5.43.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15174">2.5.46.4</a></span>
+The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14996">2.5.8.4.1</a>.</div>
+<div style="margin-left:63px"><span class="label"><a name="15175">2.5.46.5</a></span>
 <b><u>For integer operands</u></b></div>
-<div style="margin-left:81px"><span class="label"><a name="15176">2.5.43.5.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15176">2.5.46.5.1</a></span>
 result = value1 rem value2 satisfies the following conditions: </div>
-<div style="margin-left:99px"><span class="label"><a name="15177">2.5.43.5.1.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="15177">2.5.46.5.1.1</a></span>
 result = value1 – value2×(value1 div value2), and </div>
-<div style="margin-left:99px"><span class="label"><a name="15178">2.5.43.5.1.2</a></span>
+<div style="margin-left:99px"><span class="label"><a name="15178">2.5.46.5.1.2</a></span>
 0 ≤ |result| &lt; |value2|, and </div>
-<div style="margin-left:99px"><span class="label"><a name="15179">2.5.43.5.1.3</a></span>
+<div style="margin-left:99px"><span class="label"><a name="15179">2.5.46.5.1.3</a></span>
 sign(result) = sign(value1), </div>
-<div style="margin-left:81px"><span class="label"><a name="15180">2.5.43.5.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15180">2.5.46.5.2</a></span>
 where div is the division instruction, which truncates towards zero. </div>
-<div style="margin-left:63px"><span class="label"><a name="15181">2.5.43.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15181">2.5.46.6</a></span>
 <b><u>For floating-point operands</u></b></div>
-<div style="margin-left:81px"><span class="label"><a name="15182">2.5.43.6.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15182">2.5.46.6.1</a></span>
 rem is defined similarly as for integer operands, except that, if <i>value2</i> is zero or <i>value1</i> is infinity, <i>result</i> is NaN. If <i>value2</i> is infinity, <i>result</i> is <i>value1</i>. This definition is different from the one for floating-point remainder in the IEC 60559:1989 Standard. That Standard specifies that <i>value1</i> div <i>value2</i> is the nearest integer instead of truncating towards zero.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15183">2.5.44</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15183">2.5.47</a></span>
 shl – shift integer left </h4>
-<div style="margin-left:63px"><span class="label"><a name="15188">2.5.44.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15188">2.5.47.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2045,13 +2113,13 @@ shl – shift integer left </h4>
 <br>shl </td>
 <td>
 <br>Shift an integer left (shifting in zeros), return an integer. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15189">2.5.44.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15189">2.5.47.2</a></span>
 <code>…, value, shiftAmount -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15190">2.5.44.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15190">2.5.47.3</a></span>
 The shl instruction shifts <i>value</i> (int32, int64 or intptr) left by the number of bits specified by <i>shiftAmount</i>. <i>shiftAmount</i> is of type int32 or intptr. The return value is unspecified if <i>shiftAmount</i> is greater than or equal to the width of <i>value</i>. </div>
-<div style="margin-left:63px"><span class="label"><a name="15191">2.5.44.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15191">2.5.47.4</a></span>
 See the following table for details of which operand types are allowed, and their corresponding result type.</div>
-<div style="margin-left:81px"><span class="label"><a name="15192">2.5.44.4.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15192">2.5.47.4.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 ><thead>
 <tr>
 <td colspan="2" rowspan="2">
@@ -2124,9 +2192,9 @@ See the following table for details of which operand types are allowed, and thei
 <br>x </td>
 <td>
 <br><br /></td></tr></table></div>
-<h4 style="margin-left:45px"><span class="label"><a name="15193">2.5.45</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15193">2.5.48</a></span>
 shr – shift integer right </h4>
-<div style="margin-left:63px"><span class="label"><a name="15197">2.5.45.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15197">2.5.48.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2142,15 +2210,15 @@ shr – shift integer right </h4>
 <br>shr </td>
 <td>
 <br>Shift an integer right (shift in sign), return an integer. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15198">2.5.45.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15198">2.5.48.2</a></span>
 <code>…, value, shiftAmount -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15199">2.5.45.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15199">2.5.48.3</a></span>
 The shr instruction shifts <i>value</i> (int32, int64 or intptr) right by the number of bits specified by <i>shiftAmount</i>. <i>shiftAmount</i> is of type int32 or intptr. The return value is unspecified if <i>shiftAmount</i> is greater than or equal to the width of <i>value</i>. shr replicates the high order bit on each shift, preserving the sign of the original value in <i>result</i>.</div>
-<div style="margin-left:63px"><span class="label"><a name="15200">2.5.45.4</a></span>
-See table <a href="#15192">2.5.44.4.1</a> for details of which operand types are allowed, and their corresponding result type.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15201">2.5.46</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15200">2.5.48.4</a></span>
+See table <a href="#15192">2.5.47.4.1</a> for details of which operand types are allowed, and their corresponding result type.</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15201">2.5.49</a></span>
 <b>shr_un – shift integer right, unsigned </b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15202">2.5.46.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15202">2.5.49.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2166,15 +2234,15 @@ See table <a href="#15192">2.5.44.4.1</a> for details of which operand types are
 <br>shr_un </td>
 <td>
 <br>Shift an integer right (shift in zero), return an integer. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15203">2.5.46.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15203">2.5.49.2</a></span>
 <code>…, value, shiftAmount -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15204">2.5.46.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15204">2.5.49.3</a></span>
 The shr.un instruction shifts <i>value</i> (int32, int 64 or intptr) right by the number of bits specified by <i>shiftAmount</i>. <i>shiftAmount</i> is of type int32 or intptr. The return value is unspecified if <i>shiftAmount</i> is greater than or equal to the width of <i>value</i>. shr.un inserts a zero bit on each shift.</div>
-<div style="margin-left:63px"><span class="label"><a name="15206">2.5.46.4</a></span>
-See table <a href="#15192">2.5.44.4.1</a> for details of which operand types are allowed, and their corresponding result type.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15205">2.5.47</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15206">2.5.49.4</a></span>
+See table <a href="#15192">2.5.47.4.1</a> for details of which operand types are allowed, and their corresponding result type.</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15205">2.5.50</a></span>
 sub – subtract numeric values </h4>
-<div style="margin-left:63px"><span class="label"><a name="15223">2.5.47.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15223">2.5.50.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2190,15 +2258,15 @@ sub – subtract numeric values </h4>
 <br>sub </td>
 <td>
 <br>Subtract value2 from value1, returning a new value. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15224">2.5.47.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15224">2.5.50.2</a></span>
 <code>…, value1, value2 -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15225">2.5.47.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15225">2.5.50.3</a></span>
 The sub instruction subtracts <i>value2 </i>from<i> value1 </i>and pushes the result on the stack. Overflow is not detected for the integral operations; for floating-point operands, sub returns +inf on positive overflow, -inf on negative overflow, and zero on floating-point underflow.</div>
-<div style="margin-left:63px"><span class="label"><a name="15226">2.5.47.4</a></span>
-The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14996">2.5.7.4.1</a>.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15227">2.5.48</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15226">2.5.50.4</a></span>
+The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14996">2.5.8.4.1</a>.</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15227">2.5.51</a></span>
 xor – bitwise XOR </h4>
-<div style="margin-left:63px"><span class="label"><a name="15228">2.5.48.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15228">2.5.51.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2214,12 +2282,12 @@ xor – bitwise XOR </h4>
 <br>xor </td>
 <td>
 <br>Bitwise xor of integer values, returns an integer. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15229">2.5.48.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15229">2.5.51.2</a></span>
 <code>..., value1, value2 -&gt; ..., result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15230">2.5.48.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15230">2.5.51.3</a></span>
 The xor instruction computes the bitwise xor of <i>value1</i> and <i>value2</i>and leaves the result on the stack.</div>
-<div style="margin-left:63px"><span class="label"><a name="15232">2.5.48.4</a></span>
-The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14997">2.5.8.3.1</a>.</div>
+<div style="margin-left:63px"><span class="label"><a name="15232">2.5.51.4</a></span>
+The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14997">2.5.9.3.1</a>.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="15447">2.6</a></span>
 Constants</h4>
 <div style="margin-left:45px"><span class="label"><a name="15448">2.6.1</a></span>
@@ -2285,13 +2353,13 @@ Syntax of textual representation:</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15309">2.9.3</a></span>
 <b>call – call a function </b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15310">2.9.3.1</a></span>
-See <a href="#14991">2.5.9</a>.</div>
+See <a href="#14991">2.5.10</a>.</div>
 <div style="margin-left:63px"><span class="label"><a name="15311">2.9.3.2</a></span>
 Call pop if the function returns a value.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15312">2.9.4</a></span>
 <b>calli – indirect function call </b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15313">2.9.4.1</a></span>
-See <a href="#15008">2.5.10</a>.</div>
+See <a href="#15008">2.5.11</a>.</div>
 <div style="margin-left:63px"><span class="label"><a name="15314">2.9.4.2</a></span>
 Call pop if the function returns a value.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15264">2.9.5</a></span>
@@ -2985,16 +3053,16 @@ The statement sequence following the symbol BEGIN is executed when the module is
 <h4 style="margin-left:45px"><span class="label"><a name="15587">2.10.9</a></span>
 <b>Generic Modules</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15588">2.10.9.1</a></span>
-Modules can be made generic by adding formal meta parameters. Meta parameters represent types or constants; the latter include procedure names. Meta parameters default to types, but can be explicitly prefixed with the TYPE reserved word; the CONST prefix designates a constant meta parameter. A meta parameter can be constrained with a named type, in which case the actual meta parameter must correspond to this type; the correspondence is established when the generic module is instantiated; the type of the actual meta parameter must be compatible with the constraint type.</div>
+Modules can be made generic by adding formal meta parameters. Meta parameters represent types or constants; the latter include procedure names. Meta parameters default to types, but can be explicitly prefixed with the TYPE reserved word; the CONST prefix designates a constant meta parameter. A CONST meta parameter can be constrained with a named type, in which case the actual meta parameter must correspond to this type; the correspondence is established when the generic module is instantiated; the type of the actual meta parameter must be compatible with the constraint type.</div>
 <div style="margin-left:63px"><span class="label"><a name="15589">2.10.9.2</a></span>
 Generic modules can be instantiated with different sets of meta actuals which enables the design of reusable algorithms and data structures. The instantiation of a generic module occurs when importing it. A generic module can be instantiated more than once in the same module with different actual meta parameters. </div>
 <div style="margin-left:63px"><span class="label"><a name="15590">2.10.9.3</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:81px"><span class="label"><a name="15591">2.10.9.3.1</a></span>
 <pre><code>MetaParams       = '(' MetaSection { [';'] MetaSection } ')'</code></pre>
-<pre><code>MetaSection      = [ TYPE | CONST ] ident { [','] ident } [ ':' TypeConstraint ]</code></pre>
+<pre><code>MetaSection      = CONST ident { [','] ident } ':' NamedType <br />                   | [ TYPE ] ident { [','] ident }</code></pre>
 <pre><code>TypeConstraint   = NamedType | ProcedureType</code></pre>
-<pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'<br /><br />ConstExpression  = qualident | integer | real | string | hexstring </code></pre></div>
+<pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="15592">2.10.9.4</a></span>
 Meta parameters can be used within the generic module like normal types or constants. If no type constraint is present, the types and constants can be used wherever no information about the actual type is required; otherwise the type constraint determines the permitted operations. </div>
 <div style="margin-left:63px"><span class="label"><a name="15595">2.10.9.5</a></span><span class="ident">NOTE</span>
@@ -3043,12 +3111,12 @@ TODO: type checking rules, structral compatibility, packing</div>
 <br><code>| 'ceq' | 'cgt' | 'cgt_un' | 'clt' | 'clt_un' </code>
 <br><code>| 'conv_i1' | 'conv_i2' | 'conv_i4' | 'conv_i8' | 'conv_r4' | 'conv_r8'</code>
 <br><code>| 'conv_u1' | 'conv_u2' | 'conv_u4' | 'conv_u8' | 'conv_ip'</code>
-<br><code>| 'div' | 'dup' | ('ldarg'|'ldarg_s') (unsigned|ident) </code>
+<br><code>| 'div' | 'dup' | 'initobj' qualident | ('ldarg'|'ldarg_s') (unsigned|ident) </code>
 <br><code>| 'ldarg_0' | 'ldarg_1' | 'ldarg_2' | 'ldarg_3'</code>
 <br><code>| ('ldarga'|'ldarga_s') (unsigned|ident)</code>
 <br><code>| ('ldc_i4'|'ldc_i8'|'ldc_i4_s') integer | ('ldc_r4'|'ldc_r8') real</code>
 <br><code>| 'ldc_i4_0' | 'ldc_i4_1' | 'ldc_i4_2' | 'ldc_i4_3' | 'ldc_i4_4' | 'ldc_i4_5'</code>
-<br><code>| 'ldc_i4_6' | 'ldc_i4_7' | 'ldc_i4_8' | 'ldc_i4_m1'</code>
+<br><code>| 'ldc_i4_6' | 'ldc_i4_7' | 'ldc_i4_8' | 'ldc_i4_m1' | 'ldc_obj' constructor</code>
 <br><code>| ('ldelem'|'ldelema') qualident | 'ldelem_i1' | 'ldelem_i2'</code>
 <br><code>| 'ldelem_i4' | 'ldelem_i8' | 'ldelem_u1' | 'ldelem_u2' </code>
 <br><code>| 'ldelem_u4' | 'ldelem_u8' | 'ldelem_r4' | 'ldelem_r8' | 'ldelem_ip'</code>
@@ -3061,39 +3129,43 @@ TODO: type checking rules, structral compatibility, packing</div>
 <br><code>| ('ldvar'|'ldvara') qualident | 'mul' | 'neg' </code>
 <br><code>| ('newarr'|'newvla'|'newobj') qualident </code>
 <br><code>| 'not' | 'or' | 'rem' | 'shl' | 'shr' | 'shr_un' | 'sub' | 'xor'</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15525">3.13</a></span><a href="#15503">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15745">3.13</a></span><a href="#15733">&#x21B3;</a>
+<code>ConstExpression  = qualident | integer | real | string | hexstring </code></div>
+<div style="margin-left:27px"><span class="label"><a name="15746">3.14</a></span><a href="#15737">&#x21B3;</a>
+<code>constructor = NamedType component_list<br />component_list = '{' [ component {[','] component} ] '}' <br />component = [ident '='] ( ConstExpression | component_list )</code></div>
+<div style="margin-left:27px"><span class="label"><a name="15525">3.15</a></span><a href="#15503">&#x21B3;</a>
 <pre><code>VariableDeclaration = IdentList ':' VariableType<br />VariableType = [ POINTER TO | '^' ] NamedType</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="15526">3.14</a></span><a href="#15465">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15526">3.16</a></span><a href="#15465">&#x21B3;</a>
 <pre><code>ProcedureDeclaration = ProcedureHeading [';'] ( ProcedureBody | EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) identdef '=' qualident</code></pre>
 <pre><code>ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br /><br />ProcedureBody        = [VAR { LocalDeclaration [';'] }]<br />                       BEGIN StatementSequence END ident<br /><br />LocalDeclaration     = [IdentList ':'] VariableType</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="15527">3.15</a></span><a href="#15473">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15527">3.17</a></span><a href="#15473">&#x21B3;</a>
 <pre><code>FormalParameters = '(' [ FPSection { ';' FPSection } [ ';' '..'] ] ')'<br />                   [ ':' ReturnType ]</code></pre>
 <pre><code>ReturnType       = FormalType</code></pre>
 <pre><code>FPSection        = [ident { [','] ident } ':'] FormalType</code></pre>
 <pre><code>FormalType       = [ POINTER TO | '^' ] NamedType</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="15531">3.16</a></span><a href="#15530">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15531">3.18</a></span><a href="#15530">&#x21B3;</a>
 <code>StatementSequence = { Statement }<br />Statement = ('call' | 'calli') qualident | 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' qualident '.' ident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' qualident '.' ident | Switch | WhileDo</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15528">3.17</a></span><a href="#15499">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15528">3.19</a></span><a href="#15499">&#x21B3;</a>
 <pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 [ BEGIN StatementSequence ] END ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
 <pre><code>import     = [ ident ':=' ] ImportPath ident [ MetaActuals ]</code></pre>
 <pre><code>ImportPath = { ident '.' }<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
 <pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="15594">3.18</a></span><a href="#15591">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15594">3.20</a></span><a href="#15591">&#x21B3;</a>
 <pre><code>MetaParams       = '(' MetaSection { [';'] MetaSection } ')'</code></pre>
-<pre><code>MetaSection      = [ TYPE | CONST ] ident { [','] ident } [ ':' TypeConstraint ]</code></pre>
+<pre><code>MetaSection      = CONST ident { [','] ident } ':' NamedType <br />                   | [ TYPE ] ident { [','] ident }</code></pre>
 <pre><code>TypeConstraint   = NamedType | ProcedureType</code></pre>
-<pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'<br /><br />ConstExpression  = qualident | integer | real | string | hexstring </code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="15534">3.19</a></span><a href="#15533">&#x21B3;</a>
+<pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
+<div style="margin-left:27px"><span class="label"><a name="15534">3.21</a></span><a href="#15533">&#x21B3;</a>
 <code>IfThenElse = 'IF' Expression 'THEN' StatementSequence <br />[ 'ELSE' StatementSequence ] 'END'</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15546">3.20</a></span><a href="#15545">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15546">3.22</a></span><a href="#15545">&#x21B3;</a>
 <code>Loop = 'LOOP' StatementSequence 'END'</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15537">3.21</a></span><a href="#15536">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15537">3.23</a></span><a href="#15536">&#x21B3;</a>
 <code>RepeatUntil = 'REPEAT' StatementSequence 'UNTIL' Expression 'END'</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15540">3.22</a></span><a href="#15539">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15540">3.24</a></span><a href="#15539">&#x21B3;</a>
 <code>Switch = 'SWITCH' Expression { 'CASE' Expression 'THEN' StatementSequence } <br />[ 'ELSE' StatementSequence ] 'END'</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15543">3.23</a></span><a href="#15542">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15543">3.25</a></span><a href="#15542">&#x21B3;</a>
 <code>WhileDo = 'WHILE' Expression 'DO' StatementSequence 'END'</code></div>
 <h4 style="margin-left:9px"><span class="label"><a name="14962">4</a></span>
 <b>References</b></h4>
