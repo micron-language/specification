@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2024-03-01, work in progress</div>
+2024-04-15, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -136,9 +136,9 @@ This specification was written in CrossLine (see <a href="https://github.com/roc
 <div style="margin-left:63px"><span class="label"><a name="14746">1.6.2.11</a></span>
 <a href="#14440">2.11 Procedure declarations</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14747">1.6.2.11.1</a></span>
-<a href="#14458">2.11.11 Formal parameters</a></div>
+<a href="#14458">2.11.12 Formal parameters</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14748">1.6.2.11.2</a></span>
-<a href="#14493">2.11.12 Predeclared procedures</a></div>
+<a href="#14493">2.11.13 Predeclared procedures</a></div>
 <div style="margin-left:63px"><span class="label"><a name="14749">1.6.2.12</a></span>
 <a href="#14498">2.12 Modules</a></div>
 <div style="margin-left:63px"><span class="label"><a name="14750">1.6.2.13</a></span>
@@ -202,7 +202,7 @@ Predeclared signed and unsigned types, INT8, UINT8, etc.; SIGNED() and UNSIGNED(
 <div style="margin-left:63px"><span class="label"><a name="14481">2.1.7.10</a></span>
 Integer literals are unsigned, and there are different suffix types.</div>
 <div style="margin-left:63px"><span class="label"><a name="14236">2.1.7.11</a></span>
-Only one-dimensional arrays (but array x of array y of T is still possible.</div>
+Only one-dimensional arrays (but array x of array y of T is still possible).</div>
 <div style="margin-left:63px"><span class="label"><a name="14237">2.1.7.12</a></span>
 There is a goto statement (mostly to easy porting existing C code).</div>
 <div style="margin-left:63px"><span class="label"><a name="14353">2.1.7.13</a></span>
@@ -218,7 +218,7 @@ Non-local access is not supported. Nested procedures only have access to the obj
 <div style="margin-left:63px"><span class="label"><a name="15623">2.1.7.18</a></span>
 The initial values of module and local variables are undefined in Micron.</div>
 <div style="margin-left:63px"><span class="label"><a name="15630">2.1.7.19</a></span>
-AND and NOT are supported in addition to &amp; and ~</div>
+AND and NOT are supported in addition to &amp; and ~.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14127">2.2</a></span>
 <a href=""><b>S</b></a><b>yntax</b></h4>
 <div style="margin-left:45px"><span class="label"><a name="14128">2.2.1</a></span>
@@ -266,7 +266,7 @@ The type of an integer constant is the minimal unsigned integer type to which th
 <div style="margin-left:63px"><span class="label"><a name="14463">2.3.4.3</a></span>
 If the literal is specified with the suffix 'H', the representation is hexadecimal, if it is specified with suffix 'O', the representation is ocal, or if it is specified with suffic 'B', the representation is binary, otherwise the representation is decimal. </div>
 <div style="margin-left:63px"><span class="label"><a name="14466">2.3.4.4</a></span>
-The type of an integer constant can be explicitly set with a suffix. The U8, U16, U32 or U64 suffices correspond to the UINT8, UINT16, UINT32 or UINT64 unsigned integer types. If the given constant value cannot be represented by the explicit type, the compiler reports an error. </div>
+The type of an integer constant can be explicitly set with a suffix. The U1, U2, U4 or U8 suffices correspond to the UINT8, UINT16, UINT32 or UINT64 unsigned integer types. If the given constant value cannot be represented by the explicit type, the compiler reports an error. </div>
 <div style="margin-left:63px"><span class="label"><a name="14469">2.3.4.5</a></span><span class="ident">NOTE</span>
 Number literals can be prefixed with a sign. But the sign is not part of the literal, but of a simple expression including the literal, see <a href="#14322">2.8.3 Operators</a>. Use the SIGNED() predeclared function for a signed integer reinterpretation of the unsigned integer (e.g. SIGNED(0FFH) is an INT8 with value -1). Otherwise the term -0FFH becomes an INT16 with value -255.</div>
 <div style="margin-left:63px"><span class="label"><a name="14470">2.3.4.6</a></span>
@@ -276,21 +276,23 @@ A real number always contains a decimal point and at least one digit before the 
 <div style="margin-left:63px"><span class="label"><a name="14467">2.3.4.8</a></span>
 The type of a floating-point constant is the minimal <a href="#14539">Floating-point types</a> to which the constant value belongs.</div>
 <div style="margin-left:63px"><span class="label"><a name="14176">2.3.4.9</a></span>
-A real number is of type <code>LONGREAL</code>, if it has a scale factor containing the letter 'D', or of type <code>REAL</code>, if it has a scale factor containing the letter 'F'. If the scale factor contains the letter 'E', the type is <code>LONGREAL</code> if the mantissa or exponent are too large to be represented by <code>REAL</code>.</div>
-<div style="margin-left:63px"><span class="label"><a name="14177">2.3.4.10</a></span>
+A real number is of type <code>LONGREAL</code>, if it has a scale factor containing the letter 'D', or of type <code>REAL</code>, if it has a scale factor containing the letter 'F'. If the scale factor contains the letter 'D', the type is <code>LONGREAL</code> if the mantissa or exponent are too large to be represented by <code>REAL</code>.</div>
+<div style="margin-left:63px"><span class="label"><a name="15632">2.3.4.10</a></span>
+Numbers can be interspersed with underscores for better readability, but the first character is always a digit.</div>
+<div style="margin-left:63px"><span class="label"><a name="14177">2.3.4.11</a></span>
 Syntax:</div>
-<div style="margin-left:81px"><span class="label"><a name="14178">2.3.4.10.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14178">2.3.4.11.1</a></span>
 <pre><code>number   = integer | real</code></pre>
-<pre><code>integer  = (digit {digit} ['O'|'B' | digit {hexDigit} 'H')<br />           ['U8'|'U16'|'U32'|'U64']</code></pre>
-<pre><code>real     = digit {digit} '.' {digit} [Exponent]</code></pre>
+<pre><code>integer  = (digit {digit|'_'} ['O'|'B'] | digit {hexDigit|'_'} 'H')<br />           ['U1'|'U2'|'U4'|'U8'|'I1'|'I2'|'I4'|'I8']</code></pre>
+<pre><code>real     = digit {digit|'_'} '.' {digit} [Exponent]</code></pre>
 <pre><code>Exponent = ('E' | 'D' | 'F' ) ['+' | '-'] digit {digit}</code></pre>
 <pre><code>hexDigit = digit | 'A' ... 'F'</code></pre>
 <pre><code>digit    = '0' ... '9'</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="14478">2.3.4.11</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14478">2.3.4.12</a></span>
 Even though only the upper-case version is shown here, also the lower-case versions of the suffices and scale factor letters are supported.</div>
-<div style="margin-left:63px"><span class="label"><a name="14179">2.3.4.12</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14179">2.3.4.13</a></span>
 Examples:</div>
-<div style="margin-left:81px"><span class="label"><a name="14180">2.3.4.12.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14180">2.3.4.13.1</a></span>
 <pre><code>1234</code></pre>
 <pre><code>0dh              0DH</code></pre>
 <pre><code>12.3</code></pre>
@@ -498,7 +500,7 @@ No identifier may denote more than one object within a given scope (i.e. no iden
 <div style="margin-left:63px"><span class="label"><a name="14164">2.4.2.2</a></span>
 An object may only be referenced within its scope; </div>
 <div style="margin-left:63px"><span class="label"><a name="14165">2.4.2.3</a></span>
-A type<i>T</i> of the form POINTER TO <i>T1</i> (see <a href="#14278">2.6.7 Pointer types</a>) can be declared at a point where <i>T1</i> is still unknown. The declaration of <i>T1</i> must follow in the same block to which <i>T</i> is local; </div>
+A type<i>T</i> of the form POINTER TO <i>T1</i> (see <a href="#14278">2.6.7 Pointer types</a>) can be declared at a point where <i>T1</i> is still unknown. The declaration of <i>T1</i> must follow in the same type declaration section to which <i>T</i> belongs; </div>
 <div style="margin-left:63px"><span class="label"><a name="14166">2.4.2.4</a></span>
 Identifiers denoting record fields (see <a href="#14270">2.6.6 Record types</a>) are valid in record designators only. </div>
 <div style="margin-left:45px"><span class="label"><a name="14167">2.4.3</a></span>
@@ -510,11 +512,11 @@ Syntax:</div>
 <pre><code>identdef  = ident ['*' | '-']</code></pre></div>
 <div style="margin-left:45px"><span class="label"><a name="14208">2.4.5</a></span>
 The following identifiers are predeclared; their meaning is defined in the indicated sections; either all capital or all lower case identifiers are supported (only capital versions shown).</div>
-<div style="margin-left:45px"><span class="label"><a name="14209">2.4.6</a></span>
+<div style="margin-left:45px"><span class="label"><a name="15953">2.4.6</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
-<a href="">A</a>BS</td>
+ABS</td>
 <td>
 <br>ANY</td>
 <td>
@@ -560,13 +562,13 @@ The following identifiers are predeclared; their meaning is defined in the indic
 <td>
 <br>EXCL</td>
 <td>
-<br>F32</td>
+<br>FLT</td>
 <td>
-<br>F64</td>
+<br>FLT32</td>
 <td>
-<br>FLOOR</td>
+<br>FLT64</td>
 <td>
-<br>FLT</td></tr>
+<br>FLOOR</td></tr>
 <tr>
 <td>
 <br>HALT</td>
@@ -608,42 +610,50 @@ The following identifiers are predeclared; their meaning is defined in the indic
 <td>
 <br>PCALL</td>
 <td>
+<br>PRINT</td>
+<td>
+<br>PRINTLN</td></tr>
+<tr>
+<td>
 <br>RAISE</td>
 <td>
-<br>REAL</td></tr>
-<tr>
+<br>REAL</td>
 <td>
 <br>SET</td>
 <td>
 <br>SHORT</td>
 <td>
-<br>SHORTINT</td>
+<br>SHORTINT</td></tr>
+<tr>
 <td>
 <br>SIGNED</td>
 <td>
-<br>SIZE</td></tr>
-<tr>
+<br>SIZE</td>
 <td>
 <br>STRLEN</td>
 <td>
 <br>SYMBOL</td>
 <td>
-<br>UINT16</td>
+<br>UINT16</td></tr>
+<tr>
 <td>
 <br>UINT32</td>
 <td>
-<br>UINT64</td></tr>
-<tr>
+<br>UINT64</td>
 <td>
 <br>UINT8</td>
 <td>
 <br>UNSIGNED</td>
 <td>
-<br>VA_LIST</td>
+<br>VA_LIST</td></tr>
+<tr>
 <td>
 <br>VARARG</td>
 <td>
-<br>VARARGS</td></tr></table></div>
+<br>VARARGS</td>
+<td></td>
+<td></td>
+<td></td></tr></table></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14210">2.5</a></span>
 Constant declarations</h4>
 <div style="margin-left:45px"><span class="label"><a name="14211">2.5.1</a></span>
@@ -662,7 +672,7 @@ Examples:</div>
 <pre><code>limit = 2*N - 1</code></pre>
 <pre><code>fullSet = {min(set) .. max(set)}</code></pre></div>
 <div style="margin-left:45px"><span class="label"><a name="14217">2.5.5</a></span><span class="ident">NOTE</span>
-For compile time calculations of values the same rules as for runtime calculation apply. The ConstExpression of ConstDeclaration behaves as if each use of the constant identifier was replaced by the ConstExpression. An expression like <code>MAX(INTEGER)+1</code> thus causes an overflow of the INTEGER range. To avoid this either <code>LONG(MAX(INTEGER))+1</code> or <code>MAX(INTEGER)+1L</code> has to be used. </div>
+For compile time calculations of values the same rules as for runtime calculation apply. The ConstExpression of ConstDeclaration behaves as if each use of the constant identifier was replaced by the ConstExpression. An expression like <code>MAX(INT32)+1</code> thus causes an overflow of the INT32 range. To avoid this either <code>LONG(MAX(INT32))+1</code> or <code>MAX(INT32)+1I8</code> has to be used. </div>
 <h4 style="margin-left:27px"><span class="label"><a name="14218">2.6</a></span>
 Type declarations</h4>
 <div style="margin-left:45px"><span class="label"><a name="14219">2.6.1</a></span>
@@ -768,14 +778,14 @@ BOOLEAN</td>
 <br>the integers between 0 and 18'446'744'073'709'551'615</td></tr>
 <tr>
 <td>
-<br>REAL, F32</td>
+<br>REAL, FLT32</td>
 <td>
 <br>32 bit</td>
 <td>
 <br>an IEEE 754 floating point number</td></tr>
 <tr>
 <td>
-<br>LONGREAL, F64</td>
+<br>LONGREAL, FLT64</td>
 <td>
 <br>64 bit</td>
 <td>
@@ -872,6 +882,8 @@ Examples:</div>
 Fields of record type of the fixed part or the fields of the variant part can be prefixed by the INLINE (or abbreviated only IN) reserved word, in which case the name of the field or variant becomes transparent, and the fields of the corresponding record type are directly embedded in the enclosing record. </div>
 <div style="margin-left:63px"><span class="label"><a name="14280">2.6.6.6</a></span>
 Each field or variant of a record must have a name which is unique within the record; if a field of a record embedded with the INLINE prefix has the same name as a field or variant of the embedding record, then the name of the prefixed field or variant must be used to access it.</div>
+<div style="margin-left:63px"><span class="label"><a name="15730">2.6.6.7</a></span>
+TODO: open array as last field (no variant part) with new(ptr,len)</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14278">2.6.7</a></span>
 <a href=""><b>P</b></a><b>ointer types</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="14281">2.6.7.1</a></span>
@@ -885,7 +897,7 @@ If p is a variable of type <code>P = POINTER TO T</code>, a call of the predecla
 <h4 style="margin-left:45px"><span class="label"><a name="14285">2.6.8</a></span>
 Procedure types</h4>
 <div style="margin-left:63px"><span class="label"><a name="14286">2.6.8.1</a></span>
-Variables of a procedure type T have a procedure (or NIL) as value. If a procedure P is assigned to a variable of type T, the formal parameter lists and result types (see <a href="#14458">2.11.11 Formal parameters</a>) of P and T must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). A procedure P assigned to a variable or a formal parameter must not be a predeclared, nor an inlined procedure.</div>
+Variables of a procedure type T have a procedure (or NIL) as value. If a procedure P is assigned to a variable of type T, the formal parameter lists and result types (see <a href="#14458">2.11.12 Formal parameters</a>) of P and T must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). A procedure P assigned to a variable or a formal parameter must not be a predeclared, nor an inlined procedure.</div>
 <div style="margin-left:63px"><span class="label"><a name="14288">2.6.8.2</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14289">2.6.8.2.1</a></span>
@@ -969,7 +981,7 @@ If <code>a</code> or <code>r</code> are read-only, then also <code>a[e]</code> a
 <div style="margin-left:63px"><span class="label"><a name="14314">2.8.2.7</a></span>
 A type cast <code>v(T)</code> converts the original type of <code>v</code> to T. Within the designator, <code>v</code> is then regarded as having the type T instead of the original type. The cast is applicable, if <code>v</code> is a pointer to record type.</div>
 <div style="margin-left:63px"><span class="label"><a name="14315">2.8.2.8</a></span>
-If the designated object is a constant or a variable, then the designator refers to its current value. If it is a procedure, the designator refers to that procedure unless it is followed by a (possibly empty) parameter list in which case it implies an activation of that procedure and stands for the value resulting from its execution. The actual parameters must correspond to the formal parameters as in proper procedure calls (see <a href="#14458">2.11.11 Formal parameters</a>).</div>
+If the designated object is a constant or a variable, then the designator refers to its current value. If it is a procedure, the designator refers to that procedure unless it is followed by a (possibly empty) parameter list in which case it implies an activation of that procedure and stands for the value resulting from its execution. The actual parameters must correspond to the formal parameters as in proper procedure calls (see <a href="#14458">2.11.12 Formal parameters</a>).</div>
 <div style="margin-left:63px"><span class="label"><a name="14319">2.8.2.9</a></span>
 Examples:</div>
 <div style="margin-left:81px"><span class="label"><a name="14320">2.8.2.9.1</a></span>
@@ -1077,22 +1089,24 @@ When used as a binary operator, both operands must be of either of signed intege
 <div style="margin-left:81px"><span class="label"><a name="14480">2.8.3.4.4</a></span><span class="ident">NOTE</span>
 This is the same rule as in Modula-2, <i>where both operands must be either of type CARDINAL [...], in which case the result is of the type CARDINAL, or they must both be of type INTEGER [...], in which case the result is of type INTEGER</i>. The Ada language has a similar rule. The rules of the C language in contrast are much more complicated (see e.g. <a href="https://wiki.sei.cmu.edu/confluence/display/c/INT02-C.+Understand+integer+conversion+rules"><u>here</u></a>), but it is always possible to add explicit conversions when migrating C to Micron. </div>
 <div style="margin-left:81px"><span class="label"><a name="14475">2.8.3.4.5</a></span>
-The type of the result is the type of that operand which includes the type of the other operand (see <a href="#14255">2.6.4.7</a>), except for division (<code>/</code>), where the result is the smallest <a href="#14539">Floating-point types</a> which includes both operand types</div>
-<div style="margin-left:81px"><span class="label"><a name="14473">2.8.3.4.6</a></span>
+The type of the result is the type of that operand which includes the type of the other operand (see <a href="#14255">2.6.4.7</a>).</div>
+<div style="margin-left:81px"><span class="label"><a name="15820">2.8.3.4.6</a></span>
+The operator '<code>/</code>' applies to real operands only.</div>
+<div style="margin-left:81px"><span class="label"><a name="14473">2.8.3.4.7</a></span>
 The operators <code>DIV</code> and <code>MOD</code> apply to integer operands only. They are related by the following formulas defined for any <code>x</code> and positive divisors <code>y</code>:</div>
-<div style="margin-left:99px"><span class="label"><a name="14331">2.8.3.4.6.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14331">2.8.3.4.7.1</a></span>
 <pre><code>x = (x DIV y) * y + (x MOD y)</code></pre>
 <pre><code>0 &lt;= (x MOD y) &lt; y</code></pre></div>
-<div style="margin-left:81px"><span class="label"><a name="14474">2.8.3.4.7</a></span>
-When used as monadic (unary) operators, '-' denotes sign inversion and '+' denotes the identity operation. If applied to an operand of unsigned integer type, the result is of the signed integer type with the same byte width as the operand. Otherwise the type of the result is the same as the type of the operand.</div>
-<div style="margin-left:81px"><span class="label"><a name="14332">2.8.3.4.8</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14474">2.8.3.4.8</a></span>
+When used as monadic (unary) operators, '-' denotes sign inversion and '+' denotes the identity operation. If '-' is applied to an operand of unsigned integer type, the result is the signed integer type with the same byte width as the operand. Otherwise the type of the result is the same as the type of the operand.</div>
+<div style="margin-left:81px"><span class="label"><a name="14332">2.8.3.4.9</a></span>
 Examples:</div>
-<div style="margin-left:99px"><span class="label"><a name="14333">2.8.3.4.8.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14333">2.8.3.4.9.1</a></span>
 <pre><code>x    y    x DIV y    x MOD y</code></pre>
 <pre><code>5    3    1          2</code></pre>
 <pre><code>-5   3    -2         1</code></pre></div>
-<div style="margin-left:81px"><span class="label"><a name="14334">2.8.3.4.9</a></span><span class="ident">NOTE</span>
-Micron doesn’t require overflow checks. If the representation of the result of an arithmetic operation would require a wider integer type than provided by the type of the expression, the behaviour is undefined; e.g. <code>MAX(INTEGER)+1</code> causes an overflow, i.e. the result could be MIN(INTEGER) or anything else. </div>
+<div style="margin-left:81px"><span class="label"><a name="14334">2.8.3.4.10</a></span><span class="ident">NOTE</span>
+Micron doesn’t do overflow checks. If the representation of the result of an arithmetic operation would require a wider integer type than provided by the type of the expression, the behaviour is undefined; e.g. <code>MAX(INT32)+1</code> causes an overflow, i.e. the result could be MIN(INT32) or anything else. </div>
 <h4 style="margin-left:63px"><span class="label"><a name="14335">2.8.3.5</a></span>
 Set Operators</h4>
 <div style="margin-left:81px"><span class="label"><a name="14336">2.8.3.5.1</a></span>
@@ -1159,16 +1173,22 @@ Relations</h4>
 <td>
 <br>IN </td>
 <td>
-<br>set membership</td></tr></table></div>
+<br>membership</td></tr></table></div>
 <div style="margin-left:81px"><span class="label"><a name="14341">2.8.3.6.2</a></span>
-Relations yield a BOOLEAN result. The relations <code>=</code>, <code>#</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, and <code>&gt;=</code> apply to the numeric types, as well as enumerations, CHAR, strings, and CHAR arrays containing <code>0x</code> as a terminator. </div>
-<div style="margin-left:81px"><span class="label"><a name="14675">2.8.3.6.3</a></span>
-The relations <code>=</code> and <code>#</code> also apply to BOOLEAN, SYMBOL and SET, as well as to pointer and procedure types. </div>
-<div style="margin-left:81px"><span class="label"><a name="14674">2.8.3.6.4</a></span>
-<code>x IN s</code> stands for <i>x is an element of s</i>. <code>x</code> must be of an integer type, and <code>s</code> of type SET.</div>
-<div style="margin-left:81px"><span class="label"><a name="14342">2.8.3.6.5</a></span>
+Relations yield a BOOLEAN result. </div>
+<div style="margin-left:81px"><span class="label"><a name="15805">2.8.3.6.3</a></span>
+The relations <code>=</code>, <code>#</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, and <code>&gt;=</code> apply to the numeric types, as well as constant enumerations, pointer types, CHAR, string literals, and CHAR arrays containing <code>0x</code> as a terminator. </div>
+<div style="margin-left:81px"><span class="label"><a name="14675">2.8.3.6.4</a></span>
+The relations <code>=</code> and <code>#</code> also apply to BOOLEAN, SYMBOL, symbol enumeration and SET, as well procedure types. </div>
+<div style="margin-left:81px"><span class="label"><a name="15808">2.8.3.6.5</a></span>
+The IN relation applies to SET or symbol enumerations.</div>
+<div style="margin-left:81px"><span class="label"><a name="15804">2.8.3.6.6</a></span>
+In general, both operands must be of the same type. If the operand are of numeric type, both must be either of signed integer, unsigned integer or floating point type. String literals, CHAR and CHAR array operands can be mixed; the same applies to SYMBOL and symbol enumeration operands. If both operands are pointers, the specific type doesn't matter; the same applies to procedure types. </div>
+<div style="margin-left:81px"><span class="label"><a name="14674">2.8.3.6.7</a></span>
+<code>x IN s</code> stands for <i>x is an element of s</i>. If <code>s</code> is of type SET, <code>x</code> must be of an integer type. If <code>s</code> is of type symbol enumeration, <code>x</code> must be a SYMBOL type. </div>
+<div style="margin-left:81px"><span class="label"><a name="14342">2.8.3.6.8</a></span>
 Examples:</div>
-<div style="margin-left:99px"><span class="label"><a name="14343">2.8.3.6.5.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14343">2.8.3.6.8.1</a></span>
 <pre><code>1991                   // integer</code></pre>
 <pre><code>i div 3                // integer</code></pre>
 <pre><code>~p or q                // boolean</code></pre>
@@ -1205,7 +1225,7 @@ If <code>a[e]</code> designates an array element of type T at index <code>e</cod
 <h4 style="margin-left:63px"><span class="label"><a name="14349">2.8.3.9</a></span>
 Function Call</h4>
 <div style="margin-left:81px"><span class="label"><a name="14350">2.8.3.9.1</a></span>
-A function call is a factor in an expression. In contrast to <a href="#14374">2.9.6 Procedure calls</a> in a function call the actual parameter list is mandatory. Each expression in the actual parameters list (if any) is used to initialize a corresponding formal parameter. The number of expressions in the actual parameter list must correspond the number of formal parameters. See also <a href="#14458">2.11.11 Formal parameters</a>.</div>
+A function call is a factor in an expression. In contrast to <a href="#14374">2.9.6 Procedure calls</a> in a function call the actual parameter list is mandatory. Each expression in the actual parameters list (if any) is used to initialize a corresponding formal parameter. The number of expressions in the actual parameter list must correspond the number of formal parameters. See also <a href="#14458">2.11.12 Formal parameters</a>.</div>
 <div style="margin-left:81px"><span class="label"><a name="14351">2.8.3.9.2</a></span>
 Syntax:</div>
 <div style="margin-left:99px"><span class="label"><a name="14352">2.8.3.9.2.1</a></span>
@@ -1296,7 +1316,7 @@ Procedure calls</h4>
 <div style="margin-left:63px"><span class="label"><a name="14375">2.9.6.1</a></span>
 A procedure call activates a procedure. It may contain a list of actual parameters which replace the corresponding formal parameter list defined in the procedure declaration (see <a href="#14440">2.11 Procedure declarations</a>). The correspondence is established by the positions of the parameters in the actual and formal parameter lists. </div>
 <div style="margin-left:63px"><span class="label"><a name="14376">2.9.6.2</a></span>
-Each actual parameter must be an expression. This expression is evaluated before the procedure activation, and the resulting value is assigned to the formal parameter (see also <a href="#14458">2.11.11 Formal parameters</a>).</div>
+Each actual parameter must be an expression. This expression is evaluated before the procedure activation, and the resulting value is assigned to the formal parameter (see also <a href="#14458">2.11.12 Formal parameters</a>).</div>
 <div style="margin-left:63px"><span class="label"><a name="14377">2.9.6.3</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14378">2.9.6.3.1</a></span>
@@ -1367,7 +1387,7 @@ Syntax:</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14404">2.9.11</a></span>
 For statements</h4>
 <div style="margin-left:63px"><span class="label"><a name="14405">2.9.11.1</a></span>
-A for statement specifies the repeated execution of a statement sequence while a progression of values is assigned to a control variable of the for statement. Control variables can be of integer or enumeration types. An explicit BY expression is only supported for integer control variables.</div>
+A for statement specifies the repeated execution of a statement sequence while a progression of values is assigned to a control variable of the for statement. Control variables can be of integer or enumeration types. An explicit BY expression cannot be zero and is only supported for integer control variables.</div>
 <div style="margin-left:63px"><span class="label"><a name="14406">2.9.11.2</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14407">2.9.11.2.1</a></span>
@@ -1475,7 +1495,7 @@ Example:</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14440">2.11</a></span>
 <a href=""><b>P</b></a><b>rocedure declarations</b></h4>
 <div style="margin-left:45px"><span class="label"><a name="14441">2.11.1</a></span>
-A procedure declaration consists of a procedure heading and a procedure body. The heading specifies the procedure identifier and the formal parameters (see <a href="#14458">2.11.11 Formal parameters</a>). The body contains declarations and statements. The procedure identifier must be repeated at the end of the procedure declaration.</div>
+A procedure declaration consists of a procedure heading and a procedure body. The heading specifies the procedure identifier and the formal parameters (see <a href="#14458">2.11.12 Formal parameters</a>). The body contains declarations and statements. The procedure identifier must be repeated at the end of the procedure declaration.</div>
 <div style="margin-left:45px"><span class="label"><a name="14452">2.11.2</a></span>
 There are two kinds of procedures: proper procedures and function procedures. The latter are activated by a function designator as a constituent of an expression and yield a result that is an operand of the expression. Proper procedures are activated by a procedure call. A procedure is a function procedure if its formal parameters specify a result type. Each control path of a function procedure must return a value.</div>
 <div style="margin-left:45px"><span class="label"><a name="14453">2.11.3</a></span>
@@ -1483,44 +1503,46 @@ All constants, variables, types, and procedures declared within a procedure body
 <div style="margin-left:45px"><span class="label"><a name="15599">2.11.4</a></span>
 In addition to its formal parameters and locally declared objects, the objects declared globally are also visible in the procedure.</div>
 <div style="margin-left:45px"><span class="label"><a name="14485">2.11.5</a></span>
-A procedure can be declared INLINE in which case the code of the procedure is embedded at the call site, and no call actually happens. Procedures declared INLINE don't support  recursion, neither directly nor indirectly. INLINE procedures neither support variable length array local variables.</div>
+A procedure can be declared INLINE in which case the code of the procedure is embedded at the call site, and no call actually happens. Procedures declared INLINE don't support  recursion, neither directly nor indirectly. INLINE procedures neither support variable length array local variables. Nested procedures of an INLINE procedure must also be INLINE.</div>
 <div style="margin-left:45px"><span class="label"><a name="14486">2.11.6</a></span>
 A procedure can be declared INVAR (invariable) in which case it can be used in CONST declarations to derive a constant value at compile time. INVAR procedures can only call other INVAR procedures or predeclared procedures not depending on runtime information. INVAR procedures cannot access module variables, but they can access CONST declarations in the same or other modules.</div>
 <div style="margin-left:45px"><span class="label"><a name="15572">2.11.7</a></span>
 A procedure can be declared EXTERN to indicate that it is implemented in an external library with C calling conventions. EXTERN can be followed by the name the procedure has in that external library, otherwise the same name as in the identdef is assumed. </div>
-<div style="margin-left:45px"><span class="label"><a name="15362">2.11.8</a></span>
+<div style="margin-left:45px"><span class="label"><a name="15795">2.11.8</a></span><span class="ident">NOTE</span>
+EXTERN is regarded as an alternative to ProcedureBody, why it follows the (optional) semicolon. </div>
+<div style="margin-left:45px"><span class="label"><a name="15362">2.11.9</a></span>
 A procedure can be forward declared in which case the formal parameters must be identical with the actual procedure declaration. Forward declarations are marked by '^'.</div>
-<div style="margin-left:45px"><span class="label"><a name="15363">2.11.9</a></span>
+<div style="margin-left:45px"><span class="label"><a name="15363">2.11.10</a></span>
 A procedure can be an alias of another procedure. The other procedure is referenced with a qualident. If the other procedure is in another module, it must be exported.</div>
-<div style="margin-left:45px"><span class="label"><a name="14456">2.11.10</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14456">2.11.11</a></span>
 Syntax:</div>
-<div style="margin-left:63px"><span class="label"><a name="14457">2.11.10.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14457">2.11.11.1</a></span>
 <pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br />                                        [ INLINE | INVAR | EXTERN ]<br />                       | ( PROCEDURE | PROC ) identdef '=' qualident<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence END ident</code></pre>
 <pre><code>DeclarationSequence  = { CONST { ConstDeclaration [';'] }</code></pre>
-<pre><code>	           | TYPE { TypeDeclaration [';'] }</code></pre>
+<pre><code>	           | TypeDeclarationSection</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
-<pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
-<h4 style="margin-left:45px"><span class="label"><a name="14458">2.11.11</a></span>
+<pre><code>	           | ProcedureDeclaration [';'] }<br /><br />TypeDeclarationSection = TYPE { TypeDeclaration [';'] }</code></pre></div>
+<h4 style="margin-left:45px"><span class="label"><a name="14458">2.11.12</a></span>
 Formal parameters</h4>
-<div style="margin-left:63px"><span class="label"><a name="14459">2.11.11.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14459">2.11.12.1</a></span>
 Formal parameters are identifiers declared in the formal parameter list of a procedure. They correspond to actual parameters specified in the procedure call. The correspondence between formal and actual parameters is established when the procedure is called. </div>
-<div style="margin-left:63px"><span class="label"><a name="14484">2.11.11.2</a></span><span class="ident">NOTE</span>
+<div style="margin-left:63px"><span class="label"><a name="14484">2.11.12.2</a></span><span class="ident">NOTE</span>
 Oberon and Oberon+ support VAR parameters, which are not necessary in Micron, because the formal parameter can be a pointer instead and the '@' operator can be applied to the designator passed as actual parameter.</div>
-<div style="margin-left:63px"><span class="label"><a name="14483">2.11.11.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14483">2.11.12.3</a></span>
 The scope of a formal parameter extends from its declaration to the end of the procedure block in which it is declared. A function procedure without parameters must have an empty parameter list. It must be called by a function designator whose actual parameter list is empty too. The result type of a procedure cannot be an open array.</div>
-<div style="margin-left:63px"><span class="label"><a name="14488">2.11.11.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14488">2.11.12.4</a></span>
 Syntax:</div>
-<div style="margin-left:81px"><span class="label"><a name="14489">2.11.11.4.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14489">2.11.12.4.1</a></span>
 <pre><code>FormalParameters = '(' [ FPSection { [';'] FPSection } [ [';'] '..'] ] ')'</code></pre>
 <pre><code>                   [ ':' ReturnType ]</code></pre>
 <pre><code>ReturnType       = [ POINTER TO | '^' ] NamedType</code></pre>
 <pre><code>FPSection        = ident { [','] ident } ':' FormalType</code></pre>
 <pre><code>FormalType       = type</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="14490">2.11.11.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14490">2.11.12.5</a></span>
 Procedures can have a variable number of parameters, which is indicated by '..' (ellipsis). In that case the additional parameters (called &quot;variable parameters&quot;) can be accessed in the procedure body using the VARARG() and VARARGS() predeclared procedures. Only actual parameters of basic or pointer type (including enumerations and procedure types) can be passed as variable parameters.</div>
-<div style="margin-left:63px"><span class="label"><a name="14491">2.11.11.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14491">2.11.12.6</a></span>
 Examples:</div>
-<div style="margin-left:81px"><span class="label"><a name="14492">2.11.11.6.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14492">2.11.12.6.1</a></span>
 <pre><code>proc ReadInt(x: pointer to integer)</code></pre>
 <pre><code>  var i: integer; ch: char</code></pre>
 <pre><code>begin i := 0; Read(ch)</code></pre>
@@ -1529,11 +1551,11 @@ Examples:</div>
 <pre><code>  end</code></pre>
 <pre><code>  x^ := i</code></pre>
 <pre><code>end ReadInt</code></pre></div>
-<h4 style="margin-left:45px"><span class="label"><a name="14493">2.11.12</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="14493">2.11.13</a></span>
 Predeclared procedures</h4>
-<div style="margin-left:63px"><span class="label"><a name="14495">2.11.12.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14495">2.11.13.1</a></span>
 Predeclared procedures are provided by the compiler and accessible without extra imports. Some are generic procedures, i.e. they apply to several types of operands.</div>
-<div style="margin-left:63px"><span class="label"><a name="14494">2.11.12.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14494">2.11.13.2</a></span>
 See <a href="#14136">6 Predeclared Procedure Reference</a> for the list of predeclared procedures each Micron compiler has to provide.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14498">2.12</a></span>
 Modules</h4>
@@ -1697,6 +1719,8 @@ T<sub>e</sub> is an open array and T<sub>v</sub> is an array of <i>equal</i> bas
 T<sub>v</sub> is an array of CHAR, T<sub>e</sub> is a Latin-1 string literal or character array, and STRLEN(e) &lt; LEN(v);</div>
 <div style="margin-left:63px"><span class="label"><a name="14568">3.9.1.9</a></span>
 T<sub>v</sub> is a procedure type and <code>e</code> is the name of a procedure whose formal parameters <i>match</i> those of T<sub>v</sub>.</div>
+<div style="margin-left:45px"><span class="label"><a name="15947">3.9.2</a></span>
+TODO: The address of a struct S can be assigned to a pointer to T if the first field of S is of type T.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14569">3.10</a></span>
 Parameter compatible</h4>
 <div style="margin-left:45px"><span class="label"><a name="14570">3.10.1</a></span>
@@ -1906,8 +1930,8 @@ The result types of two procedures match if they are either the <i>same type</i>
 <pre><code>digit  = '0' ... '9'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14593">4.2</a></span><a href="#14178">&#x21B3;</a>
 <pre><code>number   = integer | real</code></pre>
-<pre><code>integer  = (digit {digit} ['O'|'B' | digit {hexDigit} 'H')<br />           ['U8'|'U16'|'U32'|'U64']</code></pre>
-<pre><code>real     = digit {digit} '.' {digit} [Exponent]</code></pre>
+<pre><code>integer  = (digit {digit|'_'} ['O'|'B'] | digit {hexDigit|'_'} 'H')<br />           ['U1'|'U2'|'U4'|'U8'|'I1'|'I2'|'I4'|'I8']</code></pre>
+<pre><code>real     = digit {digit|'_'} '.' {digit} [Exponent]</code></pre>
 <pre><code>Exponent = ('E' | 'D' | 'F' ) ['+' | '-'] digit {digit}</code></pre>
 <pre><code>hexDigit = digit | 'A' ... 'F'</code></pre>
 <pre><code>digit    = '0' ... '9'</code></pre></div>
@@ -2015,9 +2039,9 @@ The result types of two procedures match if they are either the <i>same type</i>
 <div style="margin-left:27px"><span class="label"><a name="14622">4.32</a></span><a href="#14457">&#x21B3;</a>
 <pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br />                                        [ INLINE | INVAR | EXTERN ]<br />                       | ( PROCEDURE | PROC ) identdef '=' qualident<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence END ident</code></pre>
 <pre><code>DeclarationSequence  = { CONST { ConstDeclaration [';'] }</code></pre>
-<pre><code>	           | TYPE { TypeDeclaration [';'] }</code></pre>
+<pre><code>	           | TypeDeclarationSection</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
-<pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
+<pre><code>	           | ProcedureDeclaration [';'] }<br /><br />TypeDeclarationSection = TYPE { TypeDeclaration [';'] }</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14623">4.33</a></span><a href="#14489">&#x21B3;</a>
 <pre><code>FormalParameters = '(' [ FPSection { [';'] FPSection } [ [';'] '..'] ] ')'</code></pre>
 <pre><code>                   [ ':' ReturnType ]</code></pre>
@@ -2084,7 +2108,7 @@ Opaque type representing an internalized identifier. Values of the type exist at
 <div style="margin-left:27px"><span class="label"><a name="14651">5.9</a></span>
 <b>VA_LIST</b></div>
 <div style="margin-left:45px"><span class="label"><a name="14683">5.9.1</a></span>
-Opaque type representing the list of variable parameters, accessible by <a href="xoid://14141@003526b9-5a79-4133-afbf-9bcd57214e0c">&lt;null reference&gt;</a>, see <a href="#14458">2.11.11 Formal parameters</a>.</div>
+Opaque type representing the list of variable parameters, accessible by <a href="xoid://14141@003526b9-5a79-4133-afbf-9bcd57214e0c">&lt;null reference&gt;</a>, see <a href="#14458">2.11.12 Formal parameters</a>.</div>
 <h4 style="margin-left:9px"><span class="label"><a name="14136">6</a></span>
 <b>Predeclared Procedure Reference</b></h4>
 <h4 style="margin-left:27px"><span class="label"><a name="14775">6.1</a></span>
@@ -2142,7 +2166,7 @@ Predeclared function procedures</h4>
 <td>
 <br>x: UINT32 or UINT64</td>
 <td>
-<br>INT32 or UINT64</td>
+<br>UNT32 or UINT64</td>
 <td>
 <br>bitwise NOT; result is UINT64 if x or y is UINT64, else UINT32</td></tr>
 <tr>
@@ -2567,7 +2591,7 @@ Predeclared function procedures</h4>
 <br>Returns an opaque value of the built-in type VA_LIST which can be passed as argument to another procedure. Only valid in a function declared with variable arguments.</td></tr></table></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14777">6.2</a></span>
 Predeclared proper procedures</h4>
-<div style="margin-left:45px"><span class="label"><a name="14823">6.2.1</a></span>
+<div style="margin-left:45px"><span class="label"><a name="15952">6.2.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 ><thead>
 <tr>
 <td>
@@ -2693,14 +2717,14 @@ Predeclared proper procedures</h4>
 <td>
 <br>p: pointer to T</td>
 <td>
-<br>allocate p^ of type T; initial values of fields and elements are undefined</td></tr>
+<br>allocate p^ of type T</td></tr>
 <tr>
 <td>
 <br>NEW(p,n)</td>
 <td>
 <br>p: pointer to open array</td>
 <td>
-<br>allocate p^ with length n; initial values of elements are undefined</td></tr>
+<br>allocate p^ with length n</td></tr>
 <tr>
 <td></td>
 <td>
@@ -2713,6 +2737,20 @@ Predeclared proper procedures</h4>
 <br>VAR e: SYMBOL; p: proper procedure type; a<sub>i</sub>: actual parameters</td>
 <td>
 <br>call procedure type p with arguments a<sub>0</sub>…​a<sub>n</sub> corresponding to the parameter list of p; e becomes nil in normal case and gets the SYMBOL to RAISE() otherwise</td></tr>
+<tr>
+<td>
+<br>PRINT(a<sub>0</sub>,…​,a<sub>n</sub>)</td>
+<td>
+<br>a<sub>i</sub>: basic type, string or char array</td>
+<td>
+<br>prints the concatenation of the arguments to standard output, not ending the line</td></tr>
+<tr>
+<td>
+<br>PRINTLN(a<sub>0</sub>,…​,a<sub>n</sub>)</td>
+<td>
+<br>a<sub>i</sub>: basic type, string or char array</td>
+<td>
+<br>prints a line to the standard output consisting of the concatenation of the arguments</td></tr>
 <tr>
 <td>
 <br>RAISE(e)</td>

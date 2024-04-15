@@ -29,27 +29,26 @@ hexstringdelim- ::= '#'
 comment- ::= '(*' '*)' '//'
 Comment ::=
 
-qualident ::= [\LA: 1:ident & 2:'.'\ ident '.'] ident
+qualident ::= [\LA: 1:ident & 2:'.'\ ImportPath ident '.'] ident
 identdef  ::= ident ['*']
 
 TypeDeclaration ::= identdef '=' type
 type            ::= ArrayType | StructUnionType | PointerType | ProcedureType | NamedType
 NamedType       ::= qualident
 
-ArrayType  ::= 'ARRAY' [ length ] 'OF' type | '[' [ length ] ']' type
+ArrayType  ::= 'ARRAY' [ length ] 'OF' NamedType | '[' [ length ] ']' NamedType
 length     ::= unsigned
 
 
 StructUnionType ::= ('STRUCT' | 'UNION') { \LA: 1:!'END'\ FieldList [';'] } 'END'
-FieldList  ::= IdentList ':' type
+FieldList  ::= IdentList ':' NamedType
 IdentList  ::= identdef { [','] identdef }
 
-PointerType ::= ( 'POINTER' 'TO' | '^' ) type
+PointerType ::= ( 'POINTER' 'TO' | '^' ) NamedType
 
 ProcedureType ::= ('PROCEDURE'|'PROC') [FormalParameters]
 
-VariableDeclaration ::= IdentList ':' VariableType
-VariableType ::= [ 'POINTER' 'TO' | '^' ] NamedType
+VariableDeclaration ::= IdentList ':' NamedType
 
 ProcedureDeclaration ::= ( 'PROCEDURE' | 'PROC' ) identdef  (
                        [ FormalParameters ] [';'] ( ProcedureBody  | 'EXTERN' [ident] )
@@ -58,12 +57,11 @@ ProcedureDeclaration ::= ( 'PROCEDURE' | 'PROC' ) identdef  (
 ProcedureBody        ::= ['VAR' { \LA: 1:(ident&!'BEGIN')\ LocalDeclaration [';'] }] 
                                         'BEGIN' StatementSequence 'END' ident
 
-LocalDeclaration     ::= IdentList ':' VariableType
+LocalDeclaration     ::= IdentList ':' NamedType
 
 FormalParameters ::= '(' [ FPSection { \LL:2\ ';' FPSection } [ ';' '..'] ] ')' [ ':' ReturnType ]
-ReturnType       ::= FormalType
-FPSection        ::= ident { [','] ident } ':' FormalType
-FormalType       ::= [ 'POINTER' 'TO' | '^' ] NamedType
+ReturnType       ::= NamedType
+FPSection        ::= ident { [','] ident } ':' NamedType
 
 module     ::= 'MODULE' ident [ MetaParams ] [';'] 
                         { ImportList | DeclarationSequence }
@@ -82,7 +80,7 @@ ExpInstr ::= 'ADD' | 'AND' | ('CALL' | 'CALLI') qualident | 'CASTPTR' qualident
                       | 'CEQ' | 'CGT' | 'CGT_UN' | 'CLT' | 'CLT_UN' 
                       | 'CONV_I1' | 'CONV_I2' | 'CONV_I4' | 'CONV_I8' | 'CONV_R4' | 'CONV_R8'
                       | 'CONV_U1' | 'CONV_U2' | 'CONV_U4' | 'CONV_U8' | 'CONV_IP'
-                      | 'DIV' | 'DUP' | 'INITOBJ' qualident | ('LDARG'|'LDARG_S') (unsigned|ident) 
+                      | 'DIV' | 'DIV_UN' | 'DUP' | 'INITOBJ' qualident | ('LDARG'|'LDARG_S') (unsigned|ident) 
                       | 'LDARG_0' | 'LDARG_1' | 'LDARG_2' | 'LDARG_3'
                       | ('LDARGA'|'LDARGA_S') (unsigned|ident)
                       | ('LDC_I4'|'LDC_I8'|'LDC_I4_S') integer | ('LDC_R4'|'LDC_R8') real
@@ -99,7 +97,7 @@ ExpInstr ::= 'ADD' | 'AND' | ('CALL' | 'CALLI') qualident | 'CASTPTR' qualident
                       | 'LDOBJ' qualident | 'LDPROC' qualident | 'LDSTR' string
                       | ('LDVAR'|'LDVARA') qualident | 'MUL' | 'NEG' 
                       | ('NEWARR'|'NEWVLA'|'NEWOBJ') qualident 
-                      | 'NOT' | 'OR' | 'REM' | 'SHL' | 'SHR' | 'SHR_UN' | 'SUB' | 'XOR'
+                      | 'NOT' | 'OR' | 'REM' | 'REM_UN' | 'SHL' | 'SHR' | 'SHR_UN' | 'SUB' | 'XOR'
 
 StatementSequence ::= { Statement }
           

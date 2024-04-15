@@ -50,7 +50,7 @@ length ::= ConstExpression | 'VAR' expression
 RecordType ::= 'RECORD' [FixedPart] [VariantPart]  'END' 
          
 inline_ ::= 'INLINE' | 'IN'
-       
+
 VariantPart ::= 'CASE' { ['|'] [inline_] identdef ':' type } 
 
 FixedPart ::= FieldList  [ ';' ] { FieldList [ ';' ] }
