@@ -114,7 +114,9 @@ Statement ::=  ('CALL' | 'CALLI') qualident | 'DISP' | RepeatUntil
 
 IfThenElse ::= 'IF' Expression 'THEN' StatementSequence [ 'ELSE' StatementSequence ] 'END'
 Loop ::= 'LOOP' StatementSequence 'END'
-Switch ::= 'SWITCH' Expression { 'CASE' Expression 'THEN' StatementSequence } 
+Switch ::= 'SWITCH' Expression 
+                 { 'CASE' integer { [','] integer }
+                    'THEN' StatementSequence } 
                   [ 'ELSE' StatementSequence ] 'END'
 RepeatUntil ::= 'REPEAT' StatementSequence 'UNTIL' Expression 'END'
 WhileDo ::= 'WHILE' Expression 'DO' StatementSequence 'END'

@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2024-04-15, work in progress</div>
+2024-04-16, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -266,7 +266,7 @@ The type of an integer constant is the minimal unsigned integer type to which th
 <div style="margin-left:63px"><span class="label"><a name="14463">2.3.4.3</a></span>
 If the literal is specified with the suffix 'H', the representation is hexadecimal, if it is specified with suffix 'O', the representation is ocal, or if it is specified with suffic 'B', the representation is binary, otherwise the representation is decimal. </div>
 <div style="margin-left:63px"><span class="label"><a name="14466">2.3.4.4</a></span>
-The type of an integer constant can be explicitly set with a suffix. The U1, U2, U4 or U8 suffices correspond to the UINT8, UINT16, UINT32 or UINT64 unsigned integer types. If the given constant value cannot be represented by the explicit type, the compiler reports an error. </div>
+The type of an integer constant can be explicitly set with a suffix. The U1, U2, U4 or U8 suffices correspond to the UINT8, UINT16, UINT32 or UINT64 unsigned integer types. The I1, I2, I4 or I8 suffices correspond to the INT8, INT16, INT32 or INT64 signed integer types. If the given constant value cannot be represented by the explicit type, the compiler reports an error. Alternatively, the suffix U or I can be used without explicit byte width, in which case the compiler assigns the minimal unsigned or signed integer type to which the value belongs.</div>
 <div style="margin-left:63px"><span class="label"><a name="14469">2.3.4.5</a></span><span class="ident">NOTE</span>
 Number literals can be prefixed with a sign. But the sign is not part of the literal, but of a simple expression including the literal, see <a href="#14322">2.8.3 Operators</a>. Use the SIGNED() predeclared function for a signed integer reinterpretation of the unsigned integer (e.g. SIGNED(0FFH) is an INT8 with value -1). Otherwise the term -0FFH becomes an INT16 with value -255.</div>
 <div style="margin-left:63px"><span class="label"><a name="14470">2.3.4.6</a></span>
@@ -283,7 +283,7 @@ Numbers can be interspersed with underscores for better readability, but the fir
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14178">2.3.4.11.1</a></span>
 <pre><code>number   = integer | real</code></pre>
-<pre><code>integer  = (digit {digit|'_'} ['O'|'B'] | digit {hexDigit|'_'} 'H')<br />           ['U1'|'U2'|'U4'|'U8'|'I1'|'I2'|'I4'|'I8']</code></pre>
+<pre><code>integer  = (digit {digit|'_'} ['O'|'B'] | digit {hexDigit|'_'} 'H')<br />           ['U'|'U1'|'U2'|'U4'|'U8'|'I'|'I1'|'I2'|'I4'|'I8']</code></pre>
 <pre><code>real     = digit {digit|'_'} '.' {digit} [Exponent]</code></pre>
 <pre><code>Exponent = ('E' | 'D' | 'F' ) ['+' | '-'] digit {digit}</code></pre>
 <pre><code>hexDigit = digit | 'A' ... 'F'</code></pre>
@@ -820,7 +820,7 @@ SHORTINT </td>
 INT64, INT32, INT16, INT8, LONGINT, INTEGER, SHORTINT are signed integer types, UIN64, UINT32, UINT16, UINT8, and BYTE are unsigned integer types, REAL and LONGREAL are <a href="#14539">Floating-point types</a>, and together they are called numeric types. The larger type includes (the values of) the smaller type according to the following relations:</div>
 <div style="margin-left:63px"><span class="label"><a name="14255">2.6.4.7</a></span>
 <pre><code>INT64 &gt;= INT32 &gt;= INT16 &gt;= INT8</code></pre>
-<pre><code>UNT64 &gt;= UINT32 &gt;= UINT16 &gt;= UINT8</code></pre>
+<pre><code>UINT64 &gt;= UINT32 &gt;= UINT16 &gt;= UINT8</code></pre>
 <pre><code>LONGREAL &gt;= REAL</code></pre>
 <pre><code>LONGINT &gt;= INTEGER &gt;= SHORTINT</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="14256">2.6.4.8</a></span><span class="ident">NOTE</span>
@@ -840,7 +840,7 @@ Syntax:</div>
 <div style="margin-left:63px"><span class="label"><a name="14269">2.6.5.3</a></span><span class="ident">NOTE</span>
 In contrast to Oberon and Oberon+, Micron only supports one-dimensional length lists. But it is still possible that the type of the array is yet another array.</div>
 <div style="margin-left:63px"><span class="label"><a name="14263">2.6.5.4</a></span>
-Arrays declared without length are called <i>open arrays</i>. They are restricted to pointer base types (see <a href="#14278">2.6.7 Pointer types</a>), and element types of open array types.</div>
+Arrays declared without length are called <i>open arrays</i>. They are restricted to pointer base types (see <a href="#14278">2.6.7 Pointer types</a>).</div>
 <div style="margin-left:63px"><span class="label"><a name="14264">2.6.5.5</a></span>
 Examples:</div>
 <div style="margin-left:81px"><span class="label"><a name="14265">2.6.5.5.1</a></span>
@@ -1089,7 +1089,7 @@ When used as a binary operator, both operands must be of either of signed intege
 <div style="margin-left:81px"><span class="label"><a name="14480">2.8.3.4.4</a></span><span class="ident">NOTE</span>
 This is the same rule as in Modula-2, <i>where both operands must be either of type CARDINAL [...], in which case the result is of the type CARDINAL, or they must both be of type INTEGER [...], in which case the result is of type INTEGER</i>. The Ada language has a similar rule. The rules of the C language in contrast are much more complicated (see e.g. <a href="https://wiki.sei.cmu.edu/confluence/display/c/INT02-C.+Understand+integer+conversion+rules"><u>here</u></a>), but it is always possible to add explicit conversions when migrating C to Micron. </div>
 <div style="margin-left:81px"><span class="label"><a name="14475">2.8.3.4.5</a></span>
-The type of the result is the type of that operand which includes the type of the other operand (see <a href="#14255">2.6.4.7</a>).</div>
+The type of the result is the type of that operand which includes the type of the other operand (see <a href="#14255">2.6.4.7</a>). TODO</div>
 <div style="margin-left:81px"><span class="label"><a name="15820">2.8.3.4.6</a></span>
 The operator '<code>/</code>' applies to real operands only.</div>
 <div style="margin-left:81px"><span class="label"><a name="14473">2.8.3.4.7</a></span>
@@ -1098,7 +1098,7 @@ The operators <code>DIV</code> and <code>MOD</code> apply to integer operands on
 <pre><code>x = (x DIV y) * y + (x MOD y)</code></pre>
 <pre><code>0 &lt;= (x MOD y) &lt; y</code></pre></div>
 <div style="margin-left:81px"><span class="label"><a name="14474">2.8.3.4.8</a></span>
-When used as monadic (unary) operators, '-' denotes sign inversion and '+' denotes the identity operation. If '-' is applied to an operand of unsigned integer type, the result is the signed integer type with the same byte width as the operand. Otherwise the type of the result is the same as the type of the operand.</div>
+When used as monadic (unary) operators, '-' denotes sign inversion and '+' denotes the identity operation. If the unary '-' or '+' is applied to an operand of unsigned integer type, the result is the next larger signed integer type, or an error if the operand is of type UIN64. Otherwise the type of the result is the same as the type of the operand.</div>
 <div style="margin-left:81px"><span class="label"><a name="14332">2.8.3.4.9</a></span>
 Examples:</div>
 <div style="margin-left:99px"><span class="label"><a name="14333">2.8.3.4.9.1</a></span>
@@ -1349,7 +1349,7 @@ Example:</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14387">2.9.8</a></span>
 <a href=""><b>C</b></a><b>ase statements</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="14388">2.9.8.1</a></span>
-Case statements specify the selection and execution of a statement sequence according to the value of an expression. First the case expression is evaluated, then that statement sequence is executed whose case label list contains the obtained value. The case expression must either be of an integer type that includes the types of all case labels, or an enumeration type with all case labels being valid members of this type, or both the case expression and the case labels must be of type CHAR. Case labels are constants, and no value must occur more than once. If the value of the expression does not occur as a label of any case, the statement sequence following ELSE is selected, if there is one, otherwise the program is aborted.</div>
+Case statements specify the selection and execution of a statement sequence according to the value of an expression. First the case expression is evaluated, then that statement sequence is executed whose case label list contains the obtained value. The case expression must either be of an integer type that includes the types of all case labels, or a constant enumeration type with all case labels being valid members of this type, or both the case expression and the case labels must be of type CHAR. Case labels are constants, and no value must occur more than once. If the value of the expression does not occur as a label of any case, the statement sequence following ELSE is selected, if there is one, otherwise the program is aborted.</div>
 <div style="margin-left:63px"><span class="label"><a name="14389">2.9.8.2</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14390">2.9.8.2.1</a></span>
@@ -1538,11 +1538,13 @@ Syntax:</div>
 <pre><code>ReturnType       = [ POINTER TO | '^' ] NamedType</code></pre>
 <pre><code>FPSection        = ident { [','] ident } ':' FormalType</code></pre>
 <pre><code>FormalType       = type</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="14490">2.11.12.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15961">2.11.12.5</a></span>
+Let T<sub>f</sub> be the type of a formal parameter <code>f</code> and T<sub>a</sub> the type of the corresponding actual parameter <code>a</code>. T<sub>a</sub> must be <i>parameter compatible</i> to <code>f</code> (see <a href="#14532">3 Definition of terms</a>).</div>
+<div style="margin-left:63px"><span class="label"><a name="14490">2.11.12.6</a></span>
 Procedures can have a variable number of parameters, which is indicated by '..' (ellipsis). In that case the additional parameters (called &quot;variable parameters&quot;) can be accessed in the procedure body using the VARARG() and VARARGS() predeclared procedures. Only actual parameters of basic or pointer type (including enumerations and procedure types) can be passed as variable parameters.</div>
-<div style="margin-left:63px"><span class="label"><a name="14491">2.11.12.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14491">2.11.12.7</a></span>
 Examples:</div>
-<div style="margin-left:81px"><span class="label"><a name="14492">2.11.12.6.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14492">2.11.12.7.1</a></span>
 <pre><code>proc ReadInt(x: pointer to integer)</code></pre>
 <pre><code>  var i: integer; ch: char</code></pre>
 <pre><code>begin i := 0; Read(ch)</code></pre>
@@ -1687,11 +1689,9 @@ Equal types</h4>
 Two types T<sub>a</sub> and T<sub>b</sub> are equal if</div>
 <div style="margin-left:63px"><span class="label"><a name="14550">3.7.1.1</a></span>
 T<sub>a</sub> and T<sub>b</sub> are the <i>same type</i>, or</div>
-<div style="margin-left:63px"><span class="label"><a name="14551">3.7.1.2</a></span>
-T<sub>a</sub> and T<sub>b</sub> are open array types with <i>equal element types</i>, or</div>
-<div style="margin-left:63px"><span class="label"><a name="14552">3.7.1.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14552">3.7.1.2</a></span>
 T<sub>a</sub> and T<sub>b</sub> are procedure types whose formal parameters <i>match</i>, or</div>
-<div style="margin-left:63px"><span class="label"><a name="14553">3.7.1.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14553">3.7.1.3</a></span>
 T<sub>a</sub> and T<sub>b</sub> are pointer types with <i>equal</i> base types.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14554">3.8</a></span>
 Type inclusion</h4>
@@ -1707,17 +1707,13 @@ T<sub>e</sub> and T<sub>v</sub> are the <i>same type</i>;</div>
 T<sub>e</sub> and T<sub>v</sub> are numeric types and T<sub>v</sub> <i>includes</i> T<sub>e</sub></div>
 <div style="margin-left:63px"><span class="label"><a name="14564">3.9.1.3</a></span>
 T<sub>e</sub> and T<sub>v</sub> are pointer types and the pointers have <i>equal</i> base types;</div>
-<div style="margin-left:63px"><span class="label"><a name="14655">3.9.1.4</a></span>
-T<sub>e</sub> and T<sub>v</sub> are pointer types and T<sub>v</sub> is a POINTER TO ANY;</div>
-<div style="margin-left:63px"><span class="label"><a name="14565">3.9.1.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14565">3.9.1.4</a></span>
 T<sub>v</sub> is a pointer or a procedure type and <code>e</code> is NIL;</div>
-<div style="margin-left:63px"><span class="label"><a name="14672">3.9.1.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14672">3.9.1.5</a></span>
 T<sub>v</sub> is an enumeration type and <code>e</code> is a valid element of the enumeration;</div>
-<div style="margin-left:63px"><span class="label"><a name="14566">3.9.1.7</a></span>
-T<sub>e</sub> is an open array and T<sub>v</sub> is an array of <i>equal</i> base type;</div>
-<div style="margin-left:63px"><span class="label"><a name="14567">3.9.1.8</a></span>
-T<sub>v</sub> is an array of CHAR, T<sub>e</sub> is a Latin-1 string literal or character array, and STRLEN(e) &lt; LEN(v);</div>
-<div style="margin-left:63px"><span class="label"><a name="14568">3.9.1.9</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14567">3.9.1.6</a></span>
+T<sub>v</sub> is an array of CHAR, T<sub>e</sub> is a string literal, and STRLEN(e) &lt; LEN(v);</div>
+<div style="margin-left:63px"><span class="label"><a name="14568">3.9.1.7</a></span>
 T<sub>v</sub> is a procedure type and <code>e</code> is the name of a procedure whose formal parameters <i>match</i> those of T<sub>v</sub>.</div>
 <div style="margin-left:45px"><span class="label"><a name="15947">3.9.2</a></span>
 TODO: The address of a struct S can be assigned to a pointer to T if the first field of S is of type T.</div>
@@ -1729,23 +1725,11 @@ An actual parameter <code>a</code> of type T<sub>a</sub> is parameter compatible
 T<sub>f</sub> and T<sub>a</sub> are <i>equal</i> types, or</div>
 <div style="margin-left:63px"><span class="label"><a name="14572">3.10.1.2</a></span>
 T<sub>a</sub> is <i>assignment compatible</i> with T<sub>f</sub></div>
-<h4 style="margin-left:27px"><span class="label"><a name="14573">3.11</a></span>
-Array compatible</h4>
-<div style="margin-left:45px"><span class="label"><a name="14574">3.11.1</a></span>
-An actual parameter <code>a</code> of type T<sub>a</sub> is array compatible with a formal parameter <code>f</code> of type T<sub>f</sub> if</div>
-<div style="margin-left:63px"><span class="label"><a name="14576">3.11.1.1</a></span>
-T<sub>f</sub> and T<sub>a</sub> are the <i>equal type</i>, or</div>
-<div style="margin-left:63px"><span class="label"><a name="14575">3.11.1.2</a></span>
-T<sub>f</sub> is an open array, T<sub>a</sub> is any array, and their element types are <i>array compatible</i>, or</div>
-<div style="margin-left:63px"><span class="label"><a name="14577">3.11.1.3</a></span>
-T<sub>f</sub> is an open array of CHAR and T<sub>a</sub> is a Latin-1 string literal, or</div>
-<div style="margin-left:63px"><span class="label"><a name="14578">3.11.1.4</a></span>
-T<sub>f</sub> is an open array of BYTE and T<sub>a</sub> is a hex string literal.</div>
-<h4 style="margin-left:27px"><span class="label"><a name="14579">3.12</a></span>
+<h4 style="margin-left:27px"><span class="label"><a name="14579">3.11</a></span>
 Expression compatible</h4>
-<div style="margin-left:45px"><span class="label"><a name="14580">3.12.1</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14580">3.11.1</a></span>
 For a given operator, the types of its operands are expression compatible if they conform to the following table (which shows also the result type of the expression). CHAR arrays that are to be compared must contain 0X as a terminator. </div>
-<div style="margin-left:45px"><span class="label"><a name="14583">3.12.2</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14583">3.11.2</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 ><thead>
 <tr>
 <td>
@@ -1908,19 +1892,19 @@ For a given operator, the types of its operands are expression compatible if the
 <br>SET</td>
 <td>
 <br>BOOLEAN</td></tr></table></div>
-<h4 style="margin-left:27px"><span class="label"><a name="14582">3.13</a></span>
+<h4 style="margin-left:27px"><span class="label"><a name="14582">3.12</a></span>
 Matching formal parameter lists</h4>
-<div style="margin-left:45px"><span class="label"><a name="14584">3.13.1</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14584">3.12.1</a></span>
 Two formal parameter lists match if</div>
-<div style="margin-left:63px"><span class="label"><a name="14585">3.13.1.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14585">3.12.1.1</a></span>
 they have the same number of parameters, and</div>
-<div style="margin-left:63px"><span class="label"><a name="14586">3.13.1.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14586">3.12.1.2</a></span>
 parameters at corresponding positions have <i>equal types</i>, and</div>
-<div style="margin-left:63px"><span class="label"><a name="14587">3.13.1.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14587">3.12.1.3</a></span>
 both parameter lists either end with an ellipsis or not</div>
-<h4 style="margin-left:27px"><span class="label"><a name="14588">3.14</a></span>
+<h4 style="margin-left:27px"><span class="label"><a name="14588">3.13</a></span>
 Matching result types</h4>
-<div style="margin-left:45px"><span class="label"><a name="14589">3.14.1</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14589">3.13.1</a></span>
 The result types of two procedures match if they are either the <i>same type</i> or none.</div>
 <h4 style="margin-left:9px"><span class="label"><a name="14590">4</a></span>
 <b>Complete Micron Syntax</b></h4>
@@ -1930,7 +1914,7 @@ The result types of two procedures match if they are either the <i>same type</i>
 <pre><code>digit  = '0' ... '9'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14593">4.2</a></span><a href="#14178">&#x21B3;</a>
 <pre><code>number   = integer | real</code></pre>
-<pre><code>integer  = (digit {digit|'_'} ['O'|'B'] | digit {hexDigit|'_'} 'H')<br />           ['U1'|'U2'|'U4'|'U8'|'I1'|'I2'|'I4'|'I8']</code></pre>
+<pre><code>integer  = (digit {digit|'_'} ['O'|'B'] | digit {hexDigit|'_'} 'H')<br />           ['U'|'U1'|'U2'|'U4'|'U8'|'I'|'I1'|'I2'|'I4'|'I8']</code></pre>
 <pre><code>real     = digit {digit|'_'} '.' {digit} [Exponent]</code></pre>
 <pre><code>Exponent = ('E' | 'D' | 'F' ) ['+' | '-'] digit {digit}</code></pre>
 <pre><code>hexDigit = digit | 'A' ... 'F'</code></pre>
