@@ -51,7 +51,7 @@ ProcedureType ::= ('PROCEDURE'|'PROC') [FormalParameters]
 VariableDeclaration ::= IdentList ':' NamedType
 
 ProcedureDeclaration ::= ( 'PROCEDURE' | 'PROC' ) identdef  (
-                       [ FormalParameters ] [';'] ( ProcedureBody  | 'EXTERN' [ident] )
+                       [ FormalParameters ] ( ['INLINE'|'INVAR'|'INIT'] [ ';' ] ProcedureBody  | \LL:2\ [ ';' ] 'EXTERN' [ident] )
                        | '=' qualident )
 
 ProcedureBody        ::= ['VAR' { \LA: 1:(ident&!'BEGIN')\ LocalDeclaration [';'] }] 
@@ -65,7 +65,7 @@ FPSection        ::= ident { [','] ident } ':' NamedType
 
 module     ::= 'MODULE' ident [ MetaParams ] [';'] 
                         { ImportList | DeclarationSequence }
-	                [ 'BEGIN' StatementSequence ] 'END' ident ['.']
+	                'END' ident ['.']
 ImportList ::= 'IMPORT' import { [','] import } [';']
 import     ::= [ \LL:2\ ident ':=' ] ImportPath ident [ MetaActuals ] 
 ImportPath ::= { \LA: 1:ident&2:'.'\ ident '.' }

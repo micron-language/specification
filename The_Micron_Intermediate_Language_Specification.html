@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2024-04-16, work in progress</div>
+2024-04-18, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -2377,30 +2377,32 @@ All variables declared within a procedure body are local to the procedure. The v
 The call of a procedure within its declaration implies recursive activation.</div>
 <div style="margin-left:45px"><span class="label"><a name="15586">2.8.5</a></span>
 A procedure can be declared EXTERN to indicate that it is implemented in an external library with C calling conventions. EXTERN can be followed by the name the procedure has in that external library, otherwise the same name as in the identdef is assumed. </div>
-<div style="margin-left:45px"><span class="label"><a name="15463">2.8.6</a></span>
+<div style="margin-left:45px"><span class="label"><a name="15966">2.8.6</a></span>
+A procedure declared INLINE is expanded by the backend at the call site. A procedure declared INVAR doesn't depend on runtime information and can be called at compile time. At most one procedure can be declared INIT, in which case it is automatically called at module load time.</div>
+<div style="margin-left:45px"><span class="label"><a name="15463">2.8.7</a></span>
 A procedure can be an alias of another procedure. The other procedure is referenced with a qualident. If the other procedure is in another module, it must be exported.</div>
-<div style="margin-left:45px"><span class="label"><a name="15464">2.8.7</a></span>
+<div style="margin-left:45px"><span class="label"><a name="15464">2.8.8</a></span>
 Syntax of textual representation:</div>
-<div style="margin-left:63px"><span class="label"><a name="15465">2.8.7.1</a></span>
-<pre><code>ProcedureDeclaration = ProcedureHeading [';'] ( ProcedureBody | EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) identdef '=' qualident</code></pre>
+<div style="margin-left:63px"><span class="label"><a name="15465">2.8.8.1</a></span>
+<pre><code>ProcedureDeclaration = ProcedureHeading [';'] <br />                         (['INLINE'|'INVAR'|'INIT'] [';'] ProcedureBody <br />                          | [';'] EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) identdef '=' qualident</code></pre>
 <pre><code>ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br /><br />ProcedureBody        = [VAR { LocalDeclaration [';'] }]<br />                       BEGIN StatementSequence END ident<br /><br />LocalDeclaration     = [IdentList ':'] NamedType</code></pre></div>
-<h4 style="margin-left:45px"><span class="label"><a name="15468">2.8.8</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15468">2.8.9</a></span>
 Formal parameters</h4>
-<div style="margin-left:63px"><span class="label"><a name="15469">2.8.8.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15469">2.8.9.1</a></span>
 Formal parameters are identifiers declared in the formal parameter list of a procedure. They correspond to actual parameters specified in the procedure call. The correspondence between formal and actual parameters is established when the procedure is called. </div>
-<div style="margin-left:63px"><span class="label"><a name="15471">2.8.8.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15471">2.8.9.2</a></span>
 The scope of a formal parameter extends from its declaration to the end of the procedure block in which it is declared. A function procedure without parameters must have an empty parameter list. The result type of a procedure cannot be an open array.</div>
-<div style="margin-left:63px"><span class="label"><a name="15478">2.8.8.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15478">2.8.9.3</a></span>
 The formal parameter names are optional. If present, they must be unique within the formal parameter list. Formal parameters are numbered from left to right, starting from zero. Formal parameters can be referenced by their name or by their number.</div>
-<div style="margin-left:63px"><span class="label"><a name="15472">2.8.8.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15472">2.8.9.4</a></span>
 Syntax of textual representation:</div>
-<div style="margin-left:81px"><span class="label"><a name="15473">2.8.8.4.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15473">2.8.9.4.1</a></span>
 <pre><code>FormalParameters = '(' [ FPSection { ';' FPSection } [ ';' '..'] ] ')'<br />                   [ ':' ReturnType ]</code></pre>
 <pre><code>ReturnType       = NamedType</code></pre>
 <pre><code>FPSection        = [ident { [','] ident } ':'] NamedType</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="15474">2.8.8.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15474">2.8.9.5</a></span>
 Procedures can have a variable number of parameters, which is indicated by <code>'..'</code> (ellipsis). </div>
-<div style="margin-left:63px"><span class="label"><a name="15337">2.8.8.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15337">2.8.9.6</a></span>
 TODO: va_list and access instruction</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14961">2.9</a></span>
 Statements</h4>
@@ -3092,7 +3094,7 @@ A module is a collection of declarations of constants, types, variables, and pro
 <div style="margin-left:45px"><span class="label"><a name="15498">2.10.2</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15499">2.10.2.1</a></span>
-<pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 [ BEGIN StatementSequence ] END ident ['.']</code></pre>
+<pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 END ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
 <pre><code>import     = [ ident ':=' ] ImportPath ident [ MetaActuals ]</code></pre>
 <pre><code>ImportPath = { ident '.' }<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
@@ -3197,7 +3199,7 @@ TODO: type checking rules, structral compatibility, packing</div>
 <div style="margin-left:27px"><span class="label"><a name="15525">3.16</a></span><a href="#15503">&#x21B3;</a>
 <pre><code>VariableDeclaration = IdentList ':' NamedType</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15526">3.17</a></span><a href="#15465">&#x21B3;</a>
-<pre><code>ProcedureDeclaration = ProcedureHeading [';'] ( ProcedureBody | EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) identdef '=' qualident</code></pre>
+<pre><code>ProcedureDeclaration = ProcedureHeading [';'] <br />                         (['INLINE'|'INVAR'|'INIT'] [';'] ProcedureBody <br />                          | [';'] EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) identdef '=' qualident</code></pre>
 <pre><code>ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br /><br />ProcedureBody        = [VAR { LocalDeclaration [';'] }]<br />                       BEGIN StatementSequence END ident<br /><br />LocalDeclaration     = [IdentList ':'] NamedType</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15527">3.18</a></span><a href="#15473">&#x21B3;</a>
 <pre><code>FormalParameters = '(' [ FPSection { ';' FPSection } [ ';' '..'] ] ')'<br />                   [ ':' ReturnType ]</code></pre>
@@ -3206,7 +3208,7 @@ TODO: type checking rules, structral compatibility, packing</div>
 <div style="margin-left:27px"><span class="label"><a name="15531">3.19</a></span><a href="#15530">&#x21B3;</a>
 <code>StatementSequence = { Statement }<br />Statement = ('call' | 'calli') qualident | 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' qualident '.' ident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' qualident '.' ident | Switch | WhileDo</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15528">3.20</a></span><a href="#15499">&#x21B3;</a>
-<pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 [ BEGIN StatementSequence ] END ident ['.']</code></pre>
+<pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 END ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
 <pre><code>import     = [ ident ':=' ] ImportPath ident [ MetaActuals ]</code></pre>
 <pre><code>ImportPath = { ident '.' }<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
