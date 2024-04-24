@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2024-04-18, work in progress</div>
+2024-04-24, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -161,19 +161,37 @@ Syntax:</div>
 <h4 style="margin-left:81px"><span class="label"><a name="15402">2.2.2.6.3</a></span>
 Hex Strings</h4>
 <div style="margin-left:99px"><span class="label"><a name="15403">2.2.2.6.3.1</a></span>
-Hex strings are sequences of bytes encoded in hexadecimal format and enclosed in dollar signs. The number of hex digits in the string must be even, two hex digits per byte. The number of bytes in a hex string is called its length. Line breaks and other white space between the dollar signs is ignored. Both upper and lower-case hex digits are supported.</div>
-<div style="margin-left:99px"><span class="label"><a name="15404">2.2.2.6.3.2</a></span>
+Hex strings are sequences of bytes encoded in hexadecimal format and enclosed in dollar signs. The number of hex digits in the string must be even, two hex digits per byte. The number of bytes in a hex string is called its length. Line breaks and other white space between the dollar signs is ignored. Both upper and lower-case hex digits are supported. </div>
+<div style="margin-left:99px"><span class="label"><a name="15973">2.2.2.6.3.2</a></span>
+When a hex string is used in place of a string literal, the terminating zero has to be explicit.</div>
+<div style="margin-left:99px"><span class="label"><a name="15404">2.2.2.6.3.3</a></span>
 Syntax:</div>
-<div style="margin-left:117px"><span class="label"><a name="15405">2.2.2.6.3.2.1</a></span>
+<div style="margin-left:117px"><span class="label"><a name="15405">2.2.2.6.3.3.1</a></span>
 <pre><code>hexstring = '#' {hexDigit} '#'</code></pre></div>
-<div style="margin-left:99px"><span class="label"><a name="15406">2.2.2.6.3.3</a></span>
+<div style="margin-left:99px"><span class="label"><a name="15406">2.2.2.6.3.4</a></span>
 Examples:</div>
-<div style="margin-left:117px"><span class="label"><a name="15407">2.2.2.6.3.3.1</a></span>
+<div style="margin-left:117px"><span class="label"><a name="15407">2.2.2.6.3.4.1</a></span>
 <pre><code>const arrow = #0F0F 0060 0070 0038 001C 000E 0007 8003 C101 E300 <br />               7700 3F00 1F00 3F00 7F00 FF00#</code></pre></div>
 <h4 style="margin-left:63px"><span class="label"><a name="15411">2.2.2.7</a></span>
 Reserved Words</h4>
-<div style="margin-left:81px"><span class="label"><a name="15412">2.2.2.7.1</a></span>
-MIL has no reserved words; a lot of identifiers have dedicated meanings in a specific context of the source code, which usually doesn't interfere with field, parameter and variable naming.</div>
+<div style="margin-left:81px"><span class="label"><a name="15978">2.2.2.7.1</a></span>
+The MIL textual representation has only the following reserved words:</div>
+<div style="margin-left:99px"><span class="label"><a name="15980">2.2.2.7.1.1</a></span>
+BEGIN</div>
+<div style="margin-left:99px"><span class="label"><a name="15981">2.2.2.7.1.2</a></span>
+END</div>
+<div style="margin-left:99px"><span class="label"><a name="15982">2.2.2.7.1.3</a></span>
+IMPORT</div>
+<div style="margin-left:99px"><span class="label"><a name="15983">2.2.2.7.1.4</a></span>
+PROC</div>
+<div style="margin-left:99px"><span class="label"><a name="15984">2.2.2.7.1.5</a></span>
+PROCEDURE</div>
+<div style="margin-left:99px"><span class="label"><a name="15985">2.2.2.7.1.6</a></span>
+TYPE</div>
+<div style="margin-left:99px"><span class="label"><a name="15986">2.2.2.7.1.7</a></span>
+VAR</div>
+<div style="margin-left:81px"><span class="label"><a name="15987">2.2.2.7.2</a></span>
+A lot of identifiers have dedicated meanings in a specific context of the source code, which usually doesn't interfere with field, parameter and variable naming.</div>
 <h4 style="margin-left:63px"><span class="label"><a name="15414">2.2.2.8</a></span>
 Comments</h4>
 <div style="margin-left:81px"><span class="label"><a name="15415">2.2.2.8.1</a></span>
@@ -379,10 +397,10 @@ Syntax of textual representation:</div>
 <br><code>| 'ldind_u4' | 'ldind_r4' | 'ldind_u8' | 'ldind_r8' | 'ldind_ip'</code>
 <br><code>| ('ldloc'|'ldloc_s'|'ldloca'|'ldloca_s')(unsigned|ident)</code>
 <br><code>| 'ldloc_0' | 'ldloc_1' | 'ldloc_2' | 'ldloc_3' | 'ldnull' </code>
-<br><code>| 'ldobj' qualident | 'ldproc' qualident | 'ldstr' string</code>
+<br><code>| 'ldobj' qualident | 'ldproc' qualident | 'ldstr' (string|hexstring)</code>
 <br><code>| ('ldvar'|'ldvara') qualident | 'mul' | 'neg' </code>
 <br><code>| ('newarr'|'newvla'|'newobj') qualident </code>
-<br><code>| 'not' | 'or' | 'rem' | 'rem_un' | 'shl' | 'shr' | 'shr_un' | 'sub' | 'xor'</code></div>
+<br><code>| 'not' | 'or' | 'rem' | 'rem_un' | 'shl' | 'shr' | 'shr_un' <br /><br />| 'sizeof' qualident | 'sub' | 'xor'</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15733">2.5.5.2</a></span>
 <code>ConstExpression  = qualident | integer | real | string | hexstring </code></div>
 <div style="margin-left:45px"><span class="label"><a name="15340">2.5.6</a></span>
@@ -1801,7 +1819,9 @@ ldobj – copy a value from an address to the stack </h4>
 <div style="margin-left:63px"><span class="label"><a name="15257">2.5.35.2</a></span>
 <code>…, src -&gt; …, val</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15258">2.5.35.3</a></span>
-The ldobj instruction dereferences src and copies its value to the stack. <i>type </i>is a reference to the struct or union. <i>src</i> is an intptr. </div>
+The ldobj instruction dereferences <i>src</i>, which is an address of a storage location of type, and copies its value to the stack. <i>type </i>is a struct or union, or a non-open array. <i>src</i> is an intptr. </div>
+<div style="margin-left:63px"><span class="label"><a name="16007">2.5.35.4</a></span>
+In addition, src can be the result of ldstr; type must then be an array of char with sufficient length to accommodate the string including the terminating zero.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15114">2.5.36</a></span>
 <b>ldproc – load procedure pointer</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15115">2.5.36.1</a></span>
@@ -1850,8 +1870,10 @@ ldstr – load a literal string </h4>
 The ldstr instruction pushes the address (intptr) representing the zero-terminated string literal as a pointer to an open array of char.</div>
 <div style="margin-left:63px"><span class="label"><a name="15263">2.5.37.4</a></span>
 The result of two ldstr instructions referring to the same string literal return precisely the same address.</div>
-<div style="margin-left:63px"><span class="label"><a name="15548">2.5.37.5</a></span>
-TODO: the equivalent for binary strings, but this time with byte count</div>
+<div style="margin-left:63px"><span class="label"><a name="15972">2.5.37.5</a></span>
+string is either a string literal or a zero-terminated hexstring literal.</div>
+<div style="margin-left:63px"><span class="label"><a name="15548">2.5.37.6</a></span>
+TODO: the equivalent for binary strings, but with byte count</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15485">2.5.38</a></span>
 ldvar – load module variable</h4>
 <div style="margin-left:63px"><span class="label"><a name="15486">2.5.38.1</a></span>
@@ -2301,9 +2323,31 @@ See table <a href="#15192">2.5.49.4.1</a> for details of which operand types are
 The shr.un instruction shifts <i>value</i> (int32, int 64 or intptr) right by the number of bits specified by <i>shiftAmount</i>. <i>shiftAmount</i> is of type int32 or intptr. The return value is unspecified if <i>shiftAmount</i> is greater than or equal to the width of <i>value</i>. shr.un inserts a zero bit on each shift.</div>
 <div style="margin-left:63px"><span class="label"><a name="15206">2.5.51.4</a></span>
 See table <a href="#15192">2.5.49.4.1</a> for details of which operand types are allowed, and their corresponding result type.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15205">2.5.52</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15988">2.5.52</a></span>
+<b>sizeof – load the si ze, in bytes,of a type</b></h4>
+<div style="margin-left:63px"><span class="label"><a name="15990">2.5.52.1</a></span>
+<table border=1 cellspacing=0 CELLPADDING=3 >
+<tr>
+<td>
+<b>Binary</b> </td>
+<td>
+<br><b>Text Format</b> </td>
+<td>
+<br><b>Description</b> </td></tr>
+<tr>
+<td>
+<br>FE 1C &lt;T&gt; </td>
+<td>
+<br>sizeof type </td>
+<td>
+<br>Push the size, in bytes, of a type as an uint32.</td></tr></table></div>
+<div style="margin-left:63px"><span class="label"><a name="15989">2.5.52.2</a></span>
+<code>…, -&gt; …, size </code></div>
+<div style="margin-left:63px"><span class="label"><a name="15991">2.5.52.3</a></span>
+Returns the size, in bytes, of a given type as uint32. sizeof returns the total size that would be occupied by each element in an array of this type – including any padding the implementation chooses to add. Specifically, array elements lie sizeof bytes apart</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15205">2.5.53</a></span>
 sub – subtract numeric values </h4>
-<div style="margin-left:63px"><span class="label"><a name="15223">2.5.52.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15223">2.5.53.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2319,15 +2363,15 @@ sub – subtract numeric values </h4>
 <br>sub </td>
 <td>
 <br>Subtract value2 from value1, returning a new value. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15224">2.5.52.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15224">2.5.53.2</a></span>
 <code>…, value1, value2 -&gt; …, result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15225">2.5.52.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15225">2.5.53.3</a></span>
 The sub instruction subtracts <i>value2 </i>from<i> value1 </i>(value1 - value2, i.e. right side was pushed last) and pushes the result on the stack. Overflow is not detected for the integral operations; for floating-point operands, sub returns +inf on positive overflow, -inf on negative overflow, and zero on floating-point underflow.</div>
-<div style="margin-left:63px"><span class="label"><a name="15226">2.5.52.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15226">2.5.53.4</a></span>
 The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14996">2.5.8.4.1</a>.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15227">2.5.53</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15227">2.5.54</a></span>
 xor – bitwise XOR </h4>
-<div style="margin-left:63px"><span class="label"><a name="15228">2.5.53.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15228">2.5.54.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2343,11 +2387,11 @@ xor – bitwise XOR </h4>
 <br>xor </td>
 <td>
 <br>Bitwise xor of integer values, returns an integer. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15229">2.5.53.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15229">2.5.54.2</a></span>
 <code>..., value1, value2 -&gt; ..., result</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15230">2.5.53.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15230">2.5.54.3</a></span>
 The xor instruction computes the bitwise xor of <i>value1</i> and <i>value2</i>and leaves the result on the stack.</div>
-<div style="margin-left:63px"><span class="label"><a name="15232">2.5.53.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15232">2.5.54.4</a></span>
 The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14997">2.5.9.3.1</a>.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="15447">2.6</a></span>
 Constants</h4>
@@ -2411,22 +2455,10 @@ TODO: pcall and raise</div>
 <div style="margin-left:45px"><span class="label"><a name="15529">2.9.2</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15530">2.9.2.1</a></span>
-<code>StatementSequence = { Statement }<br />Statement = ('call' | 'calli') qualident | 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' qualident '.' ident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' qualident '.' ident | Switch | WhileDo</code></div>
-<h4 style="margin-left:45px"><span class="label"><a name="15309">2.9.3</a></span>
-<b>call – call a function </b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15310">2.9.3.1</a></span>
-See <a href="#14991">2.5.10</a>.</div>
-<div style="margin-left:63px"><span class="label"><a name="15311">2.9.3.2</a></span>
-Call pop if the function returns a value.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15312">2.9.4</a></span>
-<b>calli – indirect function call </b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15313">2.9.4.1</a></span>
-See <a href="#15008">2.5.11</a>.</div>
-<div style="margin-left:63px"><span class="label"><a name="15314">2.9.4.2</a></span>
-Call pop if the function returns a value.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15264">2.9.5</a></span>
+<code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' qualident '.' ident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' qualident '.' ident | Switch | WhileDo</code></div>
+<h4 style="margin-left:45px"><span class="label"><a name="15264">2.9.3</a></span>
 <b>disp</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15304">2.9.5.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15304">2.9.3.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2442,13 +2474,13 @@ Call pop if the function returns a value.</div>
 <br>disp</td>
 <td>
 <br>Free memory previously allocated by Newarr or Newobj. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15317">2.9.5.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15317">2.9.3.2</a></span>
 <code>…,addr-&gt; …,</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15305">2.9.5.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15305">2.9.3.3</a></span>
 TODO: type to dispose</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15196">2.9.6</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15196">2.9.4</a></span>
 <b>exit</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15298">2.9.6.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15298">2.9.4.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2464,13 +2496,13 @@ TODO: type to dispose</div>
 <br>exit </td>
 <td>
 <br>Breaks the enclosing Loop statement. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15319">2.9.6.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15319">2.9.4.2</a></span>
 <code>…,-&gt; …,</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15299">2.9.6.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15299">2.9.4.3</a></span>
 TODO</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15194">2.9.7</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15194">2.9.5</a></span>
 <b>goto</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15302">2.9.7.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15302">2.9.5.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2486,13 +2518,13 @@ TODO</div>
 <br>goto <i>name</i> </td>
 <td>
 <br>Jump to a label declared in the same scope. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15320">2.9.7.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15320">2.9.5.2</a></span>
 <code>…,-&gt; …,</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15303">2.9.7.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15303">2.9.5.3</a></span>
 TODO</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15080">2.9.8</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15080">2.9.6</a></span>
 <b>if then else</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15288">2.9.8.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15288">2.9.6.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2529,17 +2561,17 @@ TODO</div>
 <br>end </td>
 <td>
 <br>End of the If or Else statement sequence. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15321">2.9.8.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15321">2.9.6.2</a></span>
 <code>…,-&gt; …,</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15532">2.9.8.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15532">2.9.6.3</a></span>
 Syntax of textual representation:</div>
-<div style="margin-left:81px"><span class="label"><a name="15533">2.9.8.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15533">2.9.6.3.1</a></span>
 <code>IfThenElse = 'IF' Expression 'THEN' StatementSequence <br />[ 'ELSE' StatementSequence ] 'END'</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15289">2.9.8.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15289">2.9.6.4</a></span>
 TODO</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15195">2.9.9</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15195">2.9.7</a></span>
 <b>label</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15300">2.9.9.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15300">2.9.7.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2555,13 +2587,13 @@ TODO</div>
 <br>label <i>name</i> </td>
 <td>
 <br>Specifies a label which can be referenced in Goto statements. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15322">2.9.9.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15322">2.9.7.2</a></span>
 <code>…,-&gt; …,</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15301">2.9.9.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15301">2.9.7.3</a></span>
 TODO</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15287">2.9.10</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15287">2.9.8</a></span>
 <b>line</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15290">2.9.10.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15290">2.9.8.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2577,13 +2609,13 @@ TODO</div>
 <br>line <i>num</i> </td>
 <td>
 <br>The line number <i>num</i> in the source file of the module. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15323">2.9.10.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15323">2.9.8.2</a></span>
 <code>…,-&gt; …,</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15291">2.9.10.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15291">2.9.8.3</a></span>
 TODO</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15083">2.9.11</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15083">2.9.9</a></span>
 <b>loop</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15296">2.9.11.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15296">2.9.9.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2606,17 +2638,17 @@ TODO</div>
 <br>end </td>
 <td>
 <br>End of the Loop statement sequence. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15324">2.9.11.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15324">2.9.9.2</a></span>
 <code>…,-&gt; …,</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15544">2.9.11.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15544">2.9.9.3</a></span>
 Syntax of textual representation:</div>
-<div style="margin-left:81px"><span class="label"><a name="15545">2.9.11.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15545">2.9.9.3.1</a></span>
 <code>Loop = 'LOOP' StatementSequence 'END'</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15297">2.9.11.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15297">2.9.9.4</a></span>
 TODO</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15167">2.9.12</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15167">2.9.10</a></span>
 <b>pop – remove the top element of the stack </b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15168">2.9.12.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15168">2.9.10.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2632,13 +2664,13 @@ TODO</div>
 <br>pop </td>
 <td>
 <br>Pop <i>value</i> from the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15169">2.9.12.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15169">2.9.10.2</a></span>
 <code>…, value -&gt; …</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15170">2.9.12.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15170">2.9.10.3</a></span>
 The pop instruction removes the top element from the stack.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15082">2.9.13</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15082">2.9.11</a></span>
 <b>repeat until</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15295">2.9.13.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15295">2.9.11.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2668,17 +2700,17 @@ The pop instruction removes the top element from the stack.</div>
 <br>end </td>
 <td>
 <br>End of the Until condition expression. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15318">2.9.13.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15318">2.9.11.2</a></span>
 <code>…,-&gt; …,</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15535">2.9.13.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15535">2.9.11.3</a></span>
 Syntax of textual representation:</div>
-<div style="margin-left:81px"><span class="label"><a name="15536">2.9.13.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15536">2.9.11.3.1</a></span>
 <code>RepeatUntil = 'REPEAT' StatementSequence 'UNTIL' Expression 'END'</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15292">2.9.13.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15292">2.9.11.4</a></span>
 TODO</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15184">2.9.14</a></span>
-ret – return from method</h4>
-<div style="margin-left:63px"><span class="label"><a name="15185">2.9.14.1</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15184">2.9.12</a></span>
+<b>ret – return from procedure</b></h4>
+<div style="margin-left:63px"><span class="label"><a name="15185">2.9.12.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2693,14 +2725,14 @@ ret – return from method</h4>
 <td>
 <br>ret </td>
 <td>
-<br>Return from method, possibly with a value. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15209">2.9.14.2</a></span>
+<br>Return from procedure, possibly with a value. </td></tr></table></div>
+<div style="margin-left:63px"><span class="label"><a name="15209">2.9.12.2</a></span>
 <code>…, value -&gt; …</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15186">2.9.14.3</a></span>
-Return from the current method. The return type, if any, of the current method determines the type of value to be fetched from the top of the stack and copied onto the stack of the method that called the current method. The evaluation stack for the current method shall be empty except for the value to be returned.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15187">2.9.15</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15186">2.9.12.3</a></span>
+Return from the current procedure. The return type, if any, of the current method determines the type of value to be fetched from the top of the stack and copied onto the stack of the procedure that called the current procedure. The evaluation stack for the current procedure shall be empty except for the value to be returned.</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15187">2.9.13</a></span>
 starg – store a value in an argument slot </h4>
-<div style="margin-left:63px"><span class="label"><a name="15207">2.9.15.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15207">2.9.13.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2723,17 +2755,17 @@ starg – store a value in an argument slot </h4>
 <br>starg_s <i>num</i> </td>
 <td>
 <br>Store <i>value</i> to the argument numbered <i>num</i>, short form. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15208">2.9.15.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15208">2.9.13.2</a></span>
 <code>…, value -&gt; …</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15210">2.9.15.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15210">2.9.13.3</a></span>
 The starg <i>num</i> instruction pops a value from the stack and places it in argument slot <i>num</i>. The type of the value shall match the type of the argument, as specified in the current method’s signature. The starg.s instruction provides an efficient encoding for use with the first 256 arguments.</div>
-<div style="margin-left:63px"><span class="label"><a name="15212">2.9.15.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15212">2.9.13.4</a></span>
 For procedures that take a variable argument list, the starg instructions can be used only for the initial fixed arguments, not those in the variable part of the signature.</div>
-<div style="margin-left:63px"><span class="label"><a name="15213">2.9.15.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15213">2.9.13.5</a></span>
 Storing into arguments that hold an integer value smaller than 4 bytes long truncates the value as it moves from the stack to the argument. Floating-point values are rounded from their native size (type F) to the size associated with the argument.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15274">2.9.16</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15274">2.9.14</a></span>
 stelem – store element to array </h4>
-<div style="margin-left:63px"><span class="label"><a name="15275">2.9.16.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15275">2.9.14.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2749,7 +2781,7 @@ stelem – store element to array </h4>
 <br>stelem <i>etype</i> </td>
 <td>
 <br>Replace array element at <i>index</i> with the <i>value</i> on the stack </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15278">2.9.16.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15278">2.9.14.2</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2800,13 +2832,13 @@ stelem – store element to array </h4>
 <br>stelem_ip </td>
 <td>
 <br>Replace <i>array</i> element at <i>index</i> with the intptr <i>value</i> on the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15276">2.9.16.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15276">2.9.14.3</a></span>
 <code>…, pointer to array, index, value, -&gt; …</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15277">2.9.16.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15277">2.9.14.4</a></span>
 The stelem instruction replaces the value of the element with zero-based index <i>index</i> (of type intptr or int32) in the one-dimensional array <i>array </i>(pointed to by a pointer), with <i>value</i>. The value has the type specified by <i>etype</i> or the instruction suffix. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15279">2.9.17</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15279">2.9.15</a></span>
 stfld – store into a field of an object </h4>
-<div style="margin-left:63px"><span class="label"><a name="15280">2.9.17.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15280">2.9.15.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2822,13 +2854,13 @@ stfld – store into a field of an object </h4>
 <br>stfld <i>field</i> </td>
 <td>
 <br>Replace the <i>value</i> of <i>field</i> of the object <i>obj</i> with <i>value.</i> </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15281">2.9.17.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15281">2.9.15.2</a></span>
 <code>…, pointer to obj, value</code><i><code> </code></i><code>-&gt; …,</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15282">2.9.17.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15282">2.9.15.3</a></span>
 The stfld instruction replaces the value of a field of an <i>obj</i> via a pointer (type intptr) with <i>value</i>. <i>field</i> is a field member reference. stfld pops the value and the pointer off the stack and updates the object.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15211">2.9.18</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15211">2.9.16</a></span>
 <b>stind – store value indirect from stack </b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15214">2.9.18.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15214">2.9.16.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2886,13 +2918,13 @@ The stfld instruction replaces the value of a field of an <i>obj</i> via a point
 <br>stind_ip</td>
 <td>
 <br>Store value of type intptr into memory at address </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15215">2.9.18.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15215">2.9.16.2</a></span>
 <code>…, addr, val -&gt; …</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15216">2.9.18.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15216">2.9.16.3</a></span>
 The stind instruction stores value <i>val</i> at address <i>addr</i> (an intptr type). The address specified by <i>addr</i> shall be aligned to the natural size of <i>val</i>. The results of all instructions that return addresses (e.g., ldloca and ldarga) are safely aligned. For data types larger than 1 byte, the byte ordering is dependent on the target CPU. Code that depends on byte ordering might not run on all platforms. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15217">2.9.19</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15217">2.9.17</a></span>
 stloc – pop value from stack to local variable </h4>
-<div style="margin-left:63px"><span class="label"><a name="15218">2.9.19.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15218">2.9.17.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2943,15 +2975,15 @@ stloc – pop value from stack to local variable </h4>
 <br>stloc_3 </td>
 <td>
 <br>Pop a value from stack into local variable 3. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15219">2.9.19.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15219">2.9.17.2</a></span>
 <code>…, value -&gt; …</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15220">2.9.19.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15220">2.9.17.3</a></span>
 The stloc <i>indx</i> instruction pops the top value off the evaluation stack and moves it into local variable number <i>indx</i>, where local variables are numbered 0 onwards. The type of <i>value</i> shall match the type of the local variable as specified in the current function’s locals signature. The stloc.0, stloc.1, stloc.2, and stloc.3 instructions provide an efficient encoding for the first 4 local variables; the stloc.s instruction provides an efficient encoding for local variables 4–255.</div>
-<div style="margin-left:63px"><span class="label"><a name="15221">2.9.19.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15221">2.9.17.4</a></span>
 Storing into locals that hold an integer value smaller than 4 bytes long truncates the value as it moves from the stack to the local variable. Floating-point values are rounded from their native size (type F) to the size associated with the argument.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15222">2.9.20</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15222">2.9.18</a></span>
 stobj – store a value at an address </h4>
-<div style="margin-left:63px"><span class="label"><a name="15283">2.9.20.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15283">2.9.18.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2967,13 +2999,13 @@ stobj – store a value at an address </h4>
 <br>stobj <i>type</i> </td>
 <td>
 <br>Store a value of type <i>type</i> at an address. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15285">2.9.20.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15285">2.9.18.2</a></span>
 <code>…, dest, src -&gt; …,</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15284">2.9.20.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15284">2.9.18.3</a></span>
 The stobj instruction copies the value <i>src</i> of type <i>type</i> to the address <i>dest</i>. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15493">2.9.21</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15493">2.9.19</a></span>
 <b>stvar – store a module variable</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15494">2.9.21.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15494">2.9.19.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -2989,13 +3021,13 @@ The stobj instruction copies the value <i>src</i> of type <i>type</i> to the add
 <br>stvar <i>var</i> </td>
 <td>
 <br>Replace the value of <i>var</i> with <i>val.</i> </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15495">2.9.21.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15495">2.9.19.2</a></span>
 <code>…, val</code><i><code> </code></i><code>-&gt; …,</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15496">2.9.21.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15496">2.9.19.3</a></span>
 The stvar instruction replaces the value of a module variable with a value from the stack. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15084">2.9.22</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15084">2.9.20</a></span>
 <b>switch</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15306">2.9.22.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15306">2.9.20.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -3039,17 +3071,17 @@ The stvar instruction replaces the value of a module variable with a value from 
 <br>end </td>
 <td>
 <br>End of a Then or the Else statement sequence. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15315">2.9.22.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15315">2.9.20.2</a></span>
 <code>…,-&gt; …,</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15538">2.9.22.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15538">2.9.20.3</a></span>
 Syntax of textual representation:</div>
-<div style="margin-left:81px"><span class="label"><a name="15539">2.9.22.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15539">2.9.20.3.1</a></span>
 <code>Switch = 'SWITCH' Expression { 'CASE' integer { [','] integer } <br />'THEN' StatementSequence } <br />[ 'ELSE' StatementSequence ] 'END'</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15307">2.9.22.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15307">2.9.20.4</a></span>
 TODO</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15081">2.9.23</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15081">2.9.21</a></span>
 <b>while do</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15293">2.9.23.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15293">2.9.21.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -3079,13 +3111,13 @@ TODO</div>
 <br>end </td>
 <td>
 <br>End of the Do statement sequence. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15316">2.9.23.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15316">2.9.21.2</a></span>
 <code>…,-&gt; …,</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15541">2.9.23.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15541">2.9.21.3</a></span>
 Syntax of textual representation:</div>
-<div style="margin-left:81px"><span class="label"><a name="15542">2.9.23.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15542">2.9.21.3.1</a></span>
 <code>WhileDo = 'WHILE' Expression 'DO' StatementSequence 'END'</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15294">2.9.23.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15294">2.9.21.4</a></span>
 TODO</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14957">2.10</a></span>
 Modules</h4>
@@ -3188,10 +3220,10 @@ TODO: type checking rules, structral compatibility, packing</div>
 <br><code>| 'ldind_u4' | 'ldind_r4' | 'ldind_u8' | 'ldind_r8' | 'ldind_ip'</code>
 <br><code>| ('ldloc'|'ldloc_s'|'ldloca'|'ldloca_s')(unsigned|ident)</code>
 <br><code>| 'ldloc_0' | 'ldloc_1' | 'ldloc_2' | 'ldloc_3' | 'ldnull' </code>
-<br><code>| 'ldobj' qualident | 'ldproc' qualident | 'ldstr' string</code>
+<br><code>| 'ldobj' qualident | 'ldproc' qualident | 'ldstr' (string|hexstring)</code>
 <br><code>| ('ldvar'|'ldvara') qualident | 'mul' | 'neg' </code>
 <br><code>| ('newarr'|'newvla'|'newobj') qualident </code>
-<br><code>| 'not' | 'or' | 'rem' | 'rem_un' | 'shl' | 'shr' | 'shr_un' | 'sub' | 'xor'</code></div>
+<br><code>| 'not' | 'or' | 'rem' | 'rem_un' | 'shl' | 'shr' | 'shr_un' <br /><br />| 'sizeof' qualident | 'sub' | 'xor'</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15745">3.14</a></span><a href="#15733">&#x21B3;</a>
 <code>ConstExpression  = qualident | integer | real | string | hexstring </code></div>
 <div style="margin-left:27px"><span class="label"><a name="15746">3.15</a></span><a href="#15737">&#x21B3;</a>
@@ -3206,7 +3238,7 @@ TODO: type checking rules, structral compatibility, packing</div>
 <pre><code>ReturnType       = NamedType</code></pre>
 <pre><code>FPSection        = [ident { [','] ident } ':'] NamedType</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15531">3.19</a></span><a href="#15530">&#x21B3;</a>
-<code>StatementSequence = { Statement }<br />Statement = ('call' | 'calli') qualident | 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' qualident '.' ident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' qualident '.' ident | Switch | WhileDo</code></div>
+<code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' qualident '.' ident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' qualident '.' ident | Switch | WhileDo</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15528">3.20</a></span><a href="#15499">&#x21B3;</a>
 <pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 END ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>

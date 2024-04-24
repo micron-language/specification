@@ -180,7 +180,7 @@ FormalParameters ::= '(' [ FPSection { \LA: 1:ident | 2:ident\ [';'] FPSection }
 
 ReturnType ::= [POINTER TO | '^'] NamedType
 
-FPSection ::= ident { [','] ident } ':' FormalType 
+FPSection ::= [CONST] ident { [','] ident } ':' FormalType 
 
 FormalType ::= type
 

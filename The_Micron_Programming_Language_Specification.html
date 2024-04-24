@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2024-04-16, work in progress</div>
+2024-04-24, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -837,21 +837,23 @@ Syntax:</div>
 <pre><code>ArrayType  = ARRAY [ length ] OF type | '[' [ length ] ']' type</code></pre>
 <pre><code>length     = ConstExpression | VAR varlength</code></pre>
 <pre><code>varlength  = expression</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="14269">2.6.5.3</a></span><span class="ident">NOTE</span>
-In contrast to Oberon and Oberon+, Micron only supports one-dimensional length lists. But it is still possible that the type of the array is yet another array.</div>
-<div style="margin-left:63px"><span class="label"><a name="14263">2.6.5.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14263">2.6.5.3</a></span>
 Arrays declared without length are called <i>open arrays</i>. They are restricted to pointer base types (see <a href="#14278">2.6.7 Pointer types</a>).</div>
-<div style="margin-left:63px"><span class="label"><a name="14264">2.6.5.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="16001">2.6.5.4</a></span><span class="ident">NOTE</span>
+In contrast to Oberon and Oberon+, in Micron only the first dimension of a multi-dimensional array can be an open array.</div>
+<div style="margin-left:63px"><span class="label"><a name="15994">2.6.5.5</a></span>
+Arrays of arrays are stored in row-major order.</div>
+<div style="margin-left:63px"><span class="label"><a name="14264">2.6.5.6</a></span>
 Examples:</div>
-<div style="margin-left:81px"><span class="label"><a name="14265">2.6.5.5.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14265">2.6.5.6.1</a></span>
 <pre><code>array 10 of integer</code></pre>
-<pre><code>array of char</code></pre>
+<pre><code>pointer to array of char</code></pre>
 <pre><code>[N] T</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="14266">2.6.5.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14266">2.6.5.7</a></span>
 Local variables of array type can have variable lengths calculated at runtime; in this case the LengthList is prefixed with the VAR reserved word; the expression cannot reference other local variables of the same scope.</div>
-<div style="margin-left:63px"><span class="label"><a name="14267">2.6.5.7</a></span><span class="ident">NOTE</span>
+<div style="margin-left:63px"><span class="label"><a name="14267">2.6.5.8</a></span><span class="ident">NOTE</span>
 In contrast to array pointers allocated with NEW(), variable length arrays (VLA) can be allocated on the stack instead of the heap (depending on the compiler and supported options), which makes them attractive to low-resource embedded applications where dynamic memory allocation is not feasible. It is also interesting to note that already the length/range of ALGOL 60 arrays was defined using an ordinary arithmetic expression and thus could be calculated at runtime; even ALGOL W had this feature, but unfortunately it was removed in Pascal, and even Oberon-07 still uses a const expression for array lengths evaluated at compile time. </div>
-<div style="margin-left:63px"><span class="label"><a name="14268">2.6.5.8</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14268">2.6.5.9</a></span>
 Array lengths of at least MAX(UINT32) shall be accepted by a compiler, for constant, dynamic and variable lengths.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14270">2.6.6</a></span>
 Record types</h4>
@@ -1088,24 +1090,26 @@ The operators <code>+</code>, <code>-</code>, <code>*</code>, and <code>/</code>
 When used as a binary operator, both operands must be of either of signed integer, unsigned integer or floating point type.</div>
 <div style="margin-left:81px"><span class="label"><a name="14480">2.8.3.4.4</a></span><span class="ident">NOTE</span>
 This is the same rule as in Modula-2, <i>where both operands must be either of type CARDINAL [...], in which case the result is of the type CARDINAL, or they must both be of type INTEGER [...], in which case the result is of type INTEGER</i>. The Ada language has a similar rule. The rules of the C language in contrast are much more complicated (see e.g. <a href="https://wiki.sei.cmu.edu/confluence/display/c/INT02-C.+Understand+integer+conversion+rules"><u>here</u></a>), but it is always possible to add explicit conversions when migrating C to Micron. </div>
-<div style="margin-left:81px"><span class="label"><a name="14475">2.8.3.4.5</a></span>
-The type of the result is the type of that operand which includes the type of the other operand (see <a href="#14255">2.6.4.7</a>). TODO</div>
-<div style="margin-left:81px"><span class="label"><a name="15820">2.8.3.4.6</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15974">2.8.3.4.5</a></span>
+As an exception, if one of the operands is an unsigned integer constant and the other operand is of type integer, the unsigned integer constant is converted to the smallest integer type which includes the constant value.</div>
+<div style="margin-left:81px"><span class="label"><a name="14475">2.8.3.4.6</a></span>
+The type of the result is the type of that operand which includes the type of the other operand (see <a href="#14255">2.6.4.7</a>).</div>
+<div style="margin-left:81px"><span class="label"><a name="15820">2.8.3.4.7</a></span>
 The operator '<code>/</code>' applies to real operands only.</div>
-<div style="margin-left:81px"><span class="label"><a name="14473">2.8.3.4.7</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14473">2.8.3.4.8</a></span>
 The operators <code>DIV</code> and <code>MOD</code> apply to integer operands only. They are related by the following formulas defined for any <code>x</code> and positive divisors <code>y</code>:</div>
-<div style="margin-left:99px"><span class="label"><a name="14331">2.8.3.4.7.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14331">2.8.3.4.8.1</a></span>
 <pre><code>x = (x DIV y) * y + (x MOD y)</code></pre>
 <pre><code>0 &lt;= (x MOD y) &lt; y</code></pre></div>
-<div style="margin-left:81px"><span class="label"><a name="14474">2.8.3.4.8</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14474">2.8.3.4.9</a></span>
 When used as monadic (unary) operators, '-' denotes sign inversion and '+' denotes the identity operation. If the unary '-' or '+' is applied to an operand of unsigned integer type, the result is the next larger signed integer type, or an error if the operand is of type UIN64. Otherwise the type of the result is the same as the type of the operand.</div>
-<div style="margin-left:81px"><span class="label"><a name="14332">2.8.3.4.9</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14332">2.8.3.4.10</a></span>
 Examples:</div>
-<div style="margin-left:99px"><span class="label"><a name="14333">2.8.3.4.9.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14333">2.8.3.4.10.1</a></span>
 <pre><code>x    y    x DIV y    x MOD y</code></pre>
 <pre><code>5    3    1          2</code></pre>
 <pre><code>-5   3    -2         1</code></pre></div>
-<div style="margin-left:81px"><span class="label"><a name="14334">2.8.3.4.10</a></span><span class="ident">NOTE</span>
+<div style="margin-left:81px"><span class="label"><a name="14334">2.8.3.4.11</a></span><span class="ident">NOTE</span>
 Micron doesn’t do overflow checks. If the representation of the result of an arithmetic operation would require a wider integer type than provided by the type of the expression, the behaviour is undefined; e.g. <code>MAX(INT32)+1</code> causes an overflow, i.e. the result could be MIN(INT32) or anything else. </div>
 <h4 style="margin-left:63px"><span class="label"><a name="14335">2.8.3.5</a></span>
 Set Operators</h4>
@@ -1183,12 +1187,18 @@ The relations <code>=</code> and <code>#</code> also apply to BOOLEAN, SYMBOL, s
 <div style="margin-left:81px"><span class="label"><a name="15808">2.8.3.6.5</a></span>
 The IN relation applies to SET or symbol enumerations.</div>
 <div style="margin-left:81px"><span class="label"><a name="15804">2.8.3.6.6</a></span>
-In general, both operands must be of the same type. If the operand are of numeric type, both must be either of signed integer, unsigned integer or floating point type. String literals, CHAR and CHAR array operands can be mixed; the same applies to SYMBOL and symbol enumeration operands. If both operands are pointers, the specific type doesn't matter; the same applies to procedure types. </div>
-<div style="margin-left:81px"><span class="label"><a name="14674">2.8.3.6.7</a></span>
+In general, both operands must be of the same type. If the operand are of numeric type, both must be either of signed integer, unsigned integer or floating point type. </div>
+<div style="margin-left:81px"><span class="label"><a name="15975">2.8.3.6.7</a></span>
+If one of the operands is an unsigned integer constant and the other operand is of type integer, the unsigned integer constant is converted to the smallest integer type which includes the constant value. </div>
+<div style="margin-left:81px"><span class="label"><a name="15976">2.8.3.6.8</a></span>
+String literals, CHAR and CHAR array operands can be mixed; the same applies to SYMBOL and symbol enumeration operands. </div>
+<div style="margin-left:81px"><span class="label"><a name="15977">2.8.3.6.9</a></span>
+If both operands are pointers, the specific type doesn't matter; the same applies to procedure types. </div>
+<div style="margin-left:81px"><span class="label"><a name="14674">2.8.3.6.10</a></span>
 <code>x IN s</code> stands for <i>x is an element of s</i>. If <code>s</code> is of type SET, <code>x</code> must be of an integer type. If <code>s</code> is of type symbol enumeration, <code>x</code> must be a SYMBOL type. </div>
-<div style="margin-left:81px"><span class="label"><a name="14342">2.8.3.6.8</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14342">2.8.3.6.11</a></span>
 Examples:</div>
-<div style="margin-left:99px"><span class="label"><a name="14343">2.8.3.6.8.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14343">2.8.3.6.11.1</a></span>
 <pre><code>1991                   // integer</code></pre>
 <pre><code>i div 3                // integer</code></pre>
 <pre><code>~p or q                // boolean</code></pre>
@@ -1294,10 +1304,6 @@ If an expression <code>e</code> of type T<sub>e</sub> is assigned to a variable 
 if T<sub>v</sub> and T<sub>e</sub> are the same record types, all fields of T<sub>e</sub> are assigned to the corresponding fields of T<sub>v</sub>.</div>
 <div style="margin-left:81px"><span class="label"><a name="14369">2.9.5.3.2</a></span>
 if T<sub>v</sub> is <code>ARRAY n OF CHAR</code> and <code>e</code> is a string of length m &lt; n, <code>v[i]</code> becomes e<sub>i</sub> for i = 0..m-1 and <code>v[m]</code> becomes 0X;</div>
-<div style="margin-left:81px"><span class="label"><a name="14370">2.9.5.3.3</a></span>
-if T<sub>v</sub> and T<sub>e</sub> are open or non-open CHAR arrays, <code>v[i]</code> becomes <code>e[i]</code> for i = 0..STRLEN(e); if LEN(v) &lt;= STRLEN(e) or <code>e</code> is not terminated by 0X the program halts;</div>
-<div style="margin-left:81px"><span class="label"><a name="14371">2.9.5.3.4</a></span>
-if T<sub>v</sub> is an open CHAR array and <code>e</code> is a string <code>v[i]</code> becomes <code>e[i]</code> for i = 0..LEN(e)-1 and <code>v[LEN(e)]</code> becomes 0X; if LEN(v) &lt;= LEN(e) the program halts.</div>
 <div style="margin-left:63px"><span class="label"><a name="14372">2.9.5.4</a></span>
 Examples:</div>
 <div style="margin-left:81px"><span class="label"><a name="14373">2.9.5.4.1</a></span>
@@ -1529,22 +1535,24 @@ Formal parameters are identifiers declared in the formal parameter list of a pro
 <div style="margin-left:63px"><span class="label"><a name="14484">2.11.12.2</a></span><span class="ident">NOTE</span>
 Oberon and Oberon+ support VAR parameters, which are not necessary in Micron, because the formal parameter can be a pointer instead and the '@' operator can be applied to the designator passed as actual parameter.</div>
 <div style="margin-left:63px"><span class="label"><a name="14483">2.11.12.3</a></span>
-The scope of a formal parameter extends from its declaration to the end of the procedure block in which it is declared. A function procedure without parameters must have an empty parameter list. It must be called by a function designator whose actual parameter list is empty too. The result type of a procedure cannot be an open array.</div>
+The scope of a formal parameter extends from its declaration to the end of the procedure block in which it is declared. A function procedure without parameters must have an empty parameter list. It must be called by a function designator whose actual parameter list is empty too. </div>
 <div style="margin-left:63px"><span class="label"><a name="14488">2.11.12.4</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14489">2.11.12.4.1</a></span>
 <pre><code>FormalParameters = '(' [ FPSection { [';'] FPSection } [ [';'] '..'] ] ')'</code></pre>
 <pre><code>                   [ ':' ReturnType ]</code></pre>
 <pre><code>ReturnType       = [ POINTER TO | '^' ] NamedType</code></pre>
-<pre><code>FPSection        = ident { [','] ident } ':' FormalType</code></pre>
+<pre><code>FPSection        = [CONST] ident { [','] ident } ':' FormalType</code></pre>
 <pre><code>FormalType       = type</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="15961">2.11.12.5</a></span>
 Let T<sub>f</sub> be the type of a formal parameter <code>f</code> and T<sub>a</sub> the type of the corresponding actual parameter <code>a</code>. T<sub>a</sub> must be <i>parameter compatible</i> to <code>f</code> (see <a href="#14532">3 Definition of terms</a>).</div>
-<div style="margin-left:63px"><span class="label"><a name="14490">2.11.12.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="16021">2.11.12.6</a></span>
+CONST parameters are read-only in the procedure body. The read-only feature is transitive, i.e. also the variables, elements or fields designated from a CONST parameter are read-only. </div>
+<div style="margin-left:63px"><span class="label"><a name="14490">2.11.12.7</a></span>
 Procedures can have a variable number of parameters, which is indicated by '..' (ellipsis). In that case the additional parameters (called &quot;variable parameters&quot;) can be accessed in the procedure body using the VARARG() and VARARGS() predeclared procedures. Only actual parameters of basic or pointer type (including enumerations and procedure types) can be passed as variable parameters.</div>
-<div style="margin-left:63px"><span class="label"><a name="14491">2.11.12.7</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14491">2.11.12.8</a></span>
 Examples:</div>
-<div style="margin-left:81px"><span class="label"><a name="14492">2.11.12.7.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14492">2.11.12.8.1</a></span>
 <pre><code>proc ReadInt(x: pointer to integer)</code></pre>
 <pre><code>  var i: integer; ch: char</code></pre>
 <pre><code>begin i := 0; Read(ch)</code></pre>
@@ -1689,9 +1697,11 @@ Equal types</h4>
 Two types T<sub>a</sub> and T<sub>b</sub> are equal if</div>
 <div style="margin-left:63px"><span class="label"><a name="14550">3.7.1.1</a></span>
 T<sub>a</sub> and T<sub>b</sub> are the <i>same type</i>, or</div>
-<div style="margin-left:63px"><span class="label"><a name="14552">3.7.1.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15996">3.7.1.2</a></span>
+T<sub>a</sub> and T<sub>b</sub> are open array types with <i>equal element types</i>, or</div>
+<div style="margin-left:63px"><span class="label"><a name="14552">3.7.1.3</a></span>
 T<sub>a</sub> and T<sub>b</sub> are procedure types whose formal parameters <i>match</i>, or</div>
-<div style="margin-left:63px"><span class="label"><a name="14553">3.7.1.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14553">3.7.1.4</a></span>
 T<sub>a</sub> and T<sub>b</sub> are pointer types with <i>equal</i> base types.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14554">3.8</a></span>
 Type inclusion</h4>
@@ -1704,26 +1714,34 @@ An expression e of type T<sub>e</sub> is assignment compatible with a variable v
 <div style="margin-left:63px"><span class="label"><a name="14558">3.9.1.1</a></span>
 T<sub>e</sub> and T<sub>v</sub> are the <i>same type</i>;</div>
 <div style="margin-left:63px"><span class="label"><a name="14559">3.9.1.2</a></span>
-T<sub>e</sub> and T<sub>v</sub> are numeric types and T<sub>v</sub> <i>includes</i> T<sub>e</sub></div>
+T<sub>e</sub> and T<sub>v</sub> are numeric types and T<sub>v</sub> <i>includes</i> T<sub>e</sub>;</div>
 <div style="margin-left:63px"><span class="label"><a name="14564">3.9.1.3</a></span>
 T<sub>e</sub> and T<sub>v</sub> are pointer types and the pointers have <i>equal</i> base types;</div>
-<div style="margin-left:63px"><span class="label"><a name="14565">3.9.1.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15999">3.9.1.4</a></span>
+T<sub>v</sub> is a pointer to one dimensional open array, T<sub>e</sub> is a pointer to any one or more dimensional array, and their element types are <i>equal;</i></div>
+<div style="margin-left:63px"><span class="label"><a name="16002">3.9.1.5</a></span>
+T<sub>v</sub> is a pointer to a record T<sub>R </sub>and T<sub>e</sub> is a pointer to a record the first field of which is of type T<sub>R</sub>, or is again a record the first field of which is of type T<sub>R</sub>.</div>
+<div style="margin-left:63px"><span class="label"><a name="14565">3.9.1.6</a></span>
 T<sub>v</sub> is a pointer or a procedure type and <code>e</code> is NIL;</div>
-<div style="margin-left:63px"><span class="label"><a name="14672">3.9.1.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15964">3.9.1.7</a></span>
+T<sub>e</sub> and T<sub>v</sub> are pointer types and T<sub>v</sub> is a POINTER TO ANY;</div>
+<div style="margin-left:63px"><span class="label"><a name="14672">3.9.1.8</a></span>
 T<sub>v</sub> is an enumeration type and <code>e</code> is a valid element of the enumeration;</div>
-<div style="margin-left:63px"><span class="label"><a name="14567">3.9.1.6</a></span>
-T<sub>v</sub> is an array of CHAR, T<sub>e</sub> is a string literal, and STRLEN(e) &lt; LEN(v);</div>
-<div style="margin-left:63px"><span class="label"><a name="14568">3.9.1.7</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14567">3.9.1.9</a></span>
+T<sub>v</sub> is a non-open array of CHAR, T<sub>e</sub> is a string, and STRLEN(e) &lt; LEN(v);</div>
+<div style="margin-left:63px"><span class="label"><a name="14568">3.9.1.10</a></span>
 T<sub>v</sub> is a procedure type and <code>e</code> is the name of a procedure whose formal parameters <i>match</i> those of T<sub>v</sub>.</div>
-<div style="margin-left:45px"><span class="label"><a name="15947">3.9.2</a></span>
-TODO: The address of a struct S can be assigned to a pointer to T if the first field of S is of type T.</div>
+<div style="margin-left:63px"><span class="label"><a name="16003">3.9.1.11</a></span>
+T<sub>v</sub> is a signed integer and <code>e</code> is an unsigned integer constant, and T<sub>v</sub> <i>includes</i> the smallest integer type necessary to represent <code>e</code>.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14569">3.10</a></span>
 Parameter compatible</h4>
 <div style="margin-left:45px"><span class="label"><a name="14570">3.10.1</a></span>
 An actual parameter <code>a</code> of type T<sub>a</sub> is parameter compatible with a formal parameter <code>f</code> of type T<sub>f</sub> if</div>
 <div style="margin-left:63px"><span class="label"><a name="14571">3.10.1.1</a></span>
 T<sub>f</sub> and T<sub>a</sub> are <i>equal</i> types, or</div>
-<div style="margin-left:63px"><span class="label"><a name="14572">3.10.1.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="16022">3.10.1.2</a></span>
+T<sub>f</sub> is a pointer to array of CHAR, <code>f</code> is CONST, and <code>a</code> is string literal, or</div>
+<div style="margin-left:63px"><span class="label"><a name="14572">3.10.1.3</a></span>
 T<sub>a</sub> is <i>assignment compatible</i> with T<sub>f</sub></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14579">3.11</a></span>
 Expression compatible</h4>
@@ -2030,7 +2048,7 @@ The result types of two procedures match if they are either the <i>same type</i>
 <pre><code>FormalParameters = '(' [ FPSection { [';'] FPSection } [ [';'] '..'] ] ')'</code></pre>
 <pre><code>                   [ ':' ReturnType ]</code></pre>
 <pre><code>ReturnType       = [ POINTER TO | '^' ] NamedType</code></pre>
-<pre><code>FPSection        = ident { [','] ident } ':' FormalType</code></pre>
+<pre><code>FPSection        = [CONST] ident { [','] ident } ':' FormalType</code></pre>
 <pre><code>FormalType       = type</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14624">4.34</a></span><a href="#14501">&#x21B3;</a>
 <pre><code>module     = MODULE ident [ MetaParams ] [';']</code></pre>
@@ -2575,7 +2593,7 @@ Predeclared function procedures</h4>
 <br>Returns an opaque value of the built-in type VA_LIST which can be passed as argument to another procedure. Only valid in a function declared with variable arguments.</td></tr></table></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14777">6.2</a></span>
 Predeclared proper procedures</h4>
-<div style="margin-left:45px"><span class="label"><a name="15952">6.2.1</a></span>
+<div style="margin-left:45px"><span class="label"><a name="15971">6.2.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 ><thead>
 <tr>
 <td>
@@ -2723,18 +2741,18 @@ Predeclared proper procedures</h4>
 <br>call procedure type p with arguments a<sub>0</sub>…​a<sub>n</sub> corresponding to the parameter list of p; e becomes nil in normal case and gets the SYMBOL to RAISE() otherwise</td></tr>
 <tr>
 <td>
-<br>PRINT(a<sub>0</sub>,…​,a<sub>n</sub>)</td>
+<br>PRINT(a)</td>
 <td>
-<br>a<sub>i</sub>: basic type, string or char array</td>
+<br>a: basic type, string or char array</td>
 <td>
-<br>prints the concatenation of the arguments to standard output, not ending the line</td></tr>
+<br>prints the argument to standard output, not terminating the line; for debugging and logging purpose only</td></tr>
 <tr>
 <td>
-<br>PRINTLN(a<sub>0</sub>,…​,a<sub>n</sub>)</td>
+<br>PRINTLN(a)</td>
 <td>
-<br>a<sub>i</sub>: basic type, string or char array</td>
+<br>a: basic type, string or char array</td>
 <td>
-<br>prints a line to the standard output consisting of the concatenation of the arguments</td></tr>
+<br>prints the argument to the standard output and terminates the line; for debugging and logging purpose only</td></tr>
 <tr>
 <td>
 <br>RAISE(e)</td>

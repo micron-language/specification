@@ -29,7 +29,7 @@ hexstringdelim- ::= '#'
 comment- ::= '(*' '*)' '//'
 Comment ::=
 
-qualident ::= [\LA: 1:ident & 2:'.'\ ImportPath ident '.'] ident
+qualident ::= {\LA: 1:ident & 2:'.'\ ident '.'} ident    // merged ImportPath
 identdef  ::= ident ['*']
 
 TypeDeclaration ::= identdef '=' type
@@ -46,16 +46,16 @@ IdentList  ::= identdef { [','] identdef }
 
 PointerType ::= ( 'POINTER' 'TO' | '^' ) NamedType
 
-ProcedureType ::= ('PROCEDURE'|'PROC') [FormalParameters]
+ProcedureType ::= (PROCEDURE|PROC) [FormalParameters]
 
 VariableDeclaration ::= IdentList ':' NamedType
 
-ProcedureDeclaration ::= ( 'PROCEDURE' | 'PROC' ) identdef  (
+ProcedureDeclaration ::= ( PROCEDURE | PROC ) identdef  (
                        [ FormalParameters ] ( ['INLINE'|'INVAR'|'INIT'] [ ';' ] ProcedureBody  | \LL:2\ [ ';' ] 'EXTERN' [ident] )
                        | '=' qualident )
 
-ProcedureBody        ::= ['VAR' { \LA: 1:(ident&!'BEGIN')\ LocalDeclaration [';'] }] 
-                                        'BEGIN' StatementSequence 'END' ident
+ProcedureBody*        ::= [VAR { LocalDeclaration [';'] }] 
+                                        BEGIN StatementSequence END ident
 
 LocalDeclaration     ::= IdentList ':' NamedType
 
@@ -65,18 +65,18 @@ FPSection        ::= ident { [','] ident } ':' NamedType
 
 module     ::= 'MODULE' ident [ MetaParams ] [';'] 
                         { ImportList | DeclarationSequence }
-	                'END' ident ['.']
-ImportList ::= 'IMPORT' import { [','] import } [';']
+	                END ident ['.']
+ImportList ::= IMPORT import { [','] import } [';']
 import     ::= [ \LL:2\ ident ':=' ] ImportPath ident [ MetaActuals ] 
 ImportPath ::= { \LA: 1:ident&2:'.'\ ident '.' }
 
-DeclarationSequence  ::= { 'TYPE' { \LA: 1:(ident&!('PROC'|'PROCEDURE'|'VAR'))\ TypeDeclaration [';'] }
-	           | 'VAR' { \LA: 1:(ident&!('PROC'|'PROCEDURE'|'TYPE'))\ VariableDeclaration [';'] }
+DeclarationSequence*  ::= { TYPE {  TypeDeclaration [';'] }
+	           | VAR { VariableDeclaration [';'] }
 	           | ProcedureDeclaration [';'] }
 	
 Expression ::= { ExpInstr }
 
-ExpInstr ::= 'ADD' | 'AND' | ('CALL' | 'CALLI') qualident | 'CASTPTR' qualident
+ExpInstr* ::= 'ADD' | 'AND' | ('CALL' | 'CALLI') qualident | 'CASTPTR' qualident
                       | 'CEQ' | 'CGT' | 'CGT_UN' | 'CLT' | 'CLT_UN' 
                       | 'CONV_I1' | 'CONV_I2' | 'CONV_I4' | 'CONV_I8' | 'CONV_R4' | 'CONV_R8'
                       | 'CONV_U1' | 'CONV_U2' | 'CONV_U4' | 'CONV_U8' | 'CONV_IP'
@@ -94,14 +94,15 @@ ExpInstr ::= 'ADD' | 'AND' | ('CALL' | 'CALLI') qualident | 'CASTPTR' qualident
                       | 'LDIND_U4' | 'LDIND_R4' | 'LDIND_U8' | 'LDIND_R8' | 'LDIND_IP'
                       | ('LDLOC'|'LDLOC_S'|'LDLOCA'|'LDLOCA_S')(unsigned|ident)
                       | 'LDLOC_0' | 'LDLOC_1' | 'LDLOC_2' | 'LDLOC_3' | 'LDNULL' 
-                      | 'LDOBJ' qualident | 'LDPROC' qualident | 'LDSTR' string
+                      | 'LDOBJ' qualident | 'LDPROC' qualident | 'LDSTR' (string|hexstring)
                       | ('LDVAR'|'LDVARA') qualident | 'MUL' | 'NEG' 
                       | ('NEWARR'|'NEWVLA'|'NEWOBJ') qualident 
-                      | 'NOT' | 'OR' | 'REM' | 'REM_UN' | 'SHL' | 'SHR' | 'SHR_UN' | 'SUB' | 'XOR'
+                      | 'NOT' | 'OR' | 'REM' | 'REM_UN' | 'SHL' | 'SHR' | 'SHR_UN' 
+                      | 'SIZEOF' qualident |'SUB' | 'XOR'
 
-StatementSequence ::= { Statement }
+StatementSequence ::= { Statement|ExpInstr }
           
-Statement ::=  ('CALL' | 'CALLI') qualident | 'DISP' | RepeatUntil 
+Statement* ::= 'DISP' | RepeatUntil 
                          | 'EXIT' | 'GOTO' ident | IfThenElse
                          | 'LABEL' ident | 'LINE' unsigned | Loop | 'POP' | 'RET' 
                          | ('STARG'|'STARG_S') (unsigned|ident)
@@ -112,20 +113,20 @@ Statement ::=  ('CALL' | 'CALLI') qualident | 'DISP' | RepeatUntil
                          | ('STLOC' |'STLOC_S') (unsigned|ident) | 'STLOC_0' | 'STLOC_1' | 'STLOC_2' | 'STLOC_3'
                          | 'STOBJ' qualident | 'STVAR' qualident '.' ident | Switch | WhileDo
 
-IfThenElse ::= 'IF' Expression 'THEN' StatementSequence [ 'ELSE' StatementSequence ] 'END'
-Loop ::= 'LOOP' StatementSequence 'END'
+IfThenElse ::= 'IF' Expression 'THEN' StatementSequence [ 'ELSE' StatementSequence ] END
+Loop ::= 'LOOP' StatementSequence END
 Switch ::= 'SWITCH' Expression 
                  { 'CASE' integer { [','] integer }
                     'THEN' StatementSequence } 
-                  [ 'ELSE' StatementSequence ] 'END'
-RepeatUntil ::= 'REPEAT' StatementSequence 'UNTIL' Expression 'END'
-WhileDo ::= 'WHILE' Expression 'DO' StatementSequence 'END'
+                  [ 'ELSE' StatementSequence ] END
+RepeatUntil ::= 'REPEAT' StatementSequence 'UNTIL' Expression END
+WhileDo ::= 'WHILE' Expression 'DO' StatementSequence END
 
 MetaActuals ::= '(' ConstExpression { [','] ConstExpression } ')' 
 
 MetaParams ::= '(' MetaSection { [';'] MetaSection } ')'
 
-MetaSection ::= 'CONST' ident { \LL:2\ [','] ident } ':' NamedType | [ 'TYPE' ] ident { \LL:2\ [','] ident }
+MetaSection ::= 'CONST' ident { \LL:2\ [','] ident } ':' NamedType | [ TYPE ] ident { \LL:2\ [','] ident }
 
 ConstExpression  ::= qualident | integer | real | string | hexstring
 
@@ -133,10 +134,10 @@ constructor ::= NamedType component_list
 component_list ::= '{' [ component {[','] component} ] '}' 
 component ::= [\LL:2\ ident '='] ( ConstExpression | component_list )
 
-/// Pragmas
+/// Pragmas:
 %module ::= 'Micron'
 %namespace ::= 'Mil'
 %suppress ::= ';' ',' '.' ':'
-
 //%no_syntree ::= 'true'
+//%parentptr ::= 'true'
 %pseudo_keywords ::= 'true' 
