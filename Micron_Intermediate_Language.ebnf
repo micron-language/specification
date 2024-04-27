@@ -29,7 +29,8 @@ hexstringdelim- ::= '#'
 comment- ::= '(*' '*)' '//'
 Comment ::=
 
-qualident ::= {\LA: 1:ident & 2:'.'\ ident '.'} ident    // merged ImportPath
+qualident ::= [\LA: 1:ident & 2:'.'\ ident '.'] ident    
+trident ::= ident '.' ident [ '.' ident ]  // qualident '.' ident for field reference
 identdef  ::= ident ['*']
 
 TypeDeclaration ::= identdef '=' type
@@ -83,13 +84,13 @@ ExpInstr* ::= 'ADD' | 'AND' | ('CALL' | 'CALLI') qualident | 'CASTPTR' qualident
                       | 'DIV' | 'DIV_UN' | 'DUP' | 'INITOBJ' qualident | ('LDARG'|'LDARG_S') (unsigned|ident) 
                       | 'LDARG_0' | 'LDARG_1' | 'LDARG_2' | 'LDARG_3'
                       | ('LDARGA'|'LDARGA_S') (unsigned|ident)
-                      | ('LDC_I4'|'LDC_I8'|'LDC_I4_S') integer | ('LDC_R4'|'LDC_R8') real
+                      | ('LDC_I4'|'LDC_I8'|'LDC_I4_S') integer | ('LDC_R4'|'LDC_R8') ( real | integer )
                       | 'LDC_I4_0' | 'LDC_I4_1' | 'LDC_I4_2' | 'LDC_I4_3' | 'LDC_I4_4' | 'LDC_I4_5'
                       | 'LDC_I4_6' | 'LDC_I4_7' | 'LDC_I4_8' | 'LDC_I4_M1' | 'LDC_OBJ' constructor
                       | ('LDELEM'|'LDELEMA') qualident | 'LDELEM_I1' | 'LDELEM_I2'
                       | 'LDELEM_I4' | 'LDELEM_I8' | 'LDELEM_U1' | 'LDELEM_U2' 
                       | 'LDELEM_U4' | 'LDELEM_U8' | 'LDELEM_R4' | 'LDELEM_R8' | 'LDELEM_IP'
-                      | ('LDFLD'|'LDFLDA') qualident '.' ident | 'LDFTN' qualident
+                      | ('LDFLD'|'LDFLDA') trident 
                       | 'LDIND_I1' | 'LDIND_I2' | 'LDIND_I4' | 'LDIND_I8' | 'LDIND_U1' | 'LDIND_U2'
                       | 'LDIND_U4' | 'LDIND_R4' | 'LDIND_U8' | 'LDIND_R8' | 'LDIND_IP'
                       | ('LDLOC'|'LDLOC_S'|'LDLOCA'|'LDLOCA_S')(unsigned|ident)
@@ -108,10 +109,10 @@ Statement* ::= 'DISP' | RepeatUntil
                          | ('STARG'|'STARG_S') (unsigned|ident)
                          | 'STELEM' qualident | 'STELEM_I1' | 'STELEM_I2' | 'STELEM_I4' | 'STELEM_I8' 
                          | 'STELEM_R4' | 'STELEM_R8' | 'STELEM_IP'
-                         | 'STFLD' qualident '.' ident
+                         | 'STFLD' trident
                          | 'STIND_I1' | 'STIND_I2' | 'STIND_I4' | 'STIND_I8' | 'STIND_R4' | 'STIND_R8' | 'STIND_IP'
                          | ('STLOC' |'STLOC_S') (unsigned|ident) | 'STLOC_0' | 'STLOC_1' | 'STLOC_2' | 'STLOC_3'
-                         | 'STOBJ' qualident | 'STVAR' qualident '.' ident | Switch | WhileDo
+                         | 'STOBJ' qualident | 'STVAR' trident | Switch | WhileDo
 
 IfThenElse ::= 'IF' Expression 'THEN' StatementSequence [ 'ELSE' StatementSequence ] END
 Loop ::= 'LOOP' StatementSequence END
@@ -130,7 +131,7 @@ MetaSection ::= 'CONST' ident { \LL:2\ [','] ident } ':' NamedType | [ TYPE ] id
 
 ConstExpression  ::= qualident | integer | real | string | hexstring
 
-constructor ::= NamedType component_list
+constructor ::= NamedType component_list | hexstring
 component_list ::= '{' [ component {[','] component} ] '}' 
 component ::= [\LL:2\ ident '='] ( ConstExpression | component_list )
 

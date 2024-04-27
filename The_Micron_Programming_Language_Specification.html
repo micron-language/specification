@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2024-04-24, work in progress</div>
+2024-04-27, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -48,21 +48,21 @@ This specification was written in CrossLine (see <a href="https://github.com/roc
 <div style="margin-left:63px"><span class="label"><a name="14703">1.6.2.3</a></span>
 <a href="#14126">2.3 Vocabulary and Representation</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14704">1.6.2.3.1</a></span>
-<a href="#14168">2.3.3 Identifiers</a></div>
+<a href="#14168">2.3.4 Identifiers</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14705">1.6.2.3.2</a></span>
-<a href="#14174">2.3.4 Numbers</a></div>
+<a href="#14174">2.3.5 Numbers</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14706">1.6.2.3.3</a></span>
-<a href="#14181">2.3.5 Characters</a></div>
+<a href="#14181">2.3.6 Characters</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14707">1.6.2.3.4</a></span>
-<a href="#14186">2.3.6 Strings</a></div>
+<a href="#14186">2.3.7 Strings</a></div>
 <div style="margin-left:99px"><span class="label"><a name="14708">1.6.2.3.4.1</a></span>
-<a href="#14192">2.3.6.4 Hex Strings</a></div>
+<a href="xoid://14192@003526b9-5a79-4133-afbf-9bcd57214e0c">&lt;null reference&gt;</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14709">1.6.2.3.5</a></span>
-<a href="#14198">2.3.7 Operators and Delimiters</a></div>
+<a href="#14198">2.3.8 Operators and Delimiters</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14710">1.6.2.3.6</a></span>
-<a href="#14201">2.3.8 Reserved Words</a></div>
+<a href="#14201">2.3.9 Reserved Words</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14711">1.6.2.3.7</a></span>
-<a href="#14204">2.3.9 Comments</a></div>
+<a href="#14204">2.3.10 Comments</a></div>
 <div style="margin-left:63px"><span class="label"><a name="14712">1.6.2.4</a></span>
 <a href="#14160">2.4 Declarations and scope rules</a></div>
 <div style="margin-left:63px"><span class="label"><a name="14713">1.6.2.5</a></span>
@@ -236,109 +236,101 @@ Symbols of the language vocabulary (terminal symbols) are denoted by strings for
 <h4 style="margin-left:27px"><span class="label"><a name="14126">2.3</a></span>
 <b>Vocabulary and Representation</b></h4>
 <div style="margin-left:45px"><span class="label"><a name="14134">2.3.1</a></span>
-Micron source code is a string of characters encoded using the UTF-8 variable-width encoding as defined in ISO/IEC 10646. Identifiers, numbers, operators, and delimiters are represented using the ASCII character set; strings and comments can be either represented in the ASCII or Latin-1 (as defined in ISO/IEC 8859-1) character set.</div>
-<div style="margin-left:45px"><span class="label"><a name="14135">2.3.2</a></span>
+Micron source code is a string of characters encoded using the UTF-8 variable-width encoding as defined in ISO/IEC 10646. </div>
+<div style="margin-left:45px"><span class="label"><a name="16068">2.3.2</a></span>
+Identifiers, numbers, operators, and delimiters are represented using the ASCII character set; strings and comments can use characters from the Latin-1 (as defined in ISO/IEC 8859-1) character set (UTF-8 encoded in the source code).</div>
+<div style="margin-left:45px"><span class="label"><a name="14135">2.3.3</a></span>
 The following lexical rules apply: blanks and line breaks must not occur within symbols (except in block comments, and blanks in strings); they are ignored unless they are essential to separate two consecutive symbols. Capital and lower-case letters are considered as distinct.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="14168">2.3.3</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="14168">2.3.4</a></span>
 Identifiers</h4>
-<div style="margin-left:63px"><span class="label"><a name="14169">2.3.3.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14169">2.3.4.1</a></span>
 Identifiers are sequences of letters, digits and underscore. The first character must be a letter or an underscore. </div>
-<div style="margin-left:63px"><span class="label"><a name="14170">2.3.3.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14170">2.3.4.2</a></span>
 Syntax:</div>
-<div style="margin-left:81px"><span class="label"><a name="14171">2.3.3.2.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14171">2.3.4.2.1</a></span>
 <pre><code>ident  = ( letter | '_' ) { letter | digit | '_' }</code></pre>
 <pre><code>letter = 'A' ... 'Z' | 'a' ... 'z'</code></pre>
 <pre><code>digit  = '0' ... '9'</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="14172">2.3.3.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14172">2.3.4.3</a></span>
 Examples:</div>
-<div style="margin-left:81px"><span class="label"><a name="14173">2.3.3.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14173">2.3.4.3.1</a></span>
 <pre><code>x</code></pre>
 <pre><code>Scan</code></pre>
 <pre><code>Oberon_2</code></pre>
 <pre><code>_y</code></pre>
 <pre><code>firstLetter</code></pre></div>
-<h4 style="margin-left:45px"><span class="label"><a name="14174">2.3.4</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="14174">2.3.5</a></span>
 Numbers</h4>
-<div style="margin-left:63px"><span class="label"><a name="14175">2.3.4.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14175">2.3.5.1</a></span>
 Number literals are integer or real constants. </div>
-<div style="margin-left:63px"><span class="label"><a name="14464">2.3.4.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14464">2.3.5.2</a></span>
 The type of an integer constant is the minimal unsigned integer type to which the constant value belongs (see  <a href="#14224">2.6.4 Basic types</a>). </div>
-<div style="margin-left:63px"><span class="label"><a name="14463">2.3.4.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14463">2.3.5.3</a></span>
 If the literal is specified with the suffix 'H', the representation is hexadecimal, if it is specified with suffix 'O', the representation is ocal, or if it is specified with suffic 'B', the representation is binary, otherwise the representation is decimal. </div>
-<div style="margin-left:63px"><span class="label"><a name="14466">2.3.4.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14466">2.3.5.4</a></span>
 The type of an integer constant can be explicitly set with a suffix. The U1, U2, U4 or U8 suffices correspond to the UINT8, UINT16, UINT32 or UINT64 unsigned integer types. The I1, I2, I4 or I8 suffices correspond to the INT8, INT16, INT32 or INT64 signed integer types. If the given constant value cannot be represented by the explicit type, the compiler reports an error. Alternatively, the suffix U or I can be used without explicit byte width, in which case the compiler assigns the minimal unsigned or signed integer type to which the value belongs.</div>
-<div style="margin-left:63px"><span class="label"><a name="14469">2.3.4.5</a></span><span class="ident">NOTE</span>
+<div style="margin-left:63px"><span class="label"><a name="14469">2.3.5.5</a></span><span class="ident">NOTE</span>
 Number literals can be prefixed with a sign. But the sign is not part of the literal, but of a simple expression including the literal, see <a href="#14322">2.8.3 Operators</a>. Use the SIGNED() predeclared function for a signed integer reinterpretation of the unsigned integer (e.g. SIGNED(0FFH) is an INT8 with value -1). Otherwise the term -0FFH becomes an INT16 with value -255.</div>
-<div style="margin-left:63px"><span class="label"><a name="14470">2.3.4.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14470">2.3.5.6</a></span>
 Signed integer types are represented in two’s complement form.</div>
-<div style="margin-left:63px"><span class="label"><a name="14468">2.3.4.7</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14468">2.3.5.7</a></span>
 A real number always contains a decimal point and at least one digit before the point. Optionally it may also contain a decimal scale factor. The letter 'E' means <i>times ten to the power of</i>. </div>
-<div style="margin-left:63px"><span class="label"><a name="14467">2.3.4.8</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14467">2.3.5.8</a></span>
 The type of a floating-point constant is the minimal <a href="#14539">Floating-point types</a> to which the constant value belongs.</div>
-<div style="margin-left:63px"><span class="label"><a name="14176">2.3.4.9</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14176">2.3.5.9</a></span>
 A real number is of type <code>LONGREAL</code>, if it has a scale factor containing the letter 'D', or of type <code>REAL</code>, if it has a scale factor containing the letter 'F'. If the scale factor contains the letter 'D', the type is <code>LONGREAL</code> if the mantissa or exponent are too large to be represented by <code>REAL</code>.</div>
-<div style="margin-left:63px"><span class="label"><a name="15632">2.3.4.10</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15632">2.3.5.10</a></span>
 Numbers can be interspersed with underscores for better readability, but the first character is always a digit.</div>
-<div style="margin-left:63px"><span class="label"><a name="14177">2.3.4.11</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14177">2.3.5.11</a></span>
 Syntax:</div>
-<div style="margin-left:81px"><span class="label"><a name="14178">2.3.4.11.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14178">2.3.5.11.1</a></span>
 <pre><code>number   = integer | real</code></pre>
 <pre><code>integer  = (digit {digit|'_'} ['O'|'B'] | digit {hexDigit|'_'} 'H')<br />           ['U'|'U1'|'U2'|'U4'|'U8'|'I'|'I1'|'I2'|'I4'|'I8']</code></pre>
 <pre><code>real     = digit {digit|'_'} '.' {digit} [Exponent]</code></pre>
 <pre><code>Exponent = ('E' | 'D' | 'F' ) ['+' | '-'] digit {digit}</code></pre>
 <pre><code>hexDigit = digit | 'A' ... 'F'</code></pre>
 <pre><code>digit    = '0' ... '9'</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="14478">2.3.4.12</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14478">2.3.5.12</a></span>
 Even though only the upper-case version is shown here, also the lower-case versions of the suffices and scale factor letters are supported.</div>
-<div style="margin-left:63px"><span class="label"><a name="14179">2.3.4.13</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14179">2.3.5.13</a></span>
 Examples:</div>
-<div style="margin-left:81px"><span class="label"><a name="14180">2.3.4.13.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14180">2.3.5.13.1</a></span>
 <pre><code>1234</code></pre>
 <pre><code>0dh              0DH</code></pre>
 <pre><code>12.3</code></pre>
 <pre><code>4.567e8          4.567E8</code></pre>
 <pre><code>0.57712566d-6    0.57712566D-6</code></pre></div>
-<h4 style="margin-left:45px"><span class="label"><a name="14181">2.3.5</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="14181">2.3.6</a></span>
 Characters</h4>
-<div style="margin-left:63px"><span class="label"><a name="14182">2.3.5.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14182">2.3.6.1</a></span>
 Character constants are denoted by the ordinal number of the character in hexadecimal notation followed by the letter <code>X</code> (or <code>x</code>).</div>
-<div style="margin-left:63px"><span class="label"><a name="14183">2.3.5.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14183">2.3.6.2</a></span>
 Syntax:</div>
-<div style="margin-left:81px"><span class="label"><a name="14184">2.3.5.2.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14184">2.3.6.2.1</a></span>
 <pre><code>character = digit {hexDigit} ('X' | 'x')</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="14185">2.3.5.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14185">2.3.6.3</a></span>
 A character is encoded as a 8-bit code value using the ISO/IEC 8859-1 Latin-1 encoding scheme.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="14186">2.3.6</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="14186">2.3.7</a></span>
 Strings</h4>
-<div style="margin-left:63px"><span class="label"><a name="14187">2.3.6.1</a></span>
-Strings are sequences of printable characters enclosed in single (') or double (&quot;) quote marks. The opening quote must be the same as the closing quote and must not occur within the string. A string must not extend over the end of a line. The number of characters in a string is called its length. A string of length 1 can be used wherever a character constant is allowed and vice versa.</div>
-<div style="margin-left:63px"><span class="label"><a name="14188">2.3.6.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14187">2.3.7.1</a></span>
+Strings are sequences of printable characters enclosed in single (') or double (&quot;) quote marks. The opening quote must be the same as the closing quote and must not occur within the string. A string must not extend over the end of a line. The number of characters in a string is called its length. </div>
+<div style="margin-left:63px"><span class="label"><a name="16054">2.3.7.2</a></span>
+A string of length 1 can be used wherever a character constant is allowed and vice versa.</div>
+<div style="margin-left:63px"><span class="label"><a name="14188">2.3.7.3</a></span>
 Syntax:</div>
-<div style="margin-left:81px"><span class="label"><a name="14189">2.3.6.2.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14189">2.3.7.3.1</a></span>
 <pre><code>string = ''' {character} ''' | '&quot;' {character} '&quot;'</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="14190">2.3.6.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14190">2.3.7.4</a></span>
 Examples:</div>
-<div style="margin-left:81px"><span class="label"><a name="14191">2.3.6.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14191">2.3.7.4.1</a></span>
 <pre><code>'Oberon'</code></pre>
 <pre><code>&quot;Don't worry!&quot;</code></pre>
 <pre><code>'x'</code></pre></div>
-<h4 style="margin-left:63px"><span class="label"><a name="14192">2.3.6.4</a></span>
-Hex Strings</h4>
-<div style="margin-left:81px"><span class="label"><a name="14193">2.3.6.4.1</a></span>
-Hex strings are sequences of bytes encoded in hexadecimal format and enclosed in dollar signs. The number of hex digits in the string must be even, two hex digits per byte. The number of bytes in a hex string is called its length. Line breaks and other white space between the dollar signs is ignored. Both upper and lower-case hex digits are supported.</div>
-<div style="margin-left:81px"><span class="label"><a name="14194">2.3.6.4.2</a></span>
-Syntax:</div>
-<div style="margin-left:99px"><span class="label"><a name="14195">2.3.6.4.2.1</a></span>
-<pre><code>hexstring = '$' {hexDigit} '$'</code></pre></div>
-<div style="margin-left:81px"><span class="label"><a name="14196">2.3.6.4.3</a></span>
-Examples:</div>
-<div style="margin-left:99px"><span class="label"><a name="14197">2.3.6.4.3.1</a></span>
-<pre><code>const arrow = $0F0F 0060 0070 0038 001C 000E 0007 8003 C101 E300 <br />               7700 3F00 1F00 3F00 7F00 FF00$</code></pre></div>
-<h4 style="margin-left:45px"><span class="label"><a name="14198">2.3.7</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="14198">2.3.8</a></span>
 <b>Operators and Delimiters</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="14199">2.3.7.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14199">2.3.8.1</a></span>
 Operators and delimiters are the special characters, or character pairs listed below.</div>
-<div style="margin-left:63px"><span class="label"><a name="14200">2.3.7.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14200">2.3.8.2</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -391,11 +383,11 @@ Operators and delimiters are the special characters, or character pairs listed b
 <td>
 <br>~ </td>
 <td></td></tr></table></div>
-<h4 style="margin-left:45px"><span class="label"><a name="14201">2.3.8</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="14201">2.3.9</a></span>
 Reserved Words</h4>
-<div style="margin-left:63px"><span class="label"><a name="14202">2.3.8.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14202">2.3.9.1</a></span>
 The reserved words consist of either all capital or all lower case letters and cannot be used as identifiers. All words listed below are reserved (only capital letter versions shown).</div>
-<div style="margin-left:63px"><span class="label"><a name="15585">2.3.8.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15585">2.3.9.2</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -485,9 +477,9 @@ ARRAY</td>
 <br>AND</td>
 <td>
 <br>NOT</td></tr></table></div>
-<h4 style="margin-left:45px"><span class="label"><a name="14204">2.3.9</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="14204">2.3.10</a></span>
 Comments</h4>
-<div style="margin-left:63px"><span class="label"><a name="14205">2.3.9.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14205">2.3.10.1</a></span>
 Comments are arbitrary character sequences opened by the bracket <code>(*</code> and closed by <code>*)</code>. Comments may be nested. They do not affect the meaning of a program. Micron also supports line comments; text starting with <code>//</code> up to a line break is considered a comment.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14160">2.4</a></span>
 Declarations and scope rules</h4>
@@ -1263,6 +1255,20 @@ For each field or element which is of record, array or pointer type, an embedded
 Example:</div>
 <div style="margin-left:81px"><span class="label"><a name="14638">2.8.4.8.1</a></span>
 <code>myVal := Rect{0,0,x1,y1};</code></div>
+<h4 style="margin-left:63px"><span class="label"><a name="16058">2.8.4.9</a></span>
+Hex Strings</h4>
+<div style="margin-left:81px"><span class="label"><a name="16059">2.8.4.9.1</a></span>
+Hex strings are sequences of bytes encoded in hexadecimal format and enclosed in dollar signs. The number of hex digits in the string must be even, two hex digits per byte. The number of bytes encoded in a hex string is called its length. Line breaks and other white space between the dollar signs is ignored. Both upper and lower-case hex digits are supported. </div>
+<div style="margin-left:81px"><span class="label"><a name="16061">2.8.4.9.2</a></span>
+Syntax:</div>
+<div style="margin-left:99px"><span class="label"><a name="16062">2.8.4.9.2.1</a></span>
+<pre><code>hexstring = '$' {hexDigit} '$'</code></pre></div>
+<div style="margin-left:81px"><span class="label"><a name="16063">2.8.4.9.3</a></span>
+Examples:</div>
+<div style="margin-left:99px"><span class="label"><a name="16064">2.8.4.9.3.1</a></span>
+<pre><code>const arrow = $0F0F 0060 0070 0038 001C 000E 0007 8003 C101 E300 <br />               7700 3F00 1F00 3F00 7F00 FF00$</code></pre></div>
+<div style="margin-left:81px"><span class="label"><a name="16066">2.8.4.9.4</a></span><span class="ident">NOTE</span>
+Hex strings are provided for compatibility with Oberon+; they are essentially an alternative syntax for an open byte array constructor.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14355">2.9</a></span>
 <a href=""><b>S</b></a><b>tatements</b></h4>
 <div style="margin-left:45px"><span class="label"><a name="14356">2.9.1</a></span>
@@ -1281,7 +1287,7 @@ Statement sequences denote the sequence of actions specified by the component st
 <div style="margin-left:63px"><span class="label"><a name="14361">2.9.3.2</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14362">2.9.3.2.1</a></span>
-<pre><code>StatementSequence = statement { [&quot;;&quot;] statement}</code></pre></div>
+<pre><code>StatementSequence = statement { [&quot;;&quot;] statement} </code></pre></div>
 <h4 style="margin-left:45px"><span class="label"><a name="14447">2.9.4</a></span>
 Statement block</h4>
 <div style="margin-left:63px"><span class="label"><a name="14448">2.9.4.1</a></span>
@@ -1622,7 +1628,7 @@ Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14519">2.14.2.2.1</a></span>
 <pre><code>directive = '&lt;*' ident ( '+' | '-' ) '*&gt;'</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="14520">2.14.2.3</a></span>
-Each variable is named by an ident which follows the syntax specified in <a href="#14168">2.3.3 Identifiers</a>. Variable names have compilation unit scope which is separate from all other scopes of the program. Configuration variable directives can be placed anywhere in the source code. The directive only affects the present compilation unit, starting from its position in the source code.</div>
+Each variable is named by an ident which follows the syntax specified in <a href="#14168">2.3.4 Identifiers</a>. Variable names have compilation unit scope which is separate from all other scopes of the program. Configuration variable directives can be placed anywhere in the source code. The directive only affects the present compilation unit, starting from its position in the source code.</div>
 <div style="margin-left:63px"><span class="label"><a name="14521">2.14.2.4</a></span>
 Example:</div>
 <div style="margin-left:81px"><span class="label"><a name="14522">2.14.2.4.1</a></span>
@@ -1699,10 +1705,12 @@ Two types T<sub>a</sub> and T<sub>b</sub> are equal if</div>
 T<sub>a</sub> and T<sub>b</sub> are the <i>same type</i>, or</div>
 <div style="margin-left:63px"><span class="label"><a name="15996">3.7.1.2</a></span>
 T<sub>a</sub> and T<sub>b</sub> are open array types with <i>equal element types</i>, or</div>
-<div style="margin-left:63px"><span class="label"><a name="14552">3.7.1.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="16051">3.7.1.3</a></span>
+T<sub>a</sub> and T<sub>b</sub> are non-open array types with same length and <i>equal element types</i>, or</div>
+<div style="margin-left:63px"><span class="label"><a name="16052">3.7.1.4</a></span>
+T<sub>a</sub> and T<sub>b</sub> are pointer types with <i>equal base types</i>, or</div>
+<div style="margin-left:63px"><span class="label"><a name="14552">3.7.1.5</a></span>
 T<sub>a</sub> and T<sub>b</sub> are procedure types whose formal parameters <i>match</i>, or</div>
-<div style="margin-left:63px"><span class="label"><a name="14553">3.7.1.4</a></span>
-T<sub>a</sub> and T<sub>b</sub> are pointer types with <i>equal</i> base types.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14554">3.8</a></span>
 Type inclusion</h4>
 <div style="margin-left:45px"><span class="label"><a name="14555">3.8.1</a></span>
@@ -1717,22 +1725,26 @@ T<sub>e</sub> and T<sub>v</sub> are the <i>same type</i>;</div>
 T<sub>e</sub> and T<sub>v</sub> are numeric types and T<sub>v</sub> <i>includes</i> T<sub>e</sub>;</div>
 <div style="margin-left:63px"><span class="label"><a name="14564">3.9.1.3</a></span>
 T<sub>e</sub> and T<sub>v</sub> are pointer types and the pointers have <i>equal</i> base types;</div>
-<div style="margin-left:63px"><span class="label"><a name="15999">3.9.1.4</a></span>
-T<sub>v</sub> is a pointer to one dimensional open array, T<sub>e</sub> is a pointer to any one or more dimensional array, and their element types are <i>equal;</i></div>
-<div style="margin-left:63px"><span class="label"><a name="16002">3.9.1.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="16056">3.9.1.4</a></span>
+T<sub>e</sub> and T<sub>v</sub> are non-open array types with the same length and have <i>equal</i> base types;</div>
+<div style="margin-left:63px"><span class="label"><a name="15999">3.9.1.5</a></span>
+T<sub>v</sub> is a pointer to a one dimensional open array, T<sub>e</sub> is a pointer to any one or more dimensional array, and their element types are <i>equal;</i></div>
+<div style="margin-left:63px"><span class="label"><a name="16002">3.9.1.6</a></span>
 T<sub>v</sub> is a pointer to a record T<sub>R </sub>and T<sub>e</sub> is a pointer to a record the first field of which is of type T<sub>R</sub>, or is again a record the first field of which is of type T<sub>R</sub>.</div>
-<div style="margin-left:63px"><span class="label"><a name="14565">3.9.1.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14565">3.9.1.7</a></span>
 T<sub>v</sub> is a pointer or a procedure type and <code>e</code> is NIL;</div>
-<div style="margin-left:63px"><span class="label"><a name="15964">3.9.1.7</a></span>
-T<sub>e</sub> and T<sub>v</sub> are pointer types and T<sub>v</sub> is a POINTER TO ANY;</div>
-<div style="margin-left:63px"><span class="label"><a name="14672">3.9.1.8</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15964">3.9.1.8</a></span>
+T<sub>e</sub> and T<sub>v</sub> are pointer types and T<sub>v</sub> is a pointer to ANY;</div>
+<div style="margin-left:63px"><span class="label"><a name="14672">3.9.1.9</a></span>
 T<sub>v</sub> is an enumeration type and <code>e</code> is a valid element of the enumeration;</div>
-<div style="margin-left:63px"><span class="label"><a name="14567">3.9.1.9</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14567">3.9.1.10</a></span>
 T<sub>v</sub> is a non-open array of CHAR, T<sub>e</sub> is a string, and STRLEN(e) &lt; LEN(v);</div>
-<div style="margin-left:63px"><span class="label"><a name="14568">3.9.1.10</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14568">3.9.1.11</a></span>
 T<sub>v</sub> is a procedure type and <code>e</code> is the name of a procedure whose formal parameters <i>match</i> those of T<sub>v</sub>.</div>
-<div style="margin-left:63px"><span class="label"><a name="16003">3.9.1.11</a></span>
+<div style="margin-left:63px"><span class="label"><a name="16003">3.9.1.12</a></span>
 T<sub>v</sub> is a signed integer and <code>e</code> is an unsigned integer constant, and T<sub>v</sub> <i>includes</i> the smallest integer type necessary to represent <code>e</code>.</div>
+<div style="margin-left:45px"><span class="label"><a name="16053">3.9.2</a></span><span class="ident">NOTE</span>
+Also remember <a href="#16054">2.3.7.2</a>.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14569">3.10</a></span>
 Parameter compatible</h4>
 <div style="margin-left:45px"><span class="label"><a name="14570">3.10.1</a></span>
@@ -1740,7 +1752,7 @@ An actual parameter <code>a</code> of type T<sub>a</sub> is parameter compatible
 <div style="margin-left:63px"><span class="label"><a name="14571">3.10.1.1</a></span>
 T<sub>f</sub> and T<sub>a</sub> are <i>equal</i> types, or</div>
 <div style="margin-left:63px"><span class="label"><a name="16022">3.10.1.2</a></span>
-T<sub>f</sub> is a pointer to array of CHAR, <code>f</code> is CONST, and <code>a</code> is string literal, or</div>
+T<sub>f</sub> is a pointer to an open array of CHAR, <code>f</code> is CONST, and <code>a</code> is string literal, or</div>
 <div style="margin-left:63px"><span class="label"><a name="14572">3.10.1.3</a></span>
 T<sub>a</sub> is <i>assignment compatible</i> with T<sub>f</sub></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14579">3.11</a></span>
@@ -1918,7 +1930,9 @@ Two formal parameter lists match if</div>
 they have the same number of parameters, and</div>
 <div style="margin-left:63px"><span class="label"><a name="14586">3.12.1.2</a></span>
 parameters at corresponding positions have <i>equal types</i>, and</div>
-<div style="margin-left:63px"><span class="label"><a name="14587">3.12.1.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="16035">3.12.1.3</a></span>
+parameters at corresponding positions are both either CONST or not, and</div>
+<div style="margin-left:63px"><span class="label"><a name="14587">3.12.1.4</a></span>
 both parameter lists either end with an ellipsis or not</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14588">3.13</a></span>
 Matching result types</h4>
@@ -1941,41 +1955,39 @@ The result types of two procedures match if they are either the <i>same type</i>
 <pre><code>character = digit {hexDigit} ('X' | 'x')</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14595">4.4</a></span><a href="#14189">&#x21B3;</a>
 <pre><code>string = ''' {character} ''' | '&quot;' {character} '&quot;'</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14596">4.5</a></span><a href="#14195">&#x21B3;</a>
-<pre><code>hexstring = '$' {hexDigit} '$'</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14597">4.6</a></span><a href="#14207">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14597">4.5</a></span><a href="#14207">&#x21B3;</a>
 <pre><code>qualident = [ident '.'] ident</code></pre>
 <pre><code>identdef  = ident ['*' | '-']</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14598">4.7</a></span><a href="#14213">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14598">4.6</a></span><a href="#14213">&#x21B3;</a>
 <pre><code>ConstDeclaration = identdef '=' ConstExpression</code></pre>
 <pre><code>ConstExpression  = expression</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14599">4.8</a></span><a href="#14221">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14599">4.7</a></span><a href="#14221">&#x21B3;</a>
 <pre><code>TypeDeclaration = identdef '=' type</code></pre>
 <pre><code>type            = NamedType | ArrayType | RecordType | PointerType | ProcedureType | enumeration</code></pre>
 <pre><code>NamedType       = qualident</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14600">4.9</a></span><a href="#14262">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14600">4.8</a></span><a href="#14262">&#x21B3;</a>
 <pre><code>ArrayType  = ARRAY [ length ] OF type | '[' [ length ] ']' type</code></pre>
 <pre><code>length     = ConstExpression | VAR varlength</code></pre>
 <pre><code>varlength  = expression</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14601">4.10</a></span><a href="#14275">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14601">4.9</a></span><a href="#14275">&#x21B3;</a>
 <pre><code>RecordType = RECORD [FixedPart][VariantPart] END</code></pre>
 <pre><code>FixedPart = FieldList { [';'] FieldList}</code></pre>
 <pre><code>FieldList  = [ IdentList ':' type ] | INLINE identdef ':' type</code></pre>
 <pre><code>VariantPart   = CASE { ['|'] [INLINE] identdef ':' type }</code></pre>
 <pre><code>IdentList  = identdef { [','] identdef }</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14602">4.11</a></span><a href="#14283">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14602">4.10</a></span><a href="#14283">&#x21B3;</a>
 <pre><code>PointerType = ( POINTER TO | '^' ) type</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14603">4.12</a></span><a href="#14289">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14603">4.11</a></span><a href="#14289">&#x21B3;</a>
 <pre><code>ProcedureType = PROCEDURE [FormalParameters]</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14604">4.13</a></span><a href="#14294">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14604">4.12</a></span><a href="#14294">&#x21B3;</a>
 <pre><code>enumeration ::= '(' ( constEnum | symbolEnum ) ')' <br />constEnum ::= ident [ '=' ConstExpression ] { [','] ident } <br />symbolEnum ::= ':' ident { [','] ':' ident }</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14605">4.14</a></span><a href="#14301">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14605">4.13</a></span><a href="#14301">&#x21B3;</a>
 <pre><code>VariableDeclaration = IdentList ':' type</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14606">4.15</a></span><a href="#14309">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14606">4.14</a></span><a href="#14309">&#x21B3;</a>
 <pre><code>designator = qualident {selector}</code></pre>
 <pre><code>selector   = '.' ident | '[' expression ']' | '^' | '(' qualident ')'</code></pre>
 <pre><code>ExpList    = expression {[','] expression}</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14607">4.16</a></span><a href="#14321">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14607">4.15</a></span><a href="#14321">&#x21B3;</a>
 <pre><code>expression       = SimpleExpression [ relation SimpleExpression ]</code></pre>
 <pre><code>relation         = '=' | '#' | '&lt;' | '&lt;=' | '&gt;' | '&gt;=' | IN</code></pre>
 <pre><code>SimpleExpression = ['+' | '-'] term { AddOperator term }</code></pre>
@@ -1992,18 +2004,20 @@ The result types of two procedures match if they are either the <i>same type</i>
 <pre><code>ActualParameters = '(' [ ExpList ] ')'</code></pre>
 <pre><code>set              = '{' [ element {[','] element} ] '}'</code></pre>
 <pre><code>element          = expression ['..' expression]</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14608">4.17</a></span><a href="#14352">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14608">4.16</a></span><a href="#14352">&#x21B3;</a>
 <pre><code>FunctionCall           = designator ActualParameters</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14639">4.18</a></span><a href="#14632">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14639">4.17</a></span><a href="#14632">&#x21B3;</a>
 <code>constructor ::= NamedType '{' [ component {[','] component} ] '}' </code>
 <br><code>component ::= [ident '='] ConstExpression</code></div>
+<div style="margin-left:27px"><span class="label"><a name="16067">4.18</a></span><a href="#16062">&#x21B3;</a>
+<pre><code>hexstring = '$' {hexDigit} '$'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14609">4.19</a></span><a href="#14358">&#x21B3;</a>
 <pre><code>statement = [ assignment | ProcedureCall | IfStatement</code></pre>
 <pre><code>            | CaseStatement  | WithStatement | LoopStatement</code></pre>
 <pre><code>            | ExitStatement | GotoStatement | gotoLabel </code></pre>
 <pre><code>	| ReturnStatement | RepeatStatement | ForStatement ]</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14610">4.20</a></span><a href="#14362">&#x21B3;</a>
-<pre><code>StatementSequence = statement { [&quot;;&quot;] statement}</code></pre></div>
+<pre><code>StatementSequence = statement { [&quot;;&quot;] statement} </code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14611">4.21</a></span><a href="#14366">&#x21B3;</a>
 <pre><code>assignment = designator ':=' expression</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14612">4.22</a></span><a href="#14378">&#x21B3;</a>

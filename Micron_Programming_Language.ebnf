@@ -19,9 +19,9 @@ real ::= // digit {digit|'_'} '.' {digit} [('E' | 'D' | 'F' ) ['+' | '-'] digit 
 
 number ::= integer | real
 
-string ::= // '"' {character} '"' | digit {hexDigit} 'X', also multiline hex strings $ ... $ seen in PO source
-hexchar ::=
-hexstring ::=
+string ::= // '"' {character} '"' 
+hexchar ::= // digit {hexDigit} 'X'
+hexstring ::= // '$' {hexDigit} '$'
 
 comment- ::= '(*' '*)' '//'
 Comment ::=
@@ -86,9 +86,10 @@ term ::= factor {MulOperator factor}
 
 MulOperator ::= '*' | '/' | 'DIV' | 'MOD' | '&' | 'AND'
 
-literal ::= number | string | hexstring | hexchar | 'NIL' | set | 'TRUE' | 'FALSE'
+literal ::= number | string | hexchar | 'NIL' | set | 'TRUE' | 'FALSE'
 
-constructor ::= NamedType '{' [ component {[','] component} ] '}' // for arrays, records or fixed address pointers
+constructor ::= NamedType '{' [ component {[','] component} ] '}' 
+                           | hexstring
 
 component ::= [\LL:2\ ident '='] ConstExpression
 
@@ -106,10 +107,12 @@ set ::= '{' [ element {[','] element} ] '}'
 
 element ::= expression ['..' expression]
 
-statement ::= assignmentOrProcedureCall
+statement ::= 
+        \LA: 1:ident & 2:':'\ gotoLabel 
+        | assignmentOrProcedureCall
 	| IfStatement | CaseStatement |
 	LoopStatement |
-	ExitStatement | GotoStatement |
+	ExitStatement | GotoStatement | 
 	ReturnStatement |
 	WhileStatement | RepeatStatement | ForStatement
 
@@ -117,7 +120,8 @@ assignmentOrProcedureCall ::= designator  [
 		':=' expression ] // assignment 
 		// designator enthält neu auch Params: | [ ActualParameters ] // ProcedureCall
 
-StatementSequence ::=  { ';' } { [ \LA: 1:ident & 2:':'\ gotoLabel ] statement { ';' } }  
+StatementSequence ::=  { ';' } { statement { ';' } } 
+//StatementSequence ::=  { ';' } { [ \LA: 1:ident & 2:':'\ gotoLabel ] statement { ';' } }  [ \LA: 1:ident & 2:':'\ gotoLabel ]
 
 gotoLabel ::= ident ':'
 

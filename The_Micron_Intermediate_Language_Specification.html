@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2024-04-24, work in progress</div>
+2024-04-27, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -161,17 +161,13 @@ Syntax:</div>
 <h4 style="margin-left:81px"><span class="label"><a name="15402">2.2.2.6.3</a></span>
 Hex Strings</h4>
 <div style="margin-left:99px"><span class="label"><a name="15403">2.2.2.6.3.1</a></span>
-Hex strings are sequences of bytes encoded in hexadecimal format and enclosed in dollar signs. The number of hex digits in the string must be even, two hex digits per byte. The number of bytes in a hex string is called its length. Line breaks and other white space between the dollar signs is ignored. Both upper and lower-case hex digits are supported. </div>
+Hex strings are sequences of bytes encoded in hexadecimal format and enclosed in hash signs. The number of hex digits in the string must be even, two hex digits per byte. The number of bytes encoded in a hex string is called its length. Line breaks and other white space between the hash signs is ignored. Both upper and lower-case hex digits are supported. </div>
 <div style="margin-left:99px"><span class="label"><a name="15973">2.2.2.6.3.2</a></span>
 When a hex string is used in place of a string literal, the terminating zero has to be explicit.</div>
 <div style="margin-left:99px"><span class="label"><a name="15404">2.2.2.6.3.3</a></span>
 Syntax:</div>
 <div style="margin-left:117px"><span class="label"><a name="15405">2.2.2.6.3.3.1</a></span>
 <pre><code>hexstring = '#' {hexDigit} '#'</code></pre></div>
-<div style="margin-left:99px"><span class="label"><a name="15406">2.2.2.6.3.4</a></span>
-Examples:</div>
-<div style="margin-left:117px"><span class="label"><a name="15407">2.2.2.6.3.4.1</a></span>
-<pre><code>const arrow = #0F0F 0060 0070 0038 001C 000E 0007 8003 C101 E300 <br />               7700 3F00 1F00 3F00 7F00 FF00#</code></pre></div>
 <h4 style="margin-left:63px"><span class="label"><a name="15411">2.2.2.7</a></span>
 Reserved Words</h4>
 <div style="margin-left:81px"><span class="label"><a name="15978">2.2.2.7.1</a></span>
@@ -215,7 +211,7 @@ An identifier declared in a module block may be followed by an export mark (&quo
 <div style="margin-left:45px"><span class="label"><a name="15451">2.3.4</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15452">2.3.4.1</a></span>
-<code>qualident = [ident '.'] ident </code>
+<code>qualident = [ident '.'] ident <br />trident   = qualident '.' ident</code>
 <br><code>identdef  = ident ['*']</code></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14956">2.4</a></span>
 Types</h4>
@@ -241,7 +237,7 @@ The basic types are denoted by predeclared identifiers. Either all capital or al
 <td>
 <br>bool </td>
 <td>
-<br>True (1) / false (0) value </td></tr>
+<br>true (1) / false (0) value </td></tr>
 <tr>
 <td>
 <br>char </td>
@@ -386,13 +382,13 @@ Syntax of textual representation:</div>
 <br><code>| 'div' | 'div_un' | 'dup' | 'initobj' qualident | ('ldarg'|'ldarg_s') (unsigned|ident) </code>
 <br><code>| 'ldarg_0' | 'ldarg_1' | 'ldarg_2' | 'ldarg_3'</code>
 <br><code>| ('ldarga'|'ldarga_s') (unsigned|ident)</code>
-<br><code>| ('ldc_i4'|'ldc_i8'|'ldc_i4_s') integer | ('ldc_r4'|'ldc_r8') real</code>
+<br><code>| ('ldc_i4'|'ldc_i8'|'ldc_i4_s') integer | ('ldc_r4'|'ldc_r8') (real | integer)</code>
 <br><code>| 'ldc_i4_0' | 'ldc_i4_1' | 'ldc_i4_2' | 'ldc_i4_3' | 'ldc_i4_4' | 'ldc_i4_5'</code>
 <br><code>| 'ldc_i4_6' | 'ldc_i4_7' | 'ldc_i4_8' | 'ldc_i4_m1' | 'ldc_obj' constructor</code>
 <br><code>| ('ldelem'|'ldelema') qualident | 'ldelem_i1' | 'ldelem_i2'</code>
 <br><code>| 'ldelem_i4' | 'ldelem_i8' | 'ldelem_u1' | 'ldelem_u2' </code>
 <br><code>| 'ldelem_u4' | 'ldelem_u8' | 'ldelem_r4' | 'ldelem_r8' | 'ldelem_ip'</code>
-<br><code>| ('ldfld'|'ldflda') qualident '.' ident | 'ldftn' qualident</code>
+<br><code>| ('ldfld'|'ldflda') trident </code>
 <br><code>| 'ldind_i1' | 'ldind_i2' | 'ldind_i4' | 'ldind_i8' | 'ldind_u1' | 'ldind_u2'</code>
 <br><code>| 'ldind_u4' | 'ldind_r4' | 'ldind_u8' | 'ldind_r8' | 'ldind_ip'</code>
 <br><code>| ('ldloc'|'ldloc_s'|'ldloca'|'ldloca_s')(unsigned|ident)</code>
@@ -645,9 +641,9 @@ TODO: tail calls</div>
 <div style="margin-left:63px"><span class="label"><a name="15009">2.5.11.3</a></span>
 <code>…,ftn, arg1, arg2 … argN -&gt; …</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15011">2.5.11.4</a></span>
-The calli instruction calls <i>ftn</i> (a pointer to a function entry point) with the arguments arg1 … argN. The types of these arguments, and a possible return type, are described by the signature. The <i>ftn</i> argument is assumed to be a pointer to native code (of the target machine) that can be legitimately called with the arguments described by the signature. Such a pointer can be created using the ldftn instruction, or could have been passed in from external code. The arguments are placed on the stack in left-to-right order. That is, the first argument is computed and placed on the stack, then the second argument, and so on.</div>
+The calli instruction calls <i>ftn</i> (a pointer to a procedure entry point) with the arguments arg1 … argN. The types of these arguments, and a possible return type, are described by the signature. The <i>ftn</i> argument is assumed to be a pointer to native code (of the target machine) that can be legitimately called with the arguments described by the signature. Such a pointer can be created using the ldproc instruction, or could have been passed in from external code. The arguments are placed on the stack in left-to-right order. That is, the first argument is computed and placed on the stack, then the second argument, and so on.</div>
 <div style="margin-left:63px"><span class="label"><a name="15930">2.5.11.5</a></span><span class="ident">NOTE</span>
-In MIL, the function pointer (ftn) is pushed on the stack first, before the arguments, in contrast to ECMA-335 CIL, where the function pointer is pushed after the arguments.</div>
+In MIL, the procedure pointer (ftn) is pushed on the stack first, before the arguments, in contrast to ECMA-335 CIL, where the function pointer is pushed after the arguments.</div>
 <div style="margin-left:63px"><span class="label"><a name="15012">2.5.11.6</a></span>
 TODO: tail call</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15233">2.5.12</a></span>
@@ -1822,6 +1818,8 @@ ldobj – copy a value from an address to the stack </h4>
 The ldobj instruction dereferences <i>src</i>, which is an address of a storage location of type, and copies its value to the stack. <i>type </i>is a struct or union, or a non-open array. <i>src</i> is an intptr. </div>
 <div style="margin-left:63px"><span class="label"><a name="16007">2.5.35.4</a></span>
 In addition, src can be the result of ldstr; type must then be an array of char with sufficient length to accommodate the string including the terminating zero.</div>
+<div style="margin-left:63px"><span class="label"><a name="16036">2.5.35.5</a></span><span class="ident">NOTE</span>
+ldobj is used to pass records and arrays to procedures by value, but also for the right side of assignments or return values. In the latter case, there is usually a stobj to copy the value to a variable, field or element. The backend in that case is free to avoid copying and instead just pass a pointer to the stack instead of a value copy.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15114">2.5.36</a></span>
 <b>ldproc – load procedure pointer</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15115">2.5.36.1</a></span>
@@ -1872,8 +1870,6 @@ The ldstr instruction pushes the address (intptr) representing the zero-terminat
 The result of two ldstr instructions referring to the same string literal return precisely the same address.</div>
 <div style="margin-left:63px"><span class="label"><a name="15972">2.5.37.5</a></span>
 string is either a string literal or a zero-terminated hexstring literal.</div>
-<div style="margin-left:63px"><span class="label"><a name="15548">2.5.37.6</a></span>
-TODO: the equivalent for binary strings, but with byte count</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15485">2.5.38</a></span>
 ldvar – load module variable</h4>
 <div style="margin-left:63px"><span class="label"><a name="15486">2.5.38.1</a></span>
@@ -2455,7 +2451,7 @@ TODO: pcall and raise</div>
 <div style="margin-left:45px"><span class="label"><a name="15529">2.9.2</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15530">2.9.2.1</a></span>
-<code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' qualident '.' ident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' qualident '.' ident | Switch | WhileDo</code></div>
+<code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' trident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' trident | Switch | WhileDo</code></div>
 <h4 style="margin-left:45px"><span class="label"><a name="15264">2.9.3</a></span>
 <b>disp</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15304">2.9.3.1</a></span>
@@ -3002,7 +2998,7 @@ stobj – store a value at an address </h4>
 <div style="margin-left:63px"><span class="label"><a name="15285">2.9.18.2</a></span>
 <code>…, dest, src -&gt; …,</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15284">2.9.18.3</a></span>
-The stobj instruction copies the value <i>src</i> of type <i>type</i> to the address <i>dest</i>. </div>
+The stobj instruction copies the value <i>src</i> of type <i>type</i> to the address <i>dest</i>. <i>type </i>is a struct or union, or a non-open array. <i>dest</i> is an intptr. </div>
 <h4 style="margin-left:45px"><span class="label"><a name="15493">2.9.19</a></span>
 <b>stvar – store a module variable</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15494">2.9.19.1</a></span>
@@ -3182,7 +3178,7 @@ TODO: type checking rules, structral compatibility, packing</div>
 <div style="margin-left:27px"><span class="label"><a name="15518">3.5</a></span><a href="#15405">&#x21B3;</a>
 <pre><code>hexstring = '#' {hexDigit} '#'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15519">3.6</a></span><a href="#15452">&#x21B3;</a>
-<code>qualident = [ident '.'] ident </code>
+<code>qualident = [ident '.'] ident <br />trident   = qualident '.' ident</code>
 <br><code>identdef  = ident ['*']</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15520">3.7</a></span><a href="#15431">&#x21B3;</a>
 <pre><code>TypeDeclaration = identdef '=' type</code></pre>
@@ -3209,13 +3205,13 @@ TODO: type checking rules, structral compatibility, packing</div>
 <br><code>| 'div' | 'div_un' | 'dup' | 'initobj' qualident | ('ldarg'|'ldarg_s') (unsigned|ident) </code>
 <br><code>| 'ldarg_0' | 'ldarg_1' | 'ldarg_2' | 'ldarg_3'</code>
 <br><code>| ('ldarga'|'ldarga_s') (unsigned|ident)</code>
-<br><code>| ('ldc_i4'|'ldc_i8'|'ldc_i4_s') integer | ('ldc_r4'|'ldc_r8') real</code>
+<br><code>| ('ldc_i4'|'ldc_i8'|'ldc_i4_s') integer | ('ldc_r4'|'ldc_r8') (real | integer)</code>
 <br><code>| 'ldc_i4_0' | 'ldc_i4_1' | 'ldc_i4_2' | 'ldc_i4_3' | 'ldc_i4_4' | 'ldc_i4_5'</code>
 <br><code>| 'ldc_i4_6' | 'ldc_i4_7' | 'ldc_i4_8' | 'ldc_i4_m1' | 'ldc_obj' constructor</code>
 <br><code>| ('ldelem'|'ldelema') qualident | 'ldelem_i1' | 'ldelem_i2'</code>
 <br><code>| 'ldelem_i4' | 'ldelem_i8' | 'ldelem_u1' | 'ldelem_u2' </code>
 <br><code>| 'ldelem_u4' | 'ldelem_u8' | 'ldelem_r4' | 'ldelem_r8' | 'ldelem_ip'</code>
-<br><code>| ('ldfld'|'ldflda') qualident '.' ident | 'ldftn' qualident</code>
+<br><code>| ('ldfld'|'ldflda') trident </code>
 <br><code>| 'ldind_i1' | 'ldind_i2' | 'ldind_i4' | 'ldind_i8' | 'ldind_u1' | 'ldind_u2'</code>
 <br><code>| 'ldind_u4' | 'ldind_r4' | 'ldind_u8' | 'ldind_r8' | 'ldind_ip'</code>
 <br><code>| ('ldloc'|'ldloc_s'|'ldloca'|'ldloca_s')(unsigned|ident)</code>
@@ -3238,7 +3234,7 @@ TODO: type checking rules, structral compatibility, packing</div>
 <pre><code>ReturnType       = NamedType</code></pre>
 <pre><code>FPSection        = [ident { [','] ident } ':'] NamedType</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15531">3.19</a></span><a href="#15530">&#x21B3;</a>
-<code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' qualident '.' ident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' qualident '.' ident | Switch | WhileDo</code></div>
+<code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' trident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' trident | Switch | WhileDo</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15528">3.20</a></span><a href="#15499">&#x21B3;</a>
 <pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 END ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
