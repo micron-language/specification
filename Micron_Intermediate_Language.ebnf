@@ -33,7 +33,9 @@ qualident ::= [\LA: 1:ident & 2:'.'\ ident '.'] ident
 trident ::= ident '.' ident [ '.' ident ]  // qualident '.' ident for field reference
 identdef  ::= ident ['*']
 
-TypeDeclaration ::= identdef '=' type
+ConstDeclaration ::= ident ['=' ConstExpression2 | ':' qualident]
+
+TypeDeclaration ::= identdef ['=' type]
 type            ::= ArrayType | StructUnionType | PointerType | ProcedureType | NamedType
 NamedType       ::= qualident
 
@@ -71,7 +73,9 @@ ImportList ::= IMPORT import { [','] import } [';']
 import     ::= [ \LL:2\ ident ':=' ] ImportPath ident [ MetaActuals ] 
 ImportPath ::= { \LA: 1:ident&2:'.'\ ident '.' }
 
-DeclarationSequence*  ::= { TYPE {  TypeDeclaration [';'] }
+DeclarationSequence*  ::= { 
+                     CONST { ConstDeclaration [';'] }
+                   | TYPE {  TypeDeclaration [';'] }
 	           | VAR { VariableDeclaration [';'] }
 	           | ProcedureDeclaration [';'] }
 	
@@ -125,11 +129,10 @@ WhileDo ::= 'WHILE' Expression 'DO' StatementSequence END
 
 MetaActuals ::= '(' ConstExpression { [','] ConstExpression } ')' 
 
-MetaParams ::= '(' MetaSection { [';'] MetaSection } ')'
-
-MetaSection ::= 'CONST' ident { \LL:2\ [','] ident } ':' NamedType | [ TYPE ] ident { \LL:2\ [','] ident }
+MetaParams ::= '(' ident { \LL:2\ [','] ident } ')'
 
 ConstExpression  ::= qualident | integer | real | string | hexstring
+ConstExpression2 ::= qualident [ component_list ] | integer | real | string | hexstring
 
 constructor ::= NamedType component_list | hexstring
 component_list ::= '{' [ component {[','] component} ] '}' 

@@ -62,9 +62,8 @@ IdentList ::= identdef { [','] identdef}
 
 PointerType ::= ('POINTER' 'TO' | '^') type // any type in Micron, also simple or procedure types
 
-enumeration ::= '(' ( constEnum | symbolEnum ) ')'                       
+enumeration ::= '(' constEnum ')'                       
 constEnum ::= ident [ '=' ConstExpression ] { [','] ident }
-symbolEnum ::=  ':' ident { [','] ':' ident } // corresponds to const char* ident = "module.ident" in C; ident is of type SYMBOL
 
 VariableDeclaration ::= IdentList ':' type
 
@@ -180,7 +179,8 @@ DeclarationSequence ::=
 ReturnStatement ::= 'RETURN' 
 	[ expression ] // leads to LL(k) ambig with qualident statement; resolve by checking if proc has return type
 
-FormalParameters ::= '(' [ FPSection { \LA: 1:ident | 2:ident\ [';'] FPSection } [ [';'] '..'] ]  ')' [ ':' ReturnType ]
+FormalParameters ::= '(' [ FPSection { \LA: 1:(ident|'CONST') | (2:';' & 3:(ident|'CONST'))\ 
+                                              [';'] FPSection } [ [';'] '..'] ]  ')' [ ':' ReturnType ]
 
 ReturnType ::= [POINTER TO | '^'] NamedType
 

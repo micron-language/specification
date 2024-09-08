@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2024-04-27, work in progress</div>
+2024-09-08, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -55,8 +55,6 @@ This specification was written in CrossLine (see <a href="https://github.com/roc
 <a href="#14181">2.3.6 Characters</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14707">1.6.2.3.4</a></span>
 <a href="#14186">2.3.7 Strings</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14708">1.6.2.3.4.1</a></span>
-<a href="xoid://14192@003526b9-5a79-4133-afbf-9bcd57214e0c">&lt;null reference&gt;</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14709">1.6.2.3.5</a></span>
 <a href="#14198">2.3.8 Operators and Delimiters</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14710">1.6.2.3.6</a></span>
@@ -80,7 +78,7 @@ This specification was written in CrossLine (see <a href="https://github.com/roc
 <div style="margin-left:81px"><span class="label"><a name="14719">1.6.2.6.5</a></span>
 <a href="#14285">2.6.8 Procedure types</a></div>
 <div style="margin-left:81px"><span class="label"><a name="14720">1.6.2.6.6</a></span>
-<a href="#14291">2.6.9 Enumeration and symbol types</a></div>
+<a href="#14291">2.6.9 Enumeration types</a></div>
 <div style="margin-left:81px"><span class="label"><a name="15367">1.6.2.6.7</a></span>
 <a href="#15364">2.6.10 Alias types</a></div>
 <div style="margin-left:63px"><span class="label"><a name="14721">1.6.2.7</a></span>
@@ -207,17 +205,15 @@ Only one-dimensional arrays (but array x of array y of T is still possible).</di
 There is a goto statement (mostly to easy porting existing C code).</div>
 <div style="margin-left:63px"><span class="label"><a name="14353">2.1.7.13</a></span>
 String concatenation only allowed for string and character literals.</div>
-<div style="margin-left:63px"><span class="label"><a name="14785">2.1.7.14</a></span>
-Symbols as internalized names, declared via enumeration type (e.g. for use with exceptions).</div>
-<div style="margin-left:63px"><span class="label"><a name="15417">2.1.7.15</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15417">2.1.7.14</a></span>
 The WHILE statement has no ELSIF part in Micron.</div>
-<div style="margin-left:63px"><span class="label"><a name="15425">2.1.7.16</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15425">2.1.7.15</a></span>
 Procedure aliasses: collect all required types, constants and procedures in one module which is the interface of the shared library.</div>
-<div style="margin-left:63px"><span class="label"><a name="15600">2.1.7.17</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15600">2.1.7.16</a></span>
 Non-local access is not supported. Nested procedures only have access to the objects declared on module level, but not to declarations in the outer (nesting) procedures.</div>
-<div style="margin-left:63px"><span class="label"><a name="15623">2.1.7.18</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15623">2.1.7.17</a></span>
 The initial values of module and local variables are undefined in Micron.</div>
-<div style="margin-left:63px"><span class="label"><a name="15630">2.1.7.19</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15630">2.1.7.18</a></span>
 AND and NOT are supported in addition to &amp; and ~.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14127">2.2</a></span>
 <a href=""><b>S</b></a><b>yntax</b></h4>
@@ -623,8 +619,7 @@ ABS</td>
 <br>SIZE</td>
 <td>
 <br>STRLEN</td>
-<td>
-<br>SYMBOL</td>
+<td></td>
 <td>
 <br>UINT16</td></tr>
 <tr>
@@ -899,15 +894,15 @@ Syntax:</div>
 <div style="margin-left:63px"><span class="label"><a name="14287">2.6.8.3</a></span><span class="ident">NOTE</span>
 Traditional Oberon versions don’t support assignment of procedures local to another procedure to a procedure type variable. Oberon+ as well as Micron don’t make this restriction.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14291">2.6.9</a></span>
-<b>Enumeration and symbol types</b></h4>
+<b>Enumeration types</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="14292">2.6.9.1</a></span>
-An enumeration is a list of identifiers that denote the elements which constitute the type. They, and no other values, belong to this type. These identifiers are either constants or symbols. Accordingly, the enumeration is either a constant or a symbol enumeration.</div>
+An enumeration is a list of identifiers that denote the elements which constitute the type. They, and no other values, belong to this type. These identifiers are constants. </div>
 <div style="margin-left:63px"><span class="label"><a name="14669">2.6.9.2</a></span>
 The export mark of the enumeration type declaration also applies to the elements of the enumeration.</div>
 <div style="margin-left:63px"><span class="label"><a name="14293">2.6.9.3</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14294">2.6.9.3.1</a></span>
-<pre><code>enumeration ::= '(' ( constEnum | symbolEnum ) ')' <br />constEnum ::= ident [ '=' ConstExpression ] { [','] ident } <br />symbolEnum ::= ':' ident { [','] ':' ident }</code></pre></div>
+<pre><code>enumeration ::= '(' constEnum ')' <br />constEnum ::= ident [ '=' ConstExpression ] { [','] ident } </code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="14667">2.6.9.4</a></span>
 The values of an enumeration are ordered, and the ordering relation is defined by their sequence in the enumeration. If T is an enumeration type then <code>MIN(T)</code> returns the first and <code>MAX(T)</code> the last element of the enumeration. </div>
 <div style="margin-left:63px"><span class="label"><a name="14297">2.6.9.5</a></span>
@@ -916,12 +911,7 @@ The ordinal number of a constant enumeration element can be obtained using the <
 Examples:</div>
 <div style="margin-left:81px"><span class="label"><a name="14296">2.6.9.6.1</a></span>
 <pre><code>(red, green, blue)</code></pre>
-<pre><code>(:club, :diamond, :heart, :spade)</code></pre>
 <pre><code>(Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="14668">2.6.9.7</a></span>
-The elements of a symbol enumeration are of the predeclared type SYMBOL. Values of the SYMBOL type have a runtime representation and can be stored in variables of SYMBOL type, just like integers. An invalid symbol has the value NIL. An ident of a symbol enumeration is declared the first time it appears in the source text. It can reappear later in the source text in another symbol enumeration declaration; in that case, both idents represent the same symbol. Elements of symbol enumerations can be assigned to variables of SYMBOL type. Variables of SYMBOL type are initialized with NIL.</div>
-<div style="margin-left:63px"><span class="label"><a name="14670">2.6.9.8</a></span>
-TBD: symbol enumerations should support the IN operator to check whether a given value of SYMBOL type is part of the enum type or not; this could be used to simulate inheritance relations.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15364">2.6.10</a></span>
 Alias types</h4>
 <div style="margin-left:63px"><span class="label"><a name="15365">2.6.10.1</a></span>
@@ -973,7 +963,7 @@ Dereferencing is also implied if a pointer is assigned to a variable of a record
 <div style="margin-left:63px"><span class="label"><a name="14313">2.8.2.6</a></span>
 If <code>a</code> or <code>r</code> are read-only, then also <code>a[e]</code> and <code>r.f</code> are read-only.</div>
 <div style="margin-left:63px"><span class="label"><a name="14314">2.8.2.7</a></span>
-A type cast <code>v(T)</code> converts the original type of <code>v</code> to T. Within the designator, <code>v</code> is then regarded as having the type T instead of the original type. The cast is applicable, if <code>v</code> is a pointer to record type.</div>
+A type cast <code>v(T)</code> converts the original type of <code>v</code> to T. Within the designator, <code>v</code> is then regarded as having the type T instead of the original type. The cast is applicable, if <code>v</code> is a pointer type.</div>
 <div style="margin-left:63px"><span class="label"><a name="14315">2.8.2.8</a></span>
 If the designated object is a constant or a variable, then the designator refers to its current value. If it is a procedure, the designator refers to that procedure unless it is followed by a (possibly empty) parameter list in which case it implies an activation of that procedure and stands for the value resulting from its execution. The actual parameters must correspond to the formal parameters as in proper procedure calls (see <a href="#14458">2.11.12 Formal parameters</a>).</div>
 <div style="margin-left:63px"><span class="label"><a name="14319">2.8.2.9</a></span>
@@ -1175,19 +1165,19 @@ Relations yield a BOOLEAN result. </div>
 <div style="margin-left:81px"><span class="label"><a name="15805">2.8.3.6.3</a></span>
 The relations <code>=</code>, <code>#</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, and <code>&gt;=</code> apply to the numeric types, as well as constant enumerations, pointer types, CHAR, string literals, and CHAR arrays containing <code>0x</code> as a terminator. </div>
 <div style="margin-left:81px"><span class="label"><a name="14675">2.8.3.6.4</a></span>
-The relations <code>=</code> and <code>#</code> also apply to BOOLEAN, SYMBOL, symbol enumeration and SET, as well procedure types. </div>
+The relations <code>=</code> and <code>#</code> also apply to BOOLEAN, and SET, as well procedure types. </div>
 <div style="margin-left:81px"><span class="label"><a name="15808">2.8.3.6.5</a></span>
-The IN relation applies to SET or symbol enumerations.</div>
+The IN relation applies to SET.</div>
 <div style="margin-left:81px"><span class="label"><a name="15804">2.8.3.6.6</a></span>
 In general, both operands must be of the same type. If the operand are of numeric type, both must be either of signed integer, unsigned integer or floating point type. </div>
 <div style="margin-left:81px"><span class="label"><a name="15975">2.8.3.6.7</a></span>
 If one of the operands is an unsigned integer constant and the other operand is of type integer, the unsigned integer constant is converted to the smallest integer type which includes the constant value. </div>
 <div style="margin-left:81px"><span class="label"><a name="15976">2.8.3.6.8</a></span>
-String literals, CHAR and CHAR array operands can be mixed; the same applies to SYMBOL and symbol enumeration operands. </div>
+String literals, CHAR and CHAR array operands can be mixed. </div>
 <div style="margin-left:81px"><span class="label"><a name="15977">2.8.3.6.9</a></span>
 If both operands are pointers, the specific type doesn't matter; the same applies to procedure types. </div>
 <div style="margin-left:81px"><span class="label"><a name="14674">2.8.3.6.10</a></span>
-<code>x IN s</code> stands for <i>x is an element of s</i>. If <code>s</code> is of type SET, <code>x</code> must be of an integer type. If <code>s</code> is of type symbol enumeration, <code>x</code> must be a SYMBOL type. </div>
+<code>x IN s</code> stands for <i>x is an element of s</i>. If <code>s</code> is of type SET, <code>x</code> must be of an integer type. </div>
 <div style="margin-left:81px"><span class="label"><a name="14342">2.8.3.6.11</a></span>
 Examples:</div>
 <div style="margin-left:99px"><span class="label"><a name="14343">2.8.3.6.11.1</a></span>
@@ -1217,9 +1207,9 @@ The concatenation operator applies to string and character literals. The resulti
 <h4 style="margin-left:63px"><span class="label"><a name="14662">2.8.3.8</a></span>
 Address operator</h4>
 <div style="margin-left:81px"><span class="label"><a name="14663">2.8.3.8.1</a></span>
-The address operator '@' can be applied to a variable, record field or array element, which is visible and not read-only, and yields the address of the object.</div>
+The address operator '@' can be applied to a variable, parameter, record field or array element, which is visible and not read-only; the operator yields the address of the object.</div>
 <div style="margin-left:81px"><span class="label"><a name="14664">2.8.3.8.2</a></span>
-If <code>v</code> designates a variable of type T, then <code>@v</code> denotes the address of <code>v</code> with the type <code>POINTER TO T.</code></div>
+If <code>v</code> designates a variable or parameter of type T, then <code>@v</code> denotes the address of <code>v</code> with the type <code>POINTER TO T.</code></div>
 <div style="margin-left:81px"><span class="label"><a name="14665">2.8.3.8.3</a></span>
 If <code>r.f</code> designates a record field <code>f</code> of type T, then <code>@r.f</code> denotes the address of field <code>f</code> with the type <code>POINTER TO T</code>.</div>
 <div style="margin-left:81px"><span class="label"><a name="14666">2.8.3.8.4</a></span>
@@ -1479,28 +1469,26 @@ Exception handling</h4>
 <div style="margin-left:45px"><span class="label"><a name="14435">2.10.1</a></span>
 Exception handling in Micron is implemented using the predeclared procedures PCALL and RAISE (see <a href="#14136">6 Predeclared Procedure Reference</a>), without any special syntax. There are no predefined exceptions.</div>
 <div style="margin-left:45px"><span class="label"><a name="14436">2.10.2</a></span>
-An exception is just a value of type SYMBOL The symbol representing the exception is passed as an actual argument to RAISE. RAISE may be called without an argument in which case the compiler provides an internal symbol. RAISE never returns, but control is transferred from the place where RAISE is called to the nearest dynamically-enclosing call of PCALL. When calling RAISE without a dynamically-enclosing call of PCALL the program execution is aborted.</div>
+An exception is just a value of type POINTER TO ANY. The pointer representing the exception is passed as an actual argument to RAISE. RAISE may be called without an argument in which case the compiler provides a random internal pointer. RAISE never returns, but control is transferred from the place where RAISE is called to the nearest dynamically-enclosing call of PCALL. When calling RAISE without a dynamically-enclosing call of PCALL the program execution is aborted.</div>
 <div style="margin-left:45px"><span class="label"><a name="14437">2.10.3</a></span>
-PCALL executes a protected call of the procedure or procedure type P. P is passed as the second argument to PCALL. P cannot have a return type. P can be a nested procedure. If P has formal parameters the corresponding actual parameters are passed to PCALL immediately after P. The actual parameters must be <i>parameter compatible</i> with the formal parameters of P (see <a href="#14532">3 Definition of terms</a>). The first parameter R of PCALL is a variable of type SYMBOL; if RAISE(E) is called in the course of P, then R is set to E; otherwise R is set to NIL. The state of VAR parameters of P or local variables or parameters of an outer procedure accessed by P is non-deterministic in case RAISE is called in the course of P.</div>
+PCALL executes a protected call of the procedure or procedure type P. P is passed as the second argument to PCALL. P cannot have a return type. P can be a nested procedure. If P has formal parameters the corresponding actual parameters are passed to PCALL immediately after P. The actual parameters must be <i>parameter compatible</i> with the formal parameters of P (see <a href="#14532">3 Definition of terms</a>). The first parameter R of PCALL is a variable of type POINTER TO ANY; if RAISE(E) is called in the course of P, then R is set to E; otherwise R is set to NIL. The state of VAR parameters of P or local variables or parameters of an outer procedure accessed by P is non-deterministic in case RAISE is called in the course of P.</div>
 <div style="margin-left:45px"><span class="label"><a name="14438">2.10.4</a></span>
 Example:</div>
 <div style="margin-left:63px"><span class="label"><a name="14439">2.10.4.1</a></span>
 <pre><code>module ExceptionExample</code></pre>
-<pre><code>  type Exceptions = ( :ex1 :ex2 )</code></pre>
+<pre><code>  var ex1, ex2: integer // type doesn't matter</code></pre>
 <pre><code>  proc Print(in str: array of char)</code></pre>
 <pre><code>  begin</code></pre>
 <pre><code>    println(str)</code></pre>
-<pre><code>    raise(ex1)</code></pre>
+<pre><code>    raise(@ex1)</code></pre>
 <pre><code>    println(&quot;this is not printed&quot;)</code></pre>
 <pre><code>  end Print</code></pre>
-<pre><code>  var res: SYMBOL</code></pre>
+<pre><code>  var res: pointer to any</code></pre>
 <pre><code>begin</code></pre>
 <pre><code>  pcall(res, Print, &quot;Hello World&quot;)</code></pre>
-<pre><code>  case res of</code></pre>
-<pre><code>  | ex1: println(&quot;got ex1&quot;)</code></pre>
-<pre><code>  | nil: println(&quot;no exception&quot;)</code></pre>
-<pre><code>  else</code></pre>
-<pre><code>    println(&quot;unknown exception&quot;)</code></pre>
+<pre><code>  if res = @ex1 then println(&quot;got ex1&quot;)</code></pre>
+<pre><code>  elsif res = nil then println(&quot;no exception&quot;)</code></pre>
+<pre><code>  else println(&quot;unknown exception&quot;)</code></pre>
 <pre><code>    // could call raise(res) here to propagate the exception</code></pre>
 <pre><code>  end</code></pre>
 <pre><code>end ExceptionExample</code></pre></div>
@@ -1980,7 +1968,7 @@ The result types of two procedures match if they are either the <i>same type</i>
 <div style="margin-left:27px"><span class="label"><a name="14603">4.11</a></span><a href="#14289">&#x21B3;</a>
 <pre><code>ProcedureType = PROCEDURE [FormalParameters]</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14604">4.12</a></span><a href="#14294">&#x21B3;</a>
-<pre><code>enumeration ::= '(' ( constEnum | symbolEnum ) ')' <br />constEnum ::= ident [ '=' ConstExpression ] { [','] ident } <br />symbolEnum ::= ':' ident { [','] ':' ident }</code></pre></div>
+<pre><code>enumeration ::= '(' constEnum ')' <br />constEnum ::= ident [ '=' ConstExpression ] { [','] ident } </code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14605">4.13</a></span><a href="#14301">&#x21B3;</a>
 <pre><code>VariableDeclaration = IdentList ':' type</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14606">4.14</a></span><a href="#14309">&#x21B3;</a>
@@ -2117,14 +2105,10 @@ Floating-point types, see <a href="#14224">2.6.4 Basic types</a>.</div>
 <b>SET</b></div>
 <div style="margin-left:45px"><span class="label"><a name="14689">5.7.1</a></span>
 see <a href="#14224">2.6.4 Basic types</a>.</div>
-<div style="margin-left:27px"><span class="label"><a name="14652">5.8</a></span>
-<b>SYMBOL</b></div>
-<div style="margin-left:45px"><span class="label"><a name="14673">5.8.1</a></span>
-Opaque type representing an internalized identifier. Values of the type exist at runtime and can be NIL. See <a href="#14291">2.6.9 Enumeration and symbol types</a>.</div>
-<div style="margin-left:27px"><span class="label"><a name="14651">5.9</a></span>
+<div style="margin-left:27px"><span class="label"><a name="14651">5.8</a></span>
 <b>VA_LIST</b></div>
-<div style="margin-left:45px"><span class="label"><a name="14683">5.9.1</a></span>
-Opaque type representing the list of variable parameters, accessible by <a href="xoid://14141@003526b9-5a79-4133-afbf-9bcd57214e0c">&lt;null reference&gt;</a>, see <a href="#14458">2.11.12 Formal parameters</a>.</div>
+<div style="margin-left:45px"><span class="label"><a name="14683">5.8.1</a></span>
+Opaque type representing the list of variable parameters, see <a href="#14458">2.11.12 Formal parameters</a>.</div>
 <h4 style="margin-left:9px"><span class="label"><a name="14136">6</a></span>
 <b>Predeclared Procedure Reference</b></h4>
 <h4 style="margin-left:27px"><span class="label"><a name="14775">6.1</a></span>
@@ -2750,9 +2734,9 @@ Predeclared proper procedures</h4>
 <td>
 <br>PCALL(e,p,a<sub>0</sub>,…​,a<sub>n</sub>)</td>
 <td>
-<br>VAR e: SYMBOL; p: proper procedure type; a<sub>i</sub>: actual parameters</td>
+<br>e: POINTER TO ANY; p: proper procedure type; a<sub>i</sub>: actual parameters</td>
 <td>
-<br>call procedure type p with arguments a<sub>0</sub>…​a<sub>n</sub> corresponding to the parameter list of p; e becomes nil in normal case and gets the SYMBOL to RAISE() otherwise</td></tr>
+<br>call procedure type p with arguments a<sub>0</sub>…​a<sub>n</sub> corresponding to the parameter list of p; e is set to nil in the normal case, and to the pointer passed to RAISE() otherwise</td></tr>
 <tr>
 <td>
 <br>PRINT(a)</td>
@@ -2771,7 +2755,7 @@ Predeclared proper procedures</h4>
 <td>
 <br>RAISE(e)</td>
 <td>
-<br>e: SYMBOL</td>
+<br>e: POINTER TO ANY</td>
 <td>
 <br>terminates the last protected function called and returns e as the exception value; RAISE() never returns</td></tr>
 <tr>

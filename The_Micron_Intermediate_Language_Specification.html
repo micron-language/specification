@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2024-04-27, work in progress</div>
+2024-09-08, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -637,15 +637,13 @@ TODO: tail calls</div>
 <td>
 <br>Call function indicated on the stack with arguments described by <i>function</i>. </td></tr></table></div>
 <div style="margin-left:63px"><span class="label"><a name="15010">2.5.11.2</a></span>
-<code>…,ftn, arg1, arg2 … argN -&gt; …, retVal</code></div>
+<code>…, arg1, arg2 … argN,ftn -&gt; …, retVal</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15009">2.5.11.3</a></span>
-<code>…,ftn, arg1, arg2 … argN -&gt; …</code></div>
+<code>…, arg1, arg2 … argN,ftn -&gt; …</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15011">2.5.11.4</a></span>
 The calli instruction calls <i>ftn</i> (a pointer to a procedure entry point) with the arguments arg1 … argN. The types of these arguments, and a possible return type, are described by the signature. The <i>ftn</i> argument is assumed to be a pointer to native code (of the target machine) that can be legitimately called with the arguments described by the signature. Such a pointer can be created using the ldproc instruction, or could have been passed in from external code. The arguments are placed on the stack in left-to-right order. That is, the first argument is computed and placed on the stack, then the second argument, and so on.</div>
-<div style="margin-left:63px"><span class="label"><a name="15930">2.5.11.5</a></span><span class="ident">NOTE</span>
-In MIL, the procedure pointer (ftn) is pushed on the stack first, before the arguments, in contrast to ECMA-335 CIL, where the function pointer is pushed after the arguments.</div>
-<div style="margin-left:63px"><span class="label"><a name="15012">2.5.11.6</a></span>
-TODO: tail call</div>
+<div style="margin-left:63px"><span class="label"><a name="15012">2.5.11.5</a></span>
+TODO: tail calls</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15233">2.5.12</a></span>
 <b>castptr – cast a pointer to a type </b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15234">2.5.12.1</a></span>
@@ -2397,12 +2395,18 @@ TODO</div>
 Only single literals, no expressions; or maybe calculated at runtime and write-once variable</div>
 <div style="margin-left:45px"><span class="label"><a name="15450">2.6.3</a></span>
 Maybe an initializer expression independent of the module begin.</div>
+<div style="margin-left:45px"><span class="label"><a name="17197">2.6.4</a></span>
+Syntax of textual representation:</div>
+<div style="margin-left:63px"><span class="label"><a name="17198">2.6.4.1</a></span>
+<code>ConstDeclaration = ident '=' ConstExpression2</code></div>
+<div style="margin-left:63px"><span class="label"><a name="17200">2.6.4.2</a></span>
+<code>ConstExpression2 = qualident [component_list] | integer | real | string | hexstring </code></div>
 <h4 style="margin-left:27px"><span class="label"><a name="15500">2.7</a></span>
 <b>Variables</b></h4>
 <div style="margin-left:45px"><span class="label"><a name="15501">2.7.1</a></span>
 Variable declarations introduce module variables by defining an identifier and a data type for them.</div>
 <div style="margin-left:45px"><span class="label"><a name="15502">2.7.2</a></span>
-Syntax:</div>
+Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15503">2.7.2.1</a></span>
 <pre><code>VariableDeclaration = IdentList ':' NamedType</code></pre></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14965">2.8</a></span>
@@ -3143,16 +3147,13 @@ The statement sequence following the symbol BEGIN is executed when the module is
 <h4 style="margin-left:45px"><span class="label"><a name="15587">2.10.9</a></span>
 <b>Generic Modules</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15588">2.10.9.1</a></span>
-Modules can be made generic by adding formal meta parameters. Meta parameters represent types or constants; the latter include procedure names. Meta parameters default to types, but can be explicitly prefixed with the TYPE reserved word; the CONST prefix designates a constant meta parameter. A CONST meta parameter can be constrained with a named type, in which case the actual meta parameter must correspond to this type; the correspondence is established when the generic module is instantiated; the type of the actual meta parameter must be compatible with the constraint type.</div>
+Modules can be made generic by adding formal meta parameters. Meta parameters are a list of names which represent types or constants; the latter include procedure names. For each meta parameter there must be either a TYPE or a CONST declaration, of which there is a dedicated version for this purpose. A CONST meta parameter can be constrained with a named type, in which case the actual meta parameter must correspond to this type; the correspondence is established when the generic module is instantiated; the type of the actual meta parameter must be compatible with the constraint type.</div>
 <div style="margin-left:63px"><span class="label"><a name="15589">2.10.9.2</a></span>
 Generic modules can be instantiated with different sets of meta actuals which enables the design of reusable algorithms and data structures. The instantiation of a generic module occurs when importing it. A generic module can be instantiated more than once in the same module with different actual meta parameters. </div>
 <div style="margin-left:63px"><span class="label"><a name="15590">2.10.9.3</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:81px"><span class="label"><a name="15591">2.10.9.3.1</a></span>
-<pre><code>MetaParams       = '(' MetaSection { [';'] MetaSection } ')'</code></pre>
-<pre><code>MetaSection      = CONST ident { [','] ident } ':' NamedType <br />                   | [ TYPE ] ident { [','] ident }</code></pre>
-<pre><code>TypeConstraint   = NamedType | ProcedureType</code></pre>
-<pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
+<pre><code>MetaParams       = '(' ident { [','] ident } ')'<br />TypeDeclaration = ident<br />ConstDeclaration = ident ':' NamedType<br />MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="15592">2.10.9.4</a></span>
 Meta parameters can be used within the generic module like normal types or constants. If no type constraint is present, the types and constants can be used wherever no information about the actual type is required; otherwise the type constraint determines the permitted operations. </div>
 <div style="margin-left:63px"><span class="label"><a name="15595">2.10.9.5</a></span><span class="ident">NOTE</span>
@@ -3222,40 +3223,41 @@ TODO: type checking rules, structral compatibility, packing</div>
 <br><code>| 'not' | 'or' | 'rem' | 'rem_un' | 'shl' | 'shr' | 'shr_un' <br /><br />| 'sizeof' qualident | 'sub' | 'xor'</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15745">3.14</a></span><a href="#15733">&#x21B3;</a>
 <code>ConstExpression  = qualident | integer | real | string | hexstring </code></div>
-<div style="margin-left:27px"><span class="label"><a name="15746">3.15</a></span><a href="#15737">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="17201">3.15</a></span><a href="#17200">&#x21B3;</a>
+<code>ConstExpression2 = qualident [component_list] | integer | real | string | hexstring </code></div>
+<div style="margin-left:27px"><span class="label"><a name="15746">3.16</a></span><a href="#15737">&#x21B3;</a>
 <code>constructor = NamedType component_list<br />component_list = '{' [ component {[','] component} ] '}' <br />component = [ident '='] ( ConstExpression | component_list )</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15525">3.16</a></span><a href="#15503">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="17199">3.17</a></span><a href="#17198">&#x21B3;</a>
+<code>ConstDeclaration = ident '=' ConstExpression2</code></div>
+<div style="margin-left:27px"><span class="label"><a name="15525">3.18</a></span><a href="#15503">&#x21B3;</a>
 <pre><code>VariableDeclaration = IdentList ':' NamedType</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="15526">3.17</a></span><a href="#15465">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15526">3.19</a></span><a href="#15465">&#x21B3;</a>
 <pre><code>ProcedureDeclaration = ProcedureHeading [';'] <br />                         (['INLINE'|'INVAR'|'INIT'] [';'] ProcedureBody <br />                          | [';'] EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) identdef '=' qualident</code></pre>
 <pre><code>ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br /><br />ProcedureBody        = [VAR { LocalDeclaration [';'] }]<br />                       BEGIN StatementSequence END ident<br /><br />LocalDeclaration     = [IdentList ':'] NamedType</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="15527">3.18</a></span><a href="#15473">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15527">3.20</a></span><a href="#15473">&#x21B3;</a>
 <pre><code>FormalParameters = '(' [ FPSection { ';' FPSection } [ ';' '..'] ] ')'<br />                   [ ':' ReturnType ]</code></pre>
 <pre><code>ReturnType       = NamedType</code></pre>
 <pre><code>FPSection        = [ident { [','] ident } ':'] NamedType</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="15531">3.19</a></span><a href="#15530">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15531">3.21</a></span><a href="#15530">&#x21B3;</a>
 <code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' trident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' trident | Switch | WhileDo</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15528">3.20</a></span><a href="#15499">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15528">3.22</a></span><a href="#15499">&#x21B3;</a>
 <pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 END ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
 <pre><code>import     = [ ident ':=' ] ImportPath ident [ MetaActuals ]</code></pre>
 <pre><code>ImportPath = { ident '.' }<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
 <pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="15594">3.21</a></span><a href="#15591">&#x21B3;</a>
-<pre><code>MetaParams       = '(' MetaSection { [';'] MetaSection } ')'</code></pre>
-<pre><code>MetaSection      = CONST ident { [','] ident } ':' NamedType <br />                   | [ TYPE ] ident { [','] ident }</code></pre>
-<pre><code>TypeConstraint   = NamedType | ProcedureType</code></pre>
-<pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="15534">3.22</a></span><a href="#15533">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15594">3.23</a></span><a href="#15591">&#x21B3;</a>
+<pre><code>MetaParams       = '(' ident { [','] ident } ')'<br />TypeDeclaration = ident<br />ConstDeclaration = ident ':' NamedType<br />MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
+<div style="margin-left:27px"><span class="label"><a name="15534">3.24</a></span><a href="#15533">&#x21B3;</a>
 <code>IfThenElse = 'IF' Expression 'THEN' StatementSequence <br />[ 'ELSE' StatementSequence ] 'END'</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15546">3.23</a></span><a href="#15545">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15546">3.25</a></span><a href="#15545">&#x21B3;</a>
 <code>Loop = 'LOOP' StatementSequence 'END'</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15537">3.24</a></span><a href="#15536">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15537">3.26</a></span><a href="#15536">&#x21B3;</a>
 <code>RepeatUntil = 'REPEAT' StatementSequence 'UNTIL' Expression 'END'</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15540">3.25</a></span><a href="#15539">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15540">3.27</a></span><a href="#15539">&#x21B3;</a>
 <code>Switch = 'SWITCH' Expression { 'CASE' integer { [','] integer } <br />'THEN' StatementSequence } <br />[ 'ELSE' StatementSequence ] 'END'</code></div>
-<div style="margin-left:27px"><span class="label"><a name="15543">3.26</a></span><a href="#15542">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="15543">3.28</a></span><a href="#15542">&#x21B3;</a>
 <code>WhileDo = 'WHILE' Expression 'DO' StatementSequence 'END'</code></div>
 <h4 style="margin-left:9px"><span class="label"><a name="14962">4</a></span>
 <b>References</b></h4>
