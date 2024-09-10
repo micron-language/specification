@@ -33,7 +33,10 @@ qualident ::= [ \LL:2\ ident '.' ] ident
 
 identdef ::= ident [ '*' | '-' ] 
 
-ConstDeclaration ::= identdef '=' ConstExpression
+ConstDeclaration ::= identdef ( 
+                                    '=' ConstExpression 
+                                    | ':' NamedType // for each CONST meta param, and only there, whereas same ident
+                                    )
 
 ConstExpression ::= expression
 
@@ -200,9 +203,11 @@ import ::= [ \LL:2\ ident ':=' ] ident
 
 MetaActuals ::= '(' ConstExpression { [','] ConstExpression } ')' 
 
-MetaParams ::= '(' MetaSection { [';'] MetaSection } ')'
+MetaParams ::= '(' MetaSection { [','] MetaSection } ')'
 
-MetaSection ::= 'CONST' ident { \LL:2\ [','] ident } ':' NamedType | [ 'TYPE' ] ident { \LL:2\ [','] ident }
+MetaSection ::= ['CONST' | 'TYPE'] ident 
+
+reserved_for_future_extensions- ::= OBJECT
 
 /// Pragmas
 %module ::= 'Micron'

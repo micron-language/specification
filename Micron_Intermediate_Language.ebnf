@@ -29,8 +29,8 @@ hexstringdelim- ::= '#'
 comment- ::= '(*' '*)' '//'
 Comment ::=
 
-qualident ::= [\LA: 1:ident & 2:'.'\ ident '.'] ident    
-trident ::= ident '.' ident [ '.' ident ]  // qualident '.' ident for field reference
+qualident ::= [\LL:2\ ident '!'] ident    // module : item
+trident ::= [\LL:2\ ident '!' ] ident '.' ident  // qualident '.' ident for field reference
 identdef  ::= ident ['*']
 
 ConstDeclaration ::= ident ['=' ConstExpression2 | ':' qualident]
@@ -70,8 +70,7 @@ module     ::= 'MODULE' ident [ MetaParams ] [';']
                         { ImportList | DeclarationSequence }
 	                END ident ['.']
 ImportList ::= IMPORT import { [','] import } [';']
-import     ::= [ \LL:2\ ident ':=' ] ImportPath ident [ MetaActuals ] 
-ImportPath ::= { \LA: 1:ident&2:'.'\ ident '.' }
+import     ::= { \LL:2\ ident '/' } ident [ MetaActuals ] 
 
 DeclarationSequence*  ::= { 
                      CONST { ConstDeclaration [';'] }
@@ -116,7 +115,7 @@ Statement* ::= 'DISP' | RepeatUntil
                          | 'STFLD' trident
                          | 'STIND_I1' | 'STIND_I2' | 'STIND_I4' | 'STIND_I8' | 'STIND_R4' | 'STIND_R8' | 'STIND_IP'
                          | ('STLOC' |'STLOC_S') (unsigned|ident) | 'STLOC_0' | 'STLOC_1' | 'STLOC_2' | 'STLOC_3'
-                         | 'STOBJ' qualident | 'STVAR' trident | Switch | WhileDo
+                         | 'STOBJ' qualident | 'STVAR' qualident | Switch | WhileDo
 
 IfThenElse ::= 'IF' Expression 'THEN' StatementSequence [ 'ELSE' StatementSequence ] END
 Loop ::= 'LOOP' StatementSequence END

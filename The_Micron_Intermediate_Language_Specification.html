@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2024-09-08, work in progress</div>
+2024-09-10, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -211,7 +211,7 @@ An identifier declared in a module block may be followed by an export mark (&quo
 <div style="margin-left:45px"><span class="label"><a name="15451">2.3.4</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15452">2.3.4.1</a></span>
-<code>qualident = [ident '.'] ident <br />trident   = qualident '.' ident</code>
+<code>qualident = [ident '!'] ident<br />trident   = qualident '.' ident</code>
 <br><code>identdef  = ident ['*']</code></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14956">2.4</a></span>
 Types</h4>
@@ -637,9 +637,9 @@ TODO: tail calls</div>
 <td>
 <br>Call function indicated on the stack with arguments described by <i>function</i>. </td></tr></table></div>
 <div style="margin-left:63px"><span class="label"><a name="15010">2.5.11.2</a></span>
-<code>…, arg1, arg2 … argN,ftn -&gt; …, retVal</code></div>
+<code>…, arg1, arg2 … argN, ftn -&gt; …, retVal</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15009">2.5.11.3</a></span>
-<code>…, arg1, arg2 … argN,ftn -&gt; …</code></div>
+<code>…, arg1, arg2 … argN, ftn -&gt; …</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15011">2.5.11.4</a></span>
 The calli instruction calls <i>ftn</i> (a pointer to a procedure entry point) with the arguments arg1 … argN. The types of these arguments, and a possible return type, are described by the signature. The <i>ftn</i> argument is assumed to be a pointer to native code (of the target machine) that can be legitimately called with the arguments described by the signature. Such a pointer can be created using the ldproc instruction, or could have been passed in from external code. The arguments are placed on the stack in left-to-right order. That is, the first argument is computed and placed on the stack, then the second argument, and so on.</div>
 <div style="margin-left:63px"><span class="label"><a name="15012">2.5.11.5</a></span>
@@ -2390,16 +2390,12 @@ The acceptable operand types and their corresponding result data type are encaps
 <h4 style="margin-left:27px"><span class="label"><a name="15447">2.6</a></span>
 Constants</h4>
 <div style="margin-left:45px"><span class="label"><a name="15448">2.6.1</a></span>
-TODO</div>
-<div style="margin-left:45px"><span class="label"><a name="15449">2.6.2</a></span>
-Only single literals, no expressions; or maybe calculated at runtime and write-once variable</div>
-<div style="margin-left:45px"><span class="label"><a name="15450">2.6.3</a></span>
-Maybe an initializer expression independent of the module begin.</div>
-<div style="margin-left:45px"><span class="label"><a name="17197">2.6.4</a></span>
+Named constant literals in the public interface of a module.</div>
+<div style="margin-left:45px"><span class="label"><a name="17197">2.6.2</a></span>
 Syntax of textual representation:</div>
-<div style="margin-left:63px"><span class="label"><a name="17198">2.6.4.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="17198">2.6.2.1</a></span>
 <code>ConstDeclaration = ident '=' ConstExpression2</code></div>
-<div style="margin-left:63px"><span class="label"><a name="17200">2.6.4.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="17200">2.6.2.2</a></span>
 <code>ConstExpression2 = qualident [component_list] | integer | real | string | hexstring </code></div>
 <h4 style="margin-left:27px"><span class="label"><a name="15500">2.7</a></span>
 <b>Variables</b></h4>
@@ -2455,7 +2451,7 @@ TODO: pcall and raise</div>
 <div style="margin-left:45px"><span class="label"><a name="15529">2.9.2</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15530">2.9.2.1</a></span>
-<code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' trident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' trident | Switch | WhileDo</code></div>
+<code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' trident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' qualident | Switch | WhileDo</code></div>
 <h4 style="margin-left:45px"><span class="label"><a name="15264">2.9.3</a></span>
 <b>disp</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15304">2.9.3.1</a></span>
@@ -3128,8 +3124,7 @@ Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15499">2.10.2.1</a></span>
 <pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 END ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
-<pre><code>import     = [ ident ':=' ] ImportPath ident [ MetaActuals ]</code></pre>
-<pre><code>ImportPath = { ident '.' }<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
+<pre><code>import     = {ident '/'} ident [ MetaActuals ]<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
 <pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
 <div style="margin-left:45px"><span class="label"><a name="15506">2.10.3</a></span>
@@ -3179,7 +3174,7 @@ TODO: type checking rules, structral compatibility, packing</div>
 <div style="margin-left:27px"><span class="label"><a name="15518">3.5</a></span><a href="#15405">&#x21B3;</a>
 <pre><code>hexstring = '#' {hexDigit} '#'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15519">3.6</a></span><a href="#15452">&#x21B3;</a>
-<code>qualident = [ident '.'] ident <br />trident   = qualident '.' ident</code>
+<code>qualident = [ident '!'] ident<br />trident   = qualident '.' ident</code>
 <br><code>identdef  = ident ['*']</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15520">3.7</a></span><a href="#15431">&#x21B3;</a>
 <pre><code>TypeDeclaration = identdef '=' type</code></pre>
@@ -3239,12 +3234,11 @@ TODO: type checking rules, structral compatibility, packing</div>
 <pre><code>ReturnType       = NamedType</code></pre>
 <pre><code>FPSection        = [ident { [','] ident } ':'] NamedType</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15531">3.21</a></span><a href="#15530">&#x21B3;</a>
-<code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' trident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' trident | Switch | WhileDo</code></div>
+<code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'disp' | RepeatUntil <br />| 'exit' | 'goto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' trident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stobj' qualident | 'stvar' qualident | Switch | WhileDo</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15528">3.22</a></span><a href="#15499">&#x21B3;</a>
 <pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 END ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
-<pre><code>import     = [ ident ':=' ] ImportPath ident [ MetaActuals ]</code></pre>
-<pre><code>ImportPath = { ident '.' }<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
+<pre><code>import     = {ident '/'} ident [ MetaActuals ]<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
 <pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15594">3.23</a></span><a href="#15591">&#x21B3;</a>
