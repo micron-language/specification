@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2024-09-10, work in progress</div>
+2024-09-23, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -1318,7 +1318,7 @@ Procedure calls</h4>
 <div style="margin-left:63px"><span class="label"><a name="14375">2.9.6.1</a></span>
 A procedure call activates a procedure. It may contain a list of actual parameters which replace the corresponding formal parameter list defined in the procedure declaration (see <a href="#14440">2.11 Procedure declarations</a>). The correspondence is established by the positions of the parameters in the actual and formal parameter lists. </div>
 <div style="margin-left:63px"><span class="label"><a name="14376">2.9.6.2</a></span>
-Each actual parameter must be an expression. This expression is evaluated before the procedure activation, and the resulting value is assigned to the formal parameter (see also <a href="#14458">2.11.12 Formal parameters</a>).</div>
+Each actual parameter must be an expression. This expression is evaluated before the procedure activation, and the resulting value is assigned to the formal parameter (see also <a href="#14458">2.11.12 Formal parameters</a>). The order of evaluation of the actual parameter expressions is undefined.</div>
 <div style="margin-left:63px"><span class="label"><a name="14377">2.9.6.3</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14378">2.9.6.3.1</a></span>

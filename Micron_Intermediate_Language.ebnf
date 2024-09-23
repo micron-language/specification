@@ -102,11 +102,11 @@ ExpInstr* ::= 'ADD' | 'AND' | ('CALL' | 'CALLI') qualident | 'CASTPTR' qualident
                       | ('LDVAR'|'LDVARA') qualident | 'MUL' | 'NEG' 
                       | ('NEWARR'|'NEWVLA'|'NEWOBJ') qualident 
                       | 'NOT' | 'OR' | 'REM' | 'REM_UN' | 'SHL' | 'SHR' | 'SHR_UN' 
-                      | 'SIZEOF' qualident |'SUB' | 'XOR'
+                      | 'SIZEOF' qualident |'SUB' | 'XOR' | 'PTROFF' qualident
 
 StatementSequence ::= { Statement|ExpInstr }
           
-Statement* ::= 'DISP' | RepeatUntil 
+Statement* ::= 'FREE' | RepeatUntil 
                          | 'EXIT' | 'GOTO' ident | IfThenElse
                          | 'LABEL' ident | 'LINE' unsigned | Loop | 'POP' | 'RET' 
                          | ('STARG'|'STARG_S') (unsigned|ident)
