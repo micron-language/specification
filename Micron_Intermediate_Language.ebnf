@@ -98,16 +98,16 @@ ExpInstr* ::= 'ADD' | 'AND' | ('CALL' | 'CALLI') qualident | 'CASTPTR' qualident
                       | 'LDIND_U4' | 'LDIND_R4' | 'LDIND_U8' | 'LDIND_R8' | 'LDIND_IP'
                       | ('LDLOC'|'LDLOC_S'|'LDLOCA'|'LDLOCA_S')(unsigned|ident)
                       | 'LDLOC_0' | 'LDLOC_1' | 'LDLOC_2' | 'LDLOC_3' | 'LDNULL' 
-                      | 'LDOBJ' qualident | 'LDPROC' qualident | 'LDSTR' (string|hexstring)
+                      | 'LDOBJ' [qualident] | 'LDPROC' qualident | 'LDSTR' (string|hexstring)
                       | ('LDVAR'|'LDVARA') qualident | 'MUL' | 'NEG' 
                       | ('NEWARR'|'NEWVLA'|'NEWOBJ') qualident 
                       | 'NOT' | 'OR' | 'REM' | 'REM_UN' | 'SHL' | 'SHR' | 'SHR_UN' 
-                      | 'SIZEOF' qualident |'SUB' | 'XOR' | 'PTROFF' qualident
+                      | 'SIZEOF' qualident |'SUB' | 'XOR' | 'PTROFF' qualident | 'NOP'
 
 StatementSequence ::= { Statement|ExpInstr }
           
 Statement* ::= 'FREE' | RepeatUntil 
-                         | 'EXIT' | 'GOTO' ident | IfThenElse
+                         | 'EXIT' | 'GOTO' ident | 'IFGOTO' ident | IfThenElse
                          | 'LABEL' ident | 'LINE' unsigned | Loop | 'POP' | 'RET' 
                          | ('STARG'|'STARG_S') (unsigned|ident)
                          | 'STELEM' qualident | 'STELEM_I1' | 'STELEM_I2' | 'STELEM_I4' | 'STELEM_I8' 

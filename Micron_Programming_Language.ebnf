@@ -88,7 +88,7 @@ term ::= factor {MulOperator factor}
 
 MulOperator ::= '*' | '/' | 'DIV' | 'MOD' | '&' | 'AND'
 
-literal ::= number | string | hexchar | 'NIL' | set | 'TRUE' | 'FALSE'
+literal ::= number | string | hexstring | hexchar | 'NIL' | set | 'TRUE' | 'FALSE'
 
 constructor ::= NamedType '{' [ component {[','] component} ] '}' 
                            | hexstring
