@@ -9,6 +9,11 @@
 // http://www.fsf.org/licensing/licenses/info/GPLv2.html and
 // http://www.gnu.org/copyleft/gpl.html.
 
+// To consider in future:
+// - objects, i.e. tagged records supporting inheritance and bound procs
+// - smart pointers (i.e. a separate pointer type) with garbage collection (AUTOPTR, SMARTPTR ?)
+// - enable/disable language parts, e.g. level 0 only inline calls and no dynamic alloc
+
 Micron ::=  module
 
 ident ::= // ( letter | '_' ) {letter | digit | '_'}
@@ -51,7 +56,10 @@ ArrayType ::= 'ARRAY' [ length ] 'OF' type | '[' [ length ] ']' type
 length ::= ConstExpression | 'VAR' expression
 
 RecordType ::= 'RECORD' [FixedPart] [VariantPart]  'END' 
-         
+
+//ObjectType ::= 'OBJECT' ['(' BaseType ')'] { IdentList ':' type [ ';' ] } 'END' 
+//BaseType ::= NamedType
+
 inline_ ::= 'INLINE' | 'IN'
 
 VariantPart ::= 'CASE' { ['|'] [inline_] identdef ':' type } 
@@ -78,7 +86,7 @@ ExpList ::= expression { [','] expression }
 
 expression ::= SimpleExpression [ relation SimpleExpression ]
 
-relation ::= '=' | '#' | '<' | '<=' | '>' | '>=' | 'IN'
+relation ::= '=' | '#' | '<' | '<=' | '>' | '>=' | 'IN'  // | 'IS'
 
 SimpleExpression ::= ['+' | '-'] term { AddOperator term }
 
@@ -88,12 +96,14 @@ term ::= factor {MulOperator factor}
 
 MulOperator ::= '*' | '/' | 'DIV' | 'MOD' | '&' | 'AND'
 
-literal ::= number | string | hexstring | hexchar | 'NIL' | set | 'TRUE' | 'FALSE'
+literal ::= number | string | hexstring | hexchar | 'NIL' | 'TRUE' | 'FALSE'
 
-constructor ::= NamedType '{' [ component {[','] component} ] '}' 
-                           | hexstring
+constructor ::= [NamedType] '{' [ component {[','] component} ] '}' 
 
-component ::= [\LL:2\ ident '='] ConstExpression
+component ::= 
+        \LL:2\ ident ':' expression // explicit record field name (ident is like a label, thus ':')
+        | '[' ConstExpression ']' ':' expression // explicit array element
+        | expression ['..' expression] // value mapped to record or array by field/element order; '..' only for sets
 
 factor ::= 
         \LA: 1:ident & 2:'{'\ constructor
@@ -104,10 +114,6 @@ factor ::=
 	| '@' designator // address of operator
 
 variableOrFunctionCall ::= designator // designator includes [ ActualParameters ] 
-	
-set ::= '{' [ element {[','] element} ] '}'
-
-element ::= expression ['..' expression]
 
 statement ::= 
         \LA: 1:ident & 2:':'\ gotoLabel 
@@ -135,9 +141,9 @@ ElsifStatement ::= 'ELSIF' expression 'THEN' StatementSequence
 ElseStatement ::= 'ELSE' StatementSequence
 
 CaseStatement ::= 'CASE' expression 'OF' [Case] { '|' Case }
-	[ 'ELSE' StatementSequence ] 'END' // no type case in Micron
+	[ 'ELSE' StatementSequence ] 'END'
 
-Case ::= [ CaseLabelList ':' StatementSequence ]
+Case ::= CaseLabelList ':' StatementSequence
 
 CaseLabelList ::= LabelRange { [','] LabelRange }
 
@@ -167,7 +173,8 @@ ProcedureDeclaration ::=
 	| \LA: 1:('PROCEDURE' | 'PROC')&(3:'='|4:'=')\ procedure identdef '=' qualident
 	|  ProcedureHeading ( ['INLINE'| 'INVAR'] [ ';' ] ProcedureBody | \LL:2\ [ ';' ] 'EXTERN' [ident] )
 	
-ProcedureHeading ::= procedure identdef [ FormalParameters ]  // no receivers in Micron
+ProcedureHeading ::= procedure identdef [ FormalParameters ]  // no receivers in Micron yet
+// Receiver ::= '(' ident ':' ident ')'
 
 block ::= 'BEGIN' StatementSequence
 
@@ -203,11 +210,11 @@ import ::= [ \LL:2\ ident ':=' ] ident
 
 MetaActuals ::= '(' ConstExpression { [','] ConstExpression } ')' 
 
-MetaParams ::= '(' MetaSection { [','] MetaSection } ')'
+MetaParams ::= '(' MetaSection { [';'] MetaSection } ')'
 
-MetaSection ::= ['CONST' | 'TYPE'] ident 
+MetaSection ::= [ TYPE | CONST ] ident { \LL:2\ [','] ident } [ ':' NamedType ]
 
-reserved_for_future_extensions- ::= OBJECT
+reserved_for_future_extensions- ::= 'AUTOPTR' 'OBJECT'
 
 /// Pragmas
 %module ::= 'Micron'

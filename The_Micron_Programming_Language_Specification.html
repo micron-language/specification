@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2024-12-15, work in progress</div>
+2024-12-17, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -1228,36 +1228,40 @@ Constructors</h4>
 With constructors, record, array and pointer literals can be declared. </div>
 <div style="margin-left:63px"><span class="label"><a name="14354">2.8.4.2</a></span>
 Syntax:</div>
-<div style="margin-left:81px"><span class="label"><a name="14632">2.8.4.2.1</a></span>
-<code>constructor ::= NamedType '{' [ component {[','] component} ] '}' </code>
-<br><code>component ::= [ident '='] ConstExpression</code></div>
+<div style="margin-left:81px"><span class="label"><a name="17796">2.8.4.2.1</a></span>
+<code>constructor = [NamedType] '{' [ component {[','] component} ] '}' </code>
+<br><code>component = ident ':' expression </code>
+<br><code>	| '[' ConstExpression ']' ':' expression </code>
+<br><code>	| expression ['..' expression] </code></div>
 <div style="margin-left:63px"><span class="label"><a name="15629">2.8.4.3</a></span>
-A constructor consists of an explicit type and a list of either named or anonymous components. Named and anonymous components cannot be mixed in the list.</div>
-<div style="margin-left:63px"><span class="label"><a name="14633">2.8.4.4</a></span>
-If NamedType is a record type, then there is either an anonymous component for each field of the record in the order of declaration, or there is a named component for each field in arbitrary order. If the record type has a variant part, only named component can be used, and only one option of the variant part can be initialized in the constructor.</div>
-<div style="margin-left:63px"><span class="label"><a name="14634">2.8.4.5</a></span>
-If NamedType is an array type, then there is an anonymous componend for each element of the array. The array type may be an open array in which case the number of elements is determined by the number of components.</div>
-<div style="margin-left:63px"><span class="label"><a name="14635">2.8.4.6</a></span>
+A constructor consists of an optional  NamedType and a list of either named, indexed or anonymous components. Named, Indexed and anonymous components can be mixed in the list.</div>
+<div style="margin-left:63px"><span class="label"><a name="17798">2.8.4.4</a></span>
+When the type of a constructor can be inferred (e.g. by the left side of an assignment), the NamedType prefix can be left out.</div>
+<div style="margin-left:63px"><span class="label"><a name="14633">2.8.4.5</a></span>
+If NamedType is a record type, then anonymous or named components can be used to assign field values; anonymous components are associated with fields in the order of declaration. If the record type has a variant part, only named component can be used, and only one option of the variant part can be initialized in the constructor.</div>
+<div style="margin-left:63px"><span class="label"><a name="14634">2.8.4.6</a></span>
+If NamedType is an array type, then anonymous or indexed components can be used to assign element values; anonymous components are associated with elements in the order of indizes. The array type may be an open array in which case the number of elements is determined by the number of components or the largest index component.</div>
+<div style="margin-left:63px"><span class="label"><a name="14635">2.8.4.7</a></span>
 If NamedType is a pointer type, then there is exactly one anonymous component which is an unsigned integer type constant representing the address. </div>
-<div style="margin-left:63px"><span class="label"><a name="14636">2.8.4.7</a></span>
-For each field or element which is of record, array or pointer type, an embedded constructor is required. Since the exact type of the field or element is known, the NamedType prefix can be left out.</div>
-<div style="margin-left:63px"><span class="label"><a name="14637">2.8.4.8</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14636">2.8.4.8</a></span>
+For each field or element which is of record, array or pointer type, an embedded constructor is required. </div>
+<div style="margin-left:63px"><span class="label"><a name="14637">2.8.4.9</a></span>
 Example:</div>
-<div style="margin-left:81px"><span class="label"><a name="14638">2.8.4.8.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14638">2.8.4.9.1</a></span>
 <code>myVal := Rect{0,0,x1,y1};</code></div>
-<h4 style="margin-left:63px"><span class="label"><a name="16058">2.8.4.9</a></span>
+<h4 style="margin-left:63px"><span class="label"><a name="16058">2.8.4.10</a></span>
 Hex Strings</h4>
-<div style="margin-left:81px"><span class="label"><a name="16059">2.8.4.9.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="16059">2.8.4.10.1</a></span>
 Hex strings are sequences of bytes encoded in hexadecimal format and enclosed in dollar signs. The number of hex digits in the string must be even, two hex digits per byte. The number of bytes encoded in a hex string is called its length. Line breaks and other white space between the dollar signs is ignored. Both upper and lower-case hex digits are supported. </div>
-<div style="margin-left:81px"><span class="label"><a name="16061">2.8.4.9.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="16061">2.8.4.10.2</a></span>
 Syntax:</div>
-<div style="margin-left:99px"><span class="label"><a name="16062">2.8.4.9.2.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="16062">2.8.4.10.2.1</a></span>
 <pre><code>hexstring = '$' {hexDigit} '$'</code></pre></div>
-<div style="margin-left:81px"><span class="label"><a name="16063">2.8.4.9.3</a></span>
+<div style="margin-left:81px"><span class="label"><a name="16063">2.8.4.10.3</a></span>
 Examples:</div>
-<div style="margin-left:99px"><span class="label"><a name="16064">2.8.4.9.3.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="16064">2.8.4.10.3.1</a></span>
 <pre><code>const arrow = $0F0F 0060 0070 0038 001C 000E 0007 8003 C101 E300 <br />               7700 3F00 1F00 3F00 7F00 FF00$</code></pre></div>
-<div style="margin-left:81px"><span class="label"><a name="16066">2.8.4.9.4</a></span><span class="ident">NOTE</span>
+<div style="margin-left:81px"><span class="label"><a name="16066">2.8.4.10.4</a></span><span class="ident">NOTE</span>
 Hex strings are provided for compatibility with Oberon+; they are essentially an alternative syntax for an open byte array constructor.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14355">2.9</a></span>
 <a href=""><b>S</b></a><b>tatements</b></h4>
@@ -1606,14 +1610,12 @@ Generic modules can be instantiated with different sets of meta actuals which en
 <div style="margin-left:45px"><span class="label"><a name="14511">2.13.3</a></span>
 Syntax:</div>
 <div style="margin-left:63px"><span class="label"><a name="14512">2.13.3.1</a></span>
-<pre><code>MetaParams       = '(' MetaSection { [','] MetaSection } ')'</code></pre>
-<pre><code>MetaSection      = ['CONST' | 'TYPE'] ident<br />ConstDeclaration = identdef ':' NamedType</code></pre>
+<pre><code>MetaParams       = '(' MetaSection { [';'] MetaSection } ')'</code></pre>
+<pre><code>MetaSection      = ['CONST' | 'TYPE'] ident { [','] ident } [ ':' NamedType ]<br />ConstDeclaration = identdef ':' NamedType</code></pre>
 <pre><code>TypeConstraint   = NamedType</code></pre>
 <pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
 <div style="margin-left:45px"><span class="label"><a name="14513">2.13.4</a></span>
 Meta parameters can be used within the generic module like normal types or constants. If no type constraint is present, the types and constants can be used wherever no information about the actual type is required; otherwise the type constraint determines the permitted operations. The rules for <i>same types</i> and <i>equal types</i> apply analogously to meta parameters, and subsequently also the corresponding assignment, parameter and array compatibility rules.</div>
-<div style="margin-left:45px"><span class="label"><a name="15624">2.13.5</a></span><span class="ident">NOTE</span>
-The type constraint of a CONST parameter can only be a built-in (i.e. basic) type in the current version of Micron which is designed for a single-pass compiler.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14514">2.14</a></span>
 Source code directives</h4>
 <div style="margin-left:45px"><span class="label"><a name="14515">2.14.1</a></span>
@@ -2007,9 +2009,11 @@ The result types of two procedures match if they are either the <i>same type</i>
 <pre><code>element          = expression ['..' expression]</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14608">4.16</a></span><a href="#14352">&#x21B3;</a>
 <pre><code>FunctionCall           = designator ActualParameters</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14639">4.17</a></span><a href="#14632">&#x21B3;</a>
-<code>constructor ::= NamedType '{' [ component {[','] component} ] '}' </code>
-<br><code>component ::= [ident '='] ConstExpression</code></div>
+<div style="margin-left:27px"><span class="label"><a name="17797">4.17</a></span><a href="#17796">&#x21B3;</a>
+<code>constructor = [NamedType] '{' [ component {[','] component} ] '}' </code>
+<br><code>component = ident ':' expression </code>
+<br><code>	| '[' ConstExpression ']' ':' expression </code>
+<br><code>	| expression ['..' expression] </code></div>
 <div style="margin-left:27px"><span class="label"><a name="16067">4.18</a></span><a href="#16062">&#x21B3;</a>
 <pre><code>hexstring = '$' {hexDigit} '$'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14609">4.19</a></span><a href="#14358">&#x21B3;</a>
@@ -2073,8 +2077,8 @@ The result types of two procedures match if they are either the <i>same type</i>
 <pre><code>import     = [ ident ':=' ] ImportPath ident [ MetaActuals ]</code></pre>
 <pre><code>ImportPath = { ident '.' }</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14625">4.35</a></span><a href="#14512">&#x21B3;</a>
-<pre><code>MetaParams       = '(' MetaSection { [','] MetaSection } ')'</code></pre>
-<pre><code>MetaSection      = ['CONST' | 'TYPE'] ident<br />ConstDeclaration = identdef ':' NamedType</code></pre>
+<pre><code>MetaParams       = '(' MetaSection { [';'] MetaSection } ')'</code></pre>
+<pre><code>MetaSection      = ['CONST' | 'TYPE'] ident { [','] ident } [ ':' NamedType ]<br />ConstDeclaration = identdef ':' NamedType</code></pre>
 <pre><code>TypeConstraint   = NamedType</code></pre>
 <pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14626">4.36</a></span><a href="#14519">&#x21B3;</a>
