@@ -66,8 +66,8 @@ VariantPart ::= 'CASE' { ['|'] [inline_] identdef ':' type }
 
 FixedPart ::= FieldList  [ ';' ] { FieldList [ ';' ] }
 
-FieldList ::= IdentList ':' type 
-            | inline_ identdef ':' type 
+FieldList ::= ( IdentList ':' type 
+            | inline_ identdef ':' type ) // TODO [ BITS integer ]
 
 IdentList ::= identdef { [','] identdef}
 
@@ -214,7 +214,7 @@ MetaParams ::= '(' MetaSection { [';'] MetaSection } ')'
 
 MetaSection ::= [ TYPE | CONST ] ident { \LL:2\ [','] ident } [ ':' NamedType ]
 
-reserved_for_future_extensions- ::= 'AUTOPTR' 'OBJECT'
+reserved_for_future_extensions- ::= 'AUTOPTR' OBJECT 'IS' BITS
 
 /// Pragmas
 %module ::= 'Micron'

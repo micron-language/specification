@@ -102,7 +102,9 @@ ExpInstr* ::= 'ADD' | 'AND' | ('CALL' | 'CALLI') qualident | 'CASTPTR' qualident
                       | ('LDVAR'|'LDVARA') qualident | 'MUL' | 'NEG' 
                       | ('NEWARR'|'NEWVLA'|'NEWOBJ') qualident 
                       | 'NOT' | 'OR' | 'REM' | 'REM_UN' | 'SHL' | 'SHR' | 'SHR_UN' 
-                      | 'SIZEOF' qualident |'SUB' | 'XOR' | 'PTROFF' qualident | 'NOP'
+                      | 'SIZEOF' qualident |'SUB' | 'XOR' | 'PTROFF' qualident | 'NOP' | CondOp
+
+CondOp ::= 'IIF' Expression 'THEN' Expression 'ELSE' Expression 'END' 
 
 StatementSequence ::= { Statement|ExpInstr }
           
