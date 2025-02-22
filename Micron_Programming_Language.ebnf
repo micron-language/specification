@@ -51,27 +51,33 @@ type ::= NamedType | ArrayType | RecordType | PointerType | ProcedureType | enum
 
 NamedType ::= qualident
 
-ArrayType ::= 'ARRAY' [ length ] 'OF' type | '[' [ length ] ']' type
+ArrayType ::= ARRAY [ length ] OF type | '[' [ length ] ']' type
 
-length ::= ConstExpression | 'VAR' expression
+length ::= ConstExpression | VAR expression
 
-RecordType ::= 'RECORD' [FixedPart] [VariantPart]  'END' 
+RecordType ::= RECORD [FixedPart] [VariantPart]  END
 
 //ObjectType ::= 'OBJECT' ['(' BaseType ')'] { IdentList ':' type [ ';' ] } 'END' 
 //BaseType ::= NamedType
 
-inline_ ::= 'INLINE' | 'IN'
+inline_ ::= INLINE | IN
 
-VariantPart ::= 'CASE' { ['|'] [inline_] identdef ':' type } 
+VariantPart ::= CASE { ['|'] [inline_] identdef ':' type } 
 
 FixedPart ::= FieldList  [ ';' ] { FieldList [ ';' ] }
 
 FieldList ::= ( IdentList ':' type 
-            | inline_ identdef ':' type ) // TODO [ BITS integer ]
+            | inline_ identdef ':' type  // TODO [ BITS integer ]
+            // TODO | PackedList
+            )
+            
+// TODO PackedList ::= PACKED BaseType { [IdentList] ':' bitwidth } END
+// bitwidth ::= integer // the sum of bits must not exeed the BaseType width
+// BaseType ::= NamedType  // NamedType must be integer or boolean type
 
 IdentList ::= identdef { [','] identdef}
 
-PointerType ::= ('POINTER' 'TO' | '^') type // any type in Micron, also simple or procedure types
+PointerType ::= (POINTER TO | '^') type // any type in Micron, also simple or procedure types
 
 enumeration ::= '(' constEnum ')'                       
 constEnum ::= ident [ '=' ConstExpression ] { [','] ident }
@@ -86,17 +92,17 @@ ExpList ::= expression { [','] expression }
 
 expression ::= SimpleExpression [ relation SimpleExpression ]
 
-relation ::= '=' | '#' | '<' | '<=' | '>' | '>=' | 'IN'  // | 'IS'
+relation ::= '=' | '#' | '<' | '<=' | '>' | '>=' | IN  // | IS
 
 SimpleExpression ::= ['+' | '-'] term { AddOperator term }
 
-AddOperator ::= '+' | '-' | 'OR'
+AddOperator ::= '+' | '-' | OR
 
 term ::= factor {MulOperator factor}
 
-MulOperator ::= '*' | '/' | 'DIV' | 'MOD' | '&' | 'AND'
+MulOperator ::= '*' | '/' | DIV | MOD | '&' | AND
 
-literal ::= number | string | hexstring | hexchar | 'NIL' | 'TRUE' | 'FALSE'
+literal ::= number | string | hexstring | hexchar | NIL | TRUE | FALSE
 
 constructor ::= [NamedType] '{' [ component {[','] component} ] '}' 
 
@@ -110,7 +116,7 @@ factor ::=
         | literal
 	| variableOrFunctionCall // replaces: designator [ActualParameters]
 	| '(' expression ')' 
-	| ('~'|'NOT') factor // negation
+	| ('~'| NOT) factor // negation
 	| '@' designator // address of operator
 
 variableOrFunctionCall ::= designator // designator includes [ ActualParameters ] 
@@ -133,15 +139,15 @@ StatementSequence ::=  { ';' } { statement { ';' } }
 
 gotoLabel ::= ident ':'
 
-GotoStatement ::= 'GOTO' ident
+GotoStatement ::= GOTO ident
 
-IfStatement ::= 'IF' expression 'THEN' StatementSequence { ElsifStatement }
-	[ ElseStatement ] 'END'
-ElsifStatement ::= 'ELSIF' expression 'THEN' StatementSequence 
-ElseStatement ::= 'ELSE' StatementSequence
+IfStatement ::= IF expression THEN StatementSequence { ElsifStatement }
+	[ ElseStatement ] END
+ElsifStatement ::= ELSIF expression THEN StatementSequence 
+ElseStatement ::= ELSE StatementSequence
 
-CaseStatement ::= 'CASE' expression 'OF' [Case] { '|' Case }
-	[ 'ELSE' StatementSequence ] 'END'
+CaseStatement ::= CASE expression OF [Case] { '|' Case }
+	[ ELSE StatementSequence ] END
 
 Case ::= CaseLabelList ':' StatementSequence
 
@@ -151,42 +157,42 @@ LabelRange ::= label [ '..' label ]
 
 label ::= ConstExpression
 
-WhileStatement ::= 'WHILE' expression 'DO' StatementSequence 'END'
+WhileStatement ::= WHILE expression DO StatementSequence END
 
-RepeatStatement ::= 'REPEAT' StatementSequence 'UNTIL' expression
+RepeatStatement ::= REPEAT StatementSequence UNTIL expression
 
-ForStatement ::= 'FOR' ident ':=' expression 'TO' expression [ 'BY' ConstExpression ]
-	'DO' StatementSequence 'END'
+ForStatement ::= FOR ident ':=' expression TO expression [ BY ConstExpression ]
+	DO StatementSequence END
 	
 // no WithStatement in Micron
 
-LoopStatement ::= 'LOOP' StatementSequence 'END'
+LoopStatement ::= LOOP StatementSequence END
 
-ExitStatement ::= 'EXIT'
+ExitStatement ::= EXIT
 
-procedure ::= 'PROCEDURE' | 'PROC'
+procedure ::= PROCEDURE | PROC
 
 ProcedureType ::= procedure [FormalParameters] 
 	
 ProcedureDeclaration ::= 
-	  \LL:2\ procedure '^' identdef [ FormalParameters ] ['INLINE'|'INVAR'|'EXTERN']
+	  \LL:2\ procedure '^' identdef [ FormalParameters ] [INLINE | INVAR | EXTERN]
 	| \LA: 1:('PROCEDURE' | 'PROC')&(3:'='|4:'=')\ procedure identdef '=' qualident
-	|  ProcedureHeading ( ['INLINE'| 'INVAR'] [ ';' ] ProcedureBody | \LL:2\ [ ';' ] 'EXTERN' [ident] )
+	|  ProcedureHeading ( [INLINE | INVAR] [ ';' ] ProcedureBody | \LL:2\ [ ';' ] EXTERN [ident] )
 	
 ProcedureHeading ::= procedure identdef [ FormalParameters ]  // no receivers in Micron yet
 // Receiver ::= '(' ident ':' ident ')'
 
-block ::= 'BEGIN' StatementSequence
+block ::= BEGIN StatementSequence // [ FINALLY StatementSequence ]
 
-ProcedureBody ::= DeclarationSequence block 'END' ident
+ProcedureBody ::= DeclarationSequence block END ident
 	
 DeclarationSequence ::= 
-	{ 'CONST' { ConstDeclaration [';'] } 
-	| 'TYPE' { TypeDeclaration [';'] } 
-	| 'VAR' { VariableDeclaration [';'] } 
+	{ CONST { ConstDeclaration [';'] } 
+	| TYPE { TypeDeclaration [';'] } 
+	| VAR { VariableDeclaration [';'] } 
 	| ProcedureDeclaration [';'] }
 
-ReturnStatement ::= 'RETURN' 
+ReturnStatement ::= RETURN
 	[ expression ] // leads to LL(k) ambig with qualident statement; resolve by checking if proc has return type
 
 FormalParameters ::= '(' [ FPSection { \LA: 1:(ident|'CONST') | (2:';' & 3:(ident|'CONST'))\ 
@@ -198,11 +204,11 @@ FPSection ::= [CONST] ident { [','] ident } ':' FormalType
 
 FormalType ::= type
 
-module ::= 'MODULE' ident [ MetaParams ] [';'] 
+module ::= MODULE ident [ MetaParams ] [';'] 
 	{ ImportList | DeclarationSequence }
-	[ block ] 'END' ident ['.'] 
+	[ block ] END ident ['.'] 
 	
-ImportList ::= 'IMPORT' import { [ ',' ] import } [';']
+ImportList ::= IMPORT import { [ ',' ] import } [';']
 
 import ::= [ \LL:2\ ident ':=' ] ident 
 	{ '.' ident } // NOTE: paths are not case sensitive 
@@ -214,7 +220,7 @@ MetaParams ::= '(' MetaSection { [';'] MetaSection } ')'
 
 MetaSection ::= [ TYPE | CONST ] ident { \LL:2\ [','] ident } [ ':' NamedType ]
 
-reserved_for_future_extensions- ::= 'AUTOPTR' OBJECT 'IS' BITS
+reserved_for_future_extensions- ::= 'AUTOPTR' OBJECT IS BITS FINALLY PACKED
 
 /// Pragmas
 %module ::= 'Micron'
