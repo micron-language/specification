@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2025-02-12, work in progress</div>
+2025-02-24, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -281,8 +281,8 @@ Numbers can be interspersed with underscores for better readability, but the fir
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14178">2.3.5.11.1</a></span>
 <pre><code>number   = integer | real</code></pre>
-<pre><code>integer  = (digit {digit|'_'} ['O'|'B'] | digit {hexDigit|'_'} 'H')<br />           ['U'|'U1'|'U2'|'U4'|'U8'|'I'|'I1'|'I2'|'I4'|'I8']</code></pre>
-<pre><code>real     = digit {digit|'_'} '.' {digit} [Exponent]</code></pre>
+<pre><code>integer  = (digit {digit|'_'} ['O'|'B'] | digit {hexDigit|'_'} 'H')<br />           ['U'|'U8'|'U16'|'U32'|'U64'|'I'|'I8'|'I16'|'I32'|'I64']</code></pre>
+<pre><code>real     = digit {digit|'_'} '.' {digit|'_'} [Exponent]</code></pre>
 <pre><code>Exponent = ('E' | 'D' | 'F' ) ['+' | '-'] digit {digit}</code></pre>
 <pre><code>hexDigit = digit | 'A' ... 'F'</code></pre>
 <pre><code>digit    = '0' ... '9'</code></pre></div>
@@ -688,14 +688,14 @@ Examples:</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14224">2.6.4</a></span>
 Basic types</h4>
 <div style="margin-left:63px"><span class="label"><a name="14225">2.6.4.1</a></span>
-The basic types are denoted by predeclared identifiers. The associated operators are defined in <a href="#14322">2.8.3 Operators</a> and the predeclared function procedures in <a href="#14136">6 Predeclared Procedure Reference</a>. Either all capital or all lower case identifiers are supported (only capital versions shown). There are fixed and variable size basic types. For the fixed size basic types the byte widths and ranges are explicitly specified herein. The variable size basic types are just alternative names for the fixed size integer types.</div>
+The basic types are denoted by predeclared identifiers. The associated operators are defined in <a href="#14322">2.8.3 Operators</a> and the predeclared function procedures in <a href="#14136">6 Predeclared Procedure Reference</a>. All basic types support alternative identifiers. Either all capital or all lower case identifiers are supported (only capital versions shown). </div>
 <div style="margin-left:63px"><span class="label"><a name="14226">2.6.4.2</a></span>
-The values of the given fixed size basic types are the following:</div>
+The values of the basic types are the following:</div>
 <div style="margin-left:63px"><span class="label"><a name="14251">2.6.4.3</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
-BOOLEAN</td>
+BOOL, BOOLEAN</td>
 <td>
 <br>1 byte</td>
 <td>
@@ -709,70 +709,70 @@ BOOLEAN</td>
 <br>the characters of the Latin-1 set (0x .. 0ffx)</td></tr>
 <tr>
 <td>
-<br>BYTE, UINT8</td>
+<br>UINT8, U8, BYTE</td>
 <td>
 <br>1 byte</td>
 <td>
 <br>the integers between 0 and 255</td></tr>
 <tr>
 <td>
-<br>INT8</td>
+<br>INT8, I8</td>
 <td>
 <br>1 byte</td>
 <td>
 <br>the integers between -128 and 127</td></tr>
 <tr>
 <td>
-<br>INT16</td>
+<br>INT16, I16, SHORTINT</td>
 <td>
 <br>2 byte</td>
 <td>
 <br>the integers between -32'768 and 32'767</td></tr>
 <tr>
 <td>
-<br>UINT16</td>
+<br>UINT16, U16</td>
 <td>
 <br>2 byte</td>
 <td>
 <br>the integers between 0 and 65'535</td></tr>
 <tr>
 <td>
-<br>INT32</td>
+<br>INT32, I32, INTEGER</td>
 <td>
 <br>4 byte</td>
 <td>
 <br>the integers between -2'147'483'648 and 2'147'483'647</td></tr>
 <tr>
 <td>
-<br>UINT32</td>
+<br>UINT32, U32</td>
 <td>
 <br>4 byte</td>
 <td>
 <br>the integers between 0 and 4'294'967'295</td></tr>
 <tr>
 <td>
-<br>INT64</td>
+<br>INT64, I64, LONGINT</td>
 <td>
 <br>8 byte</td>
 <td>
 <br>the integers between -9'223'372'036'854'775'808 and 9'223'372'036'854'775'807</td></tr>
 <tr>
 <td>
-<br>UINT64</td>
+<br>UINT64, U64</td>
 <td>
 <br>8 byte</td>
 <td>
 <br>the integers between 0 and 18'446'744'073'709'551'615</td></tr>
 <tr>
 <td>
-<br>REAL, FLT32</td>
+<br>FLT32, F32, REAL</td>
 <td>
 <br>32 bit</td>
 <td>
 <br>an IEEE 754 floating point number</td></tr>
 <tr>
 <td>
-<br>LONGREAL, FLT64</td>
+<br>FLT64, F64, LONGREAL</td>
 <td>
 <br>64 bit</td>
 <td>
@@ -783,37 +783,15 @@ BOOLEAN</td>
 <td>
 <br>4 byte</td>
 <td>
-<br>the sets of integers between 0 and MAX(SET)</td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="14252">2.6.4.4</a></span>
-The values of the given variable size basic types are the following:</div>
-<div style="margin-left:63px"><span class="label"><a name="14253">2.6.4.5</a></span>
-<table border=1 cellspacing=0 CELLPADDING=3 >
-<tr>
-<td>
-SHORTINT </td>
-<td>
-<br>the integers between MIN(SHORTINT) and MAX(SHORTINT) </td></tr>
-<tr>
-<td>
-<br>INTEGER </td>
-<td>
-<br>the integers between MIN(INTEGER) and MAX(INTEGER) </td></tr>
-<tr>
-<td>
-<br>LONGINT </td>
-<td>
-<br>the integers between MIN(LONGINT) and MAX(LONGINT)</td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="14254">2.6.4.6</a></span>
-INT64, INT32, INT16, INT8, LONGINT, INTEGER, SHORTINT are signed integer types, UIN64, UINT32, UINT16, UINT8, and BYTE are unsigned integer types, REAL and LONGREAL are <a href="#14539">Floating-point types</a>, and together they are called numeric types. The larger type includes (the values of) the smaller type according to the following relations:</div>
-<div style="margin-left:63px"><span class="label"><a name="14255">2.6.4.7</a></span>
+<br>the sets of integers between 0 and 31</td></tr></table></div>
+<div style="margin-left:63px"><span class="label"><a name="14254">2.6.4.4</a></span>
+INT64, INT32, INT16, INT8, are signed integer types, UIN64, UINT32, UINT16, and UINT8, are unsigned integer types, FLT32 and FLT64 are <a href="#14539">Floating-point types</a>, and together they are called numeric types. The larger type includes (the values of) the smaller type according to the following relations:</div>
+<div style="margin-left:63px"><span class="label"><a name="14255">2.6.4.5</a></span>
 <pre><code>INT64 &gt;= INT32 &gt;= INT16 &gt;= INT8</code></pre>
 <pre><code>UINT64 &gt;= UINT32 &gt;= UINT16 &gt;= UINT8</code></pre>
-<pre><code>LONGREAL &gt;= REAL</code></pre>
-<pre><code>LONGINT &gt;= INTEGER &gt;= SHORTINT</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="14256">2.6.4.8</a></span><span class="ident">NOTE</span>
-Oberon and Oberon+ both support implicit type casts from integer to floating point and vice versa. Micron requres an explicit cast. To convert an integer to a floating point type, the FLT() built-in function should be used. To convert a numeric type to a signed integer, the SIGNED() function should be used. To convert a numeric byp to an unsigned integer, the UNSIGNED() function should be used.</div>
-<div style="margin-left:63px"><span class="label"><a name="14258">2.6.4.9</a></span>
-A compiler may map the variable size integer names to any of the fixed size signed integers as long as the inclusion relations are obeyed. By default a correspondence of LONGINT with INT64, INTEGER with INT32 and SHORTINT with INT16 is assumed.</div>
+<pre><code>FLT64 &gt;= FLT32</code></pre></div>
+<div style="margin-left:63px"><span class="label"><a name="14256">2.6.4.6</a></span><span class="ident">NOTE</span>
+Oberon and Oberon+ both support implicit type casts from integer to floating point and vice versa. Micron requres an explicit cast. To convert an integer to a floating point type, the FLT() built-in function must be used. To convert a numeric type to a signed integer, the SIGNED() function must be used. To convert a numeric type to an unsigned integer, the UNSIGNED() function must be used.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14257">2.6.5</a></span>
 <a href=""><b>A</b></a><b>rray types</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="14260">2.6.5.1</a></span>
@@ -853,7 +831,7 @@ Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14275">2.6.6.3.1</a></span>
 <pre><code>RecordType = RECORD [FixedPart][VariantPart] END</code></pre>
 <pre><code>FixedPart = FieldList { [';'] FieldList}</code></pre>
-<pre><code>FieldList  = [ IdentList ':' type ] | INLINE identdef ':' type</code></pre>
+<pre><code>FieldList  = IdentList ':' type [ BITS integer ]<br />             | '..' BITS integer<br />             | INLINE identdef ':' type</code></pre>
 <pre><code>VariantPart   = CASE { ['|'] [INLINE] identdef ':' type }</code></pre>
 <pre><code>IdentList  = identdef { [','] identdef }</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="14277">2.6.6.4</a></span>
@@ -869,10 +847,14 @@ Examples:</div>
 <pre><code>END</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="14279">2.6.6.5</a></span>
 Fields of record type of the fixed part or the fields of the variant part can be prefixed by the INLINE (or abbreviated only IN) reserved word, in which case the name of the field or variant becomes transparent, and the fields of the corresponding record type are directly embedded in the enclosing record. </div>
-<div style="margin-left:63px"><span class="label"><a name="14280">2.6.6.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18452">2.6.6.6</a></span>
+Fields of boolean or integer type within the fixed part of a record can be packed at the bit level for memory optimization. This is achieved by explicitly specifying the number of bits each field occupies. Use the BITS keyword followed by an integer to declare the bit width of a field. Sequences of fields with BITS specifications are grouped into packing units. Each unit is sized to the nearest integer type that can contain the specified bits. Explicit padding can be inserted using  '..' followed by BITS and a number. This allows for precise control over field alignment within a unit. A new packing unit begins when either the sum of bits in the current sequence exceeds the maximum supported integer size, or padding of 0 bits is encountered. The type of a field with BITS specification determines how the field value is interpreted (e.g., signed vs unsigned overflow behavior); the number of bits of a signed integer type includes the sign bit.</div>
+<div style="margin-left:63px"><span class="label"><a name="14280">2.6.6.7</a></span>
 Each field or variant of a record must have a name which is unique within the record; if a field of a record embedded with the INLINE prefix has the same name as a field or variant of the embedding record, then the name of the prefixed field or variant must be used to access it.</div>
-<div style="margin-left:63px"><span class="label"><a name="15730">2.6.6.7</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15730">2.6.6.8</a></span>
 TODO: open array as last field (no variant part) with new(ptr,len)</div>
+<div style="margin-left:63px"><span class="label"><a name="18451">2.6.6.9</a></span>
+TODO: record layout like C</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14278">2.6.7</a></span>
 <a href=""><b>P</b></a><b>ointer types</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="14281">2.6.7.1</a></span>
@@ -1077,7 +1059,7 @@ This is the same rule as in Modula-2, <i>where both operands must be either of t
 <div style="margin-left:81px"><span class="label"><a name="15974">2.8.3.4.5</a></span>
 As an exception, if one of the operands is an unsigned integer constant and the other operand is of type integer, the unsigned integer constant is converted to the smallest integer type which includes the constant value.</div>
 <div style="margin-left:81px"><span class="label"><a name="14475">2.8.3.4.6</a></span>
-The type of the result is the type of that operand which includes the type of the other operand (see <a href="#14255">2.6.4.7</a>).</div>
+The type of the result is the type of that operand which includes the type of the other operand (see <a href="#14255">2.6.4.5</a>).</div>
 <div style="margin-left:81px"><span class="label"><a name="15820">2.8.3.4.7</a></span>
 The operator '<code>/</code>' applies to real operands only.</div>
 <div style="margin-left:81px"><span class="label"><a name="14473">2.8.3.4.8</a></span>
@@ -1942,7 +1924,7 @@ both parameter lists either end with an ellipsis or not</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14588">3.13</a></span>
 Matching result types</h4>
 <div style="margin-left:45px"><span class="label"><a name="14589">3.13.1</a></span>
-The result types of two procedures match if they are either the <i>same type</i> or none.</div>
+The result types of two procedures match if they are either of <i>equal type</i> or none.</div>
 <h4 style="margin-left:9px"><span class="label"><a name="14590">4</a></span>
 <b>Complete Micron Syntax</b></h4>
 <div style="margin-left:27px"><span class="label"><a name="14592">4.1</a></span><a href="#14171">&#x21B3;</a>
@@ -1951,8 +1933,8 @@ The result types of two procedures match if they are either the <i>same type</i>
 <pre><code>digit  = '0' ... '9'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14593">4.2</a></span><a href="#14178">&#x21B3;</a>
 <pre><code>number   = integer | real</code></pre>
-<pre><code>integer  = (digit {digit|'_'} ['O'|'B'] | digit {hexDigit|'_'} 'H')<br />           ['U'|'U1'|'U2'|'U4'|'U8'|'I'|'I1'|'I2'|'I4'|'I8']</code></pre>
-<pre><code>real     = digit {digit|'_'} '.' {digit} [Exponent]</code></pre>
+<pre><code>integer  = (digit {digit|'_'} ['O'|'B'] | digit {hexDigit|'_'} 'H')<br />           ['U'|'U8'|'U16'|'U32'|'U64'|'I'|'I8'|'I16'|'I32'|'I64']</code></pre>
+<pre><code>real     = digit {digit|'_'} '.' {digit|'_'} [Exponent]</code></pre>
 <pre><code>Exponent = ('E' | 'D' | 'F' ) ['+' | '-'] digit {digit}</code></pre>
 <pre><code>hexDigit = digit | 'A' ... 'F'</code></pre>
 <pre><code>digit    = '0' ... '9'</code></pre></div>
@@ -1977,7 +1959,7 @@ The result types of two procedures match if they are either the <i>same type</i>
 <div style="margin-left:27px"><span class="label"><a name="14601">4.9</a></span><a href="#14275">&#x21B3;</a>
 <pre><code>RecordType = RECORD [FixedPart][VariantPart] END</code></pre>
 <pre><code>FixedPart = FieldList { [';'] FieldList}</code></pre>
-<pre><code>FieldList  = [ IdentList ':' type ] | INLINE identdef ':' type</code></pre>
+<pre><code>FieldList  = IdentList ':' type [ BITS integer ]<br />             | '..' BITS integer<br />             | INLINE identdef ':' type</code></pre>
 <pre><code>VariantPart   = CASE { ['|'] [INLINE] identdef ':' type }</code></pre>
 <pre><code>IdentList  = identdef { [','] identdef }</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14602">4.10</a></span><a href="#14283">&#x21B3;</a>

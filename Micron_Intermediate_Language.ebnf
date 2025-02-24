@@ -44,7 +44,7 @@ length     ::= unsigned
 
 
 StructUnionType ::= ('STRUCT' | 'UNION') { \LA: 1:!'END'\ FieldList [';'] } 'END'
-FieldList  ::= IdentList ':' NamedType
+FieldList  ::= IdentList ':' NamedType [ ':' integer ] | '..' integer
 IdentList  ::= identdef { [','] identdef }
 
 PointerType ::= ( 'POINTER' 'TO' | '^' ) NamedType

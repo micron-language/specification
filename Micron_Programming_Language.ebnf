@@ -18,7 +18,7 @@ Micron ::=  module
 
 ident ::= // ( letter | '_' ) {letter | digit | '_'}
 
-integer ::= // digit {hexDigit|'_'} ['O'|'B'|'H'] ['U'|'U1'|'U2'|'U4'|'U8'|'I'|'I1'|'I2'|'I4'|'I8']
+integer ::= // digit {hexDigit|'_'} ['O'|'B'|'H'] ['U'|'U8'|'U16'|'U32'|'U64'|'I'|'I8'|'I16'|'I32'|'I64']
 
 real ::= // digit {digit|'_'} '.' {digit} [('E' | 'D' | 'F' ) ['+' | '-'] digit {digit}]
 
@@ -66,15 +66,10 @@ VariantPart ::= CASE { ['|'] [inline_] identdef ':' type }
 
 FixedPart ::= FieldList  [ ';' ] { FieldList [ ';' ] }
 
-FieldList ::= ( IdentList ':' type 
-            | inline_ identdef ':' type  // TODO [ BITS integer ]
-            // TODO | PackedList
-            )
+FieldList ::= IdentList ':' type [ BITS integer ] // in contrast to C, type only affects current fields
+            | '..' BITS integer // use to add padding bits; as in C, 0 starts a new unit
+            | inline_ identdef ':' type 
             
-// TODO PackedList ::= PACKED BaseType { [IdentList] ':' bitwidth } END
-// bitwidth ::= integer // the sum of bits must not exeed the BaseType width
-// BaseType ::= NamedType  // NamedType must be integer or boolean type
-
 IdentList ::= identdef { [','] identdef}
 
 PointerType ::= (POINTER TO | '^') type // any type in Micron, also simple or procedure types
@@ -135,7 +130,6 @@ assignmentOrProcedureCall ::= designator  [
 		// designator enthält neu auch Params: | [ ActualParameters ] // ProcedureCall
 
 StatementSequence ::=  { ';' } { statement { ';' } } 
-//StatementSequence ::=  { ';' } { [ \LA: 1:ident & 2:':'\ gotoLabel ] statement { ';' } }  [ \LA: 1:ident & 2:':'\ gotoLabel ]
 
 gotoLabel ::= ident ':'
 
@@ -220,7 +214,7 @@ MetaParams ::= '(' MetaSection { [';'] MetaSection } ')'
 
 MetaSection ::= [ TYPE | CONST ] ident { \LL:2\ [','] ident } [ ':' NamedType ]
 
-reserved_for_future_extensions- ::= 'AUTOPTR' OBJECT IS BITS FINALLY PACKED
+reserved_for_future_extensions- ::= 'AUTOPTR' OBJECT IS FINALLY BITS INTERFACE
 
 /// Pragmas
 %module ::= 'Micron'

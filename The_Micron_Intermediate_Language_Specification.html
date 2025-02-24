@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2025-02-12, work in progress</div>
+2025-02-24, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -225,7 +225,7 @@ Syntax of textual representation:</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14966">2.4.3</a></span>
 <b>Basic types</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15421">2.4.3.1</a></span>
-The basic types are denoted by predeclared identifiers. Either all capital or all lower case identifiers are supported (only lower case versions shown). </div>
+The basic types are denoted by predeclared identifiers. Either all capital or all lower case identifiers are supported (only lower case versions shown). For some basic types, abbreviations are available.</div>
 <div style="margin-left:63px"><span class="label"><a name="15419">2.4.3.2</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
@@ -245,32 +245,32 @@ The basic types are denoted by predeclared identifiers. Either all capital or al
 <br>Latin-1 8-bit char (equals uint8)</td></tr>
 <tr>
 <td>
-<br>float32 </td>
+<br>float32, r4 </td>
 <td>
 <br>IEC 60559:1989 32-bit float </td></tr>
 <tr>
 <td>
-<br>float64 </td>
+<br>float64, r8</td>
 <td>
 <br>IEC 60559:1989 64-bit float </td></tr>
 <tr>
 <td>
-<br>int8 </td>
+<br>int8, i1</td>
 <td>
 <br>Signed 8-bit integer </td></tr>
 <tr>
 <td>
-<br>int16 </td>
+<br>int16, i2</td>
 <td>
 <br>Signed 16-bit integer </td></tr>
 <tr>
 <td>
-<br>int32 </td>
+<br>int32, i4</td>
 <td>
 <br>Signed 32-bit integer </td></tr>
 <tr>
 <td>
-<br>int64 </td>
+<br>int64, i8</td>
 <td>
 <br>Signed 64-bit integer </td></tr>
 <tr>
@@ -280,22 +280,22 @@ The basic types are denoted by predeclared identifiers. Either all capital or al
 <br>Signed integer address, native size </td></tr>
 <tr>
 <td>
-<br>uint8 </td>
+<br>uint8, u1</td>
 <td>
 <br>Unsigned 8-bit integer </td></tr>
 <tr>
 <td>
-<br>uint16 </td>
+<br>uint16, u2 </td>
 <td>
 <br>Unsigned 16-bit integer </td></tr>
 <tr>
 <td>
-<br>uint32 </td>
+<br>uint32, u4 </td>
 <td>
 <br>Unsigned 32-bit integer </td></tr>
 <tr>
 <td>
-<br>uint64 </td>
+<br>uint64, u8 </td>
 <td>
 <br>Unsigned 64-bit integer </td></tr></table></div>
 <h4 style="margin-left:45px"><span class="label"><a name="15438">2.4.4</a></span>
@@ -327,11 +327,13 @@ MIL struct and union types correspond to the ones of the C programming language
 A struct type is a structure consisting of a fixed number of elements, called fields, with possibly different types. The struct type declaration specifies the name and type of each field. The scope of the field identifiers extends from the point of their declaration to the end of the struct type, but they are also visible within designators referring to elements of struct variables. If a struct type is exported, field identifiers that are to be visible outside the declaring module must be marked. They are called public fields; unmarked elements are called private fields.</div>
 <div style="margin-left:81px"><span class="label"><a name="15428">2.4.5.2.3</a></span>
 A union type is declared like a struct type, but in contrast to the latter all fields reside at the same memory position. A union can be pictured as a chunk of memory that is used to store variables of different data types. Once a new value is assigned to a field, the existing data is overwritten with the new data.</div>
-<div style="margin-left:81px"><span class="label"><a name="15426">2.4.5.2.4</a></span>
+<div style="margin-left:81px"><span class="label"><a name="18453">2.4.5.2.4</a></span>
+Fields of boolean or integer type of a record can be packed at the bit level for memory optimization. This is achieved by explicitly specifying the number of bits each field occupies. Use another ':' after the type specifier followed by an integer to declare the bit width of a field. Sequences of fields with bit specifications are grouped into packing units. Each unit is sized to the nearest integer type that can contain the specified bits. Explicit padding can be inserted using  '..' followed by  the number of bits. This allows for precise control over field alignment within a unit. A new packing unit begins when either the sum of bits in the current sequence exceeds the maximum supported integer size, or padding of 0 bits is encountered. The type of a field with BITS specification determines how the field value is interpreted (e.g., signed vs unsigned overflow behavior); the number of bits of a signed integer type includes the sign bit.</div>
+<div style="margin-left:81px"><span class="label"><a name="15426">2.4.5.2.5</a></span>
 Syntax of textual representation:</div>
-<div style="margin-left:99px"><span class="label"><a name="15427">2.4.5.2.4.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="15427">2.4.5.2.5.1</a></span>
 <code>StructUnionType = (STRUCT | UNION) { FieldList [';'] } END</code>
-<br><code>FieldList  = IdentList ':' NamedType</code>
+<br><code>FieldList  = IdentList ':' NamedType [':' integer] | '..' integer</code>
 <br><code>IdentList  = identdef { [','] identdef }</code></div>
 <h4 style="margin-left:45px"><span class="label"><a name="15432">2.4.6</a></span>
 <b>Pointer types</b></h4>
@@ -3297,7 +3299,7 @@ TODO: type checking rules, structral compatibility, packing</div>
 <br><code>length     = unsigned</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15522">3.10</a></span><a href="#15427">&#x21B3;</a>
 <code>StructUnionType = (STRUCT | UNION) { FieldList [';'] } END</code>
-<br><code>FieldList  = IdentList ':' NamedType</code>
+<br><code>FieldList  = IdentList ':' NamedType [':' integer] | '..' integer</code>
 <br><code>IdentList  = identdef { [','] identdef }</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15523">3.11</a></span><a href="#15436">&#x21B3;</a>
 <pre><code>PointerType = ( POINTER TO | '^' ) NamedType</code></pre></div>
