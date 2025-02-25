@@ -170,7 +170,6 @@ ProcedureType ::= procedure [FormalParameters]
 	
 ProcedureDeclaration ::= 
 	  \LL:2\ procedure '^' identdef [ FormalParameters ] [INLINE | INVAR | EXTERN]
-	| \LA: 1:('PROCEDURE' | 'PROC')&(3:'='|4:'=')\ procedure identdef '=' qualident
 	|  ProcedureHeading ( [INLINE | INVAR] [ ';' ] ProcedureBody | \LL:2\ [ ';' ] EXTERN [ident] )
 	
 ProcedureHeading ::= procedure identdef [ FormalParameters ]  // no receivers in Micron yet
