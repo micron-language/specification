@@ -1,4 +1,4 @@
-// Copyright (c) 2024 by Rochus Keller <mailto:me@rochus-keller.ch>
+// Copyright (c) 2024, 2025 by Rochus Keller <mailto:me@rochus-keller.ch>
 // 
 // GNU General Public License Usage
 // This file may be used under the terms of the GNU General Public
@@ -10,9 +10,12 @@
 // http://www.gnu.org/copyleft/gpl.html.
 
 // To consider in future:
-// - objects, i.e. tagged records supporting inheritance and bound procs
-// - smart pointers (i.e. a separate pointer type) with garbage collection (AUTOPTR, SMARTPTR ?)
-// - enable/disable language parts, e.g. level 0 only inline calls and no dynamic alloc
+// - smart pointers (i.e. a separate pointer type) with garbage collection (AUTOPTR, SMARTPTR, REF, ?)
+// - Go interfaces for object types
+// - set language level directly in source code? in module header or via directive?
+
+#define LEVEL1
+#define LEVEL3
 
 Micron ::=  module
 
@@ -48,6 +51,9 @@ ConstExpression ::= expression
 TypeDeclaration ::= identdef 	'=' type
 
 type ::= NamedType | ArrayType | RecordType | PointerType | ProcedureType | enumeration
+#ifdef LEVEL3
+                | ObjectType
+#endif
 
 NamedType ::= qualident
 
@@ -57,8 +63,10 @@ length ::= ConstExpression | VAR expression
 
 RecordType ::= RECORD [FixedPart] [VariantPart]  END
 
-//ObjectType ::= 'OBJECT' ['(' BaseType ')'] { IdentList ':' type [ ';' ] } 'END' 
-//BaseType ::= NamedType
+#ifdef LEVEL3
+ObjectType ::= OBJECT ['(' BaseType ')'] { IdentList ':' type [ ';' ] } END   // no inlines, case, nor bitfields
+BaseType ::= NamedType
+#endif
 
 inline_ ::= INLINE | IN
 
@@ -87,7 +95,10 @@ ExpList ::= expression { [','] expression }
 
 expression ::= SimpleExpression [ relation SimpleExpression ]
 
-relation ::= '=' | '#' | '<' | '<=' | '>' | '>=' | IN  // | IS
+relation ::= '=' | '#' | '<' | '<=' | '>' | '>=' | IN  
+#ifdef LEVEL3
+                     | IS
+#endif
 
 SimpleExpression ::= ['+' | '-'] term { AddOperator term }
 
@@ -166,16 +177,30 @@ ExitStatement ::= EXIT
 
 procedure ::= PROCEDURE | PROC
 
-ProcedureType ::= procedure [FormalParameters] 
+ProcedureType ::= procedure 
+#ifdef LEVEL3
+                                 [\LL:2\'(' ( POINTER | '^' ) ')']  // type-bound procedure type, includes an object pointer
+#endif                                 
+                                 [FormalParameters] 
 	
 ProcedureDeclaration ::= 
 	  \LL:2\ procedure '^' identdef [ FormalParameters ] [INLINE | INVAR | EXTERN]
 	|  ProcedureHeading ( [INLINE | INVAR] [ ';' ] ProcedureBody | \LL:2\ [ ';' ] EXTERN [ident] )
 	
-ProcedureHeading ::= procedure identdef [ FormalParameters ]  // no receivers in Micron yet
-// Receiver ::= '(' ident ':' ident ')'
+ProcedureHeading ::= procedure 
+#ifdef LEVEL3
+                                        [ Receiver ]
+#endif
+                                        identdef [ FormalParameters ]  
+                                        
+#ifdef LEVEL3                                        
+Receiver ::= '(' ident ':' [POINTER TO | '^'] ident ')'
+#endif
 
-block ::= BEGIN StatementSequence // [ FINALLY StatementSequence ]
+block ::= BEGIN StatementSequence 
+#ifdef LEVEL1
+                [ FINALLY StatementSequence ]
+#endif
 
 ProcedureBody ::= DeclarationSequence block END ident
 	
@@ -213,7 +238,7 @@ MetaParams ::= '(' MetaSection { [';'] MetaSection } ')'
 
 MetaSection ::= [ TYPE | CONST ] ident { \LL:2\ [','] ident } [ ':' NamedType ]
 
-reserved_for_future_extensions- ::= 'AUTOPTR' OBJECT IS FINALLY BITS INTERFACE
+reserved_for_future_extensions- ::= 'AUTOPTR' OBJECT IS FINALLY INTERFACE
 
 /// Pragmas
 %module ::= 'Micron'
