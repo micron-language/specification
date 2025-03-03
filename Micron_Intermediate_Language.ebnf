@@ -52,7 +52,7 @@ MemberList ::= IdentList ':' NamedType
 
 PointerType ::= ( 'POINTER' 'TO' | '^' ) NamedType
 
-ProcedureType ::= (PROCEDURE|PROC)['^'] [FormalParameters]
+ProcedureType ::= (PROCEDURE|PROC) [FormalParameters]
 
 VariableDeclaration ::= IdentList ':' NamedType
 
@@ -87,11 +87,13 @@ DeclarationSequence*  ::= {
 	
 Expression ::= { ExpInstr }
 
-ExpInstr* ::= 'ADD' | 'AND' | ('CALL' | 'CALLI'|'CALLVIRT') qualident | 'CASTPTR' qualident
+ExpInstr* ::= 'ADD' | 'AND' | ('CALL' | 'CALLI') qualident 
+                      | ('CALLVIRT'|'CALLVI') trident | 'CASTPTR' qualident
                       | 'CEQ' | 'CGT' | 'CGT_UN' | 'CLT' | 'CLT_UN' 
                       | 'CONV_I1' | 'CONV_I2' | 'CONV_I4' | 'CONV_I8' | 'CONV_R4' | 'CONV_R8'
                       | 'CONV_U1' | 'CONV_U2' | 'CONV_U4' | 'CONV_U8' | 'CONV_IP'
-                      | 'DIV' | 'DIV_UN' | 'DUP' | 'INITOBJ' qualident | ('LDARG'|'LDARG_S') (unsigned|ident) 
+                      | 'DIV' | 'DIV_UN' | 'DUP' | 'INITOBJ' qualident | 'ISINST' qualident
+                      | ('LDARG'|'LDARG_S') (unsigned|ident) 
                       | 'LDARG_0' | 'LDARG_1' | 'LDARG_2' | 'LDARG_3'
                       | ('LDARGA'|'LDARGA_S') (unsigned|ident)
                       | ('LDC_I4'|'LDC_I8'|'LDC_I4_S') integer | ('LDC_R4'|'LDC_R8') ( real | integer )
@@ -105,7 +107,7 @@ ExpInstr* ::= 'ADD' | 'AND' | ('CALL' | 'CALLI'|'CALLVIRT') qualident | 'CASTPTR
                       | 'LDIND_U4' | 'LDIND_R4' | 'LDIND_U8' | 'LDIND_R8' | 'LDIND_IP'
                       | ('LDLOC'|'LDLOC_S'|'LDLOCA'|'LDLOCA_S')(unsigned|ident)
                       | 'LDLOC_0' | 'LDLOC_1' | 'LDLOC_2' | 'LDLOC_3' | 'LDNULL' 
-                      | 'LDOBJ' [qualident] | ('LDPROC'|'LDMETH') qualident | 'LDSTR' (string|hexstring)
+                      | 'LDOBJ' [qualident] | 'LDPROC' qualident | 'LDMETH' trident | 'LDSTR' (string|hexstring)
                       | ('LDVAR'|'LDVARA') qualident | 'MUL' | 'NEG' 
                       | ('NEWARR'|'NEWVLA'|'NEWOBJ') qualident 
                       | 'NOT' | 'OR' | 'REM' | 'REM_UN' | 'SHL' | 'SHR' | 'SHR_UN' 

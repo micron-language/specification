@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2025-02-27, work in progress</div>
+2025-03-03, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -389,7 +389,7 @@ Operators and delimiters are the special characters, or character pairs listed b
 Reserved Words</h4>
 <div style="margin-left:63px"><span class="label"><a name="14202">2.3.9.1</a></span>
 The reserved words consist of either all capital or all lower case letters and cannot be used as identifiers. All words listed below are reserved (only capital letter versions shown).</div>
-<div style="margin-left:63px"><span class="label"><a name="17202">2.3.9.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18666">2.3.9.2</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -399,10 +399,12 @@ AND</td>
 <td>
 <br>BEGIN</td>
 <td>
-<br>BY</td>
+<br>BITS</td>
 <td>
-<br>CASE</td></tr>
+<br>BY</td></tr>
 <tr>
+<td>
+<br>CASE</td>
 <td>
 <br>CONST</td>
 <td>
@@ -410,10 +412,10 @@ AND</td>
 <td>
 <br>DO</td>
 <td>
-<br>ELSE</td>
-<td>
-<br>ELSIF</td></tr>
+<br>ELSE</td></tr>
 <tr>
+<td>
+<br>ELSIF</td>
 <td>
 <br>END</td>
 <td>
@@ -421,34 +423,41 @@ AND</td>
 <td>
 <br>EXTERN</td>
 <td>
-<br>FALSE</td>
-<td>
-<br>FOR</td></tr>
+<br>FALSE</td></tr>
 <tr>
+<td>
+<br>FINALLY</td>
+<td>
+<br>FOR</td>
 <td>
 <br>IF</td>
 <td>
 <br>IMPORT</td>
 <td>
-<br>IN</td>
+<br>IN</td></tr>
+<tr>
 <td>
 <br>INLINE</td>
 <td>
-<br>INVAR</td></tr>
-<tr>
+<br>INVAR</td>
+<td>
+<br>IS</td>
 <td>
 <br>LOOP</td>
 <td>
-<br>MOD</td>
+<br>MOD</td></tr>
+<tr>
 <td>
 <br>MODULE</td>
 <td>
 <br>NIL</td>
 <td>
-<br>NOT</td></tr>
-<tr>
+<br>NOT</td>
 <td>
-<br>OF</td>
+<br>OBJECT</td>
+<td>
+<br>OF</td></tr>
+<tr>
 <td>
 <br>OR</td>
 <td>
@@ -456,10 +465,10 @@ AND</td>
 <td>
 <br>PROC</td>
 <td>
-<br>PROCEDURE</td></tr>
-<tr>
+<br>PROCEDURE</td>
 <td>
-<br>RECORD</td>
+<br>RECORD</td></tr>
+<tr>
 <td>
 <br>REPEAT</td>
 <td>
@@ -467,10 +476,10 @@ AND</td>
 <td>
 <br>THEN</td>
 <td>
-<br>TO</td></tr>
-<tr>
+<br>TO</td>
 <td>
-<br>TRUE</td>
+<br>TRUE</td></tr>
+<tr>
 <td>
 <br>TYPE</td>
 <td>
@@ -478,9 +487,8 @@ AND</td>
 <td>
 <br>VAR</td>
 <td>
-<br>WHILE</td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="18497">2.3.9.3</a></span>
-TODO: BITS, FINALLY, IS, OBJECT</div>
+<br>WHILE</td>
+<td></td></tr></table></div>
 <h4 style="margin-left:45px"><span class="label"><a name="14204">2.3.10</a></span>
 Comments</h4>
 <div style="margin-left:63px"><span class="label"><a name="14205">2.3.10.1</a></span>
@@ -1144,7 +1152,7 @@ Relations</h4>
 <br>equal </td></tr>
 <tr>
 <td>
-<br># </td>
+<br>#, &lt;&gt; </td>
 <td>
 <br>unequal </td></tr>
 <tr>
@@ -1182,30 +1190,32 @@ Relations yield a BOOLEAN result. </div>
 <div style="margin-left:81px"><span class="label"><a name="15805">2.8.3.6.3</a></span>
 The relations <code>=</code>, <code>#</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, and <code>&gt;=</code> apply to the numeric types, as well as constant enumerations, pointer types, CHAR, string literals, and CHAR arrays containing <code>0x</code> as a terminator. </div>
 <div style="margin-left:81px"><span class="label"><a name="14675">2.8.3.6.4</a></span>
-The relations <code>=</code> and <code>#</code> also apply to BOOLEAN, and SET, as well procedure types. </div>
-<div style="margin-left:81px"><span class="label"><a name="15808">2.8.3.6.5</a></span>
+The relations <code>=</code> and <code>#</code> also apply to BOOLEAN, and SET, as well procedure types.</div>
+<div style="margin-left:81px"><span class="label"><a name="18657">2.8.3.6.5</a></span><span class="ident">NOTE</span>
+Micron supports '&lt;&gt;' as an alternative '#' syntax for compatibility with Pascal.</div>
+<div style="margin-left:81px"><span class="label"><a name="15808">2.8.3.6.6</a></span>
 The IN relation applies to SET.</div>
-<div style="margin-left:81px"><span class="label"><a name="15804">2.8.3.6.6</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15804">2.8.3.6.7</a></span>
 In general, both operands must be of the same type. If the operand are of numeric type, both must be either of signed integer, unsigned integer or floating point type. </div>
-<div style="margin-left:81px"><span class="label"><a name="15975">2.8.3.6.7</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15975">2.8.3.6.8</a></span>
 If one of the operands is an unsigned integer constant and the other operand is of type integer, the unsigned integer constant is converted to the smallest integer type which includes the constant value. </div>
-<div style="margin-left:81px"><span class="label"><a name="15976">2.8.3.6.8</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15976">2.8.3.6.9</a></span>
 String literals, CHAR and CHAR array operands can be mixed. </div>
-<div style="margin-left:81px"><span class="label"><a name="15977">2.8.3.6.9</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15977">2.8.3.6.10</a></span>
 If both operands are pointers, the specific type doesn't matter; the same applies to procedure types. </div>
-<div style="margin-left:81px"><span class="label"><a name="14674">2.8.3.6.10</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14674">2.8.3.6.11</a></span>
 <code>x IN s</code> stands for <i>x is an element of s</i>. If <code>s</code> is of type SET, <code>x</code> must be of an integer type. </div>
-<div style="margin-left:81px"><span class="label"><a name="18512">2.8.3.6.11</a></span>
+<div style="margin-left:81px"><span class="label"><a name="18512">2.8.3.6.12</a></span>
 <code>v IS T</code> stands for <i>the dynamic type of </i><i><code>v</code></i><i> is T (or an extension of T )</i> and is called a type test. It is applicable if</div>
-<div style="margin-left:99px"><span class="label"><a name="18513">2.8.3.6.11.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="18513">2.8.3.6.12.1</a></span>
 <code>v</code> is a pointer to object type (which can be NIL), and if</div>
-<div style="margin-left:99px"><span class="label"><a name="18514">2.8.3.6.11.2</a></span>
+<div style="margin-left:99px"><span class="label"><a name="18514">2.8.3.6.12.2</a></span>
 T is an <i>extension</i> of the static type of <code>v</code> (see <a href="#14532">3 Definition of terms</a>).</div>
-<div style="margin-left:81px"><span class="label"><a name="18515">2.8.3.6.12</a></span><span class="ident">NOTE</span>
+<div style="margin-left:81px"><span class="label"><a name="18515">2.8.3.6.13</a></span><span class="ident">NOTE</span>
 The IS operator is an extended feature of the language and not available in all language levels (see <a href="#18479">7 Language levels</a>).</div>
-<div style="margin-left:81px"><span class="label"><a name="14342">2.8.3.6.13</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14342">2.8.3.6.14</a></span>
 Examples:</div>
-<div style="margin-left:99px"><span class="label"><a name="14343">2.8.3.6.13.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="14343">2.8.3.6.14.1</a></span>
 <pre><code>1991                   // integer</code></pre>
 <pre><code>i div 3                // integer</code></pre>
 <pre><code>~p or q                // boolean</code></pre>
@@ -1374,9 +1384,9 @@ Example:</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14387">2.9.7</a></span>
 <a href=""><b>C</b></a><b>ase statements</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="14388">2.9.7.1</a></span>
-Case statements specify the selection and execution of a statement sequence according to the value of an expression. First the case expression is evaluated, then that statement sequence is executed whose case label list contains the obtained value. The case expression must either be of an integer type that includes the types of all case labels, or a constant enumeration type with all case labels being valid members of this type, or both the case expression and the case labels must be of type CHAR. Case labels are constants, and no value must occur more than once. If the value of the expression does not occur as a label of any case, the statement sequence following ELSE is selected, if there is one, otherwise the program is aborted.</div>
+Case statements specify the selection and execution of a statement sequence according to the value of an expression. First the case expression is evaluated, then that statement sequence is executed whose case label list contains the obtained value. The case expression must either be of an integer type that includes tjhe types of all case labels, or a constant enumeration type with all case labels being valid members of this type, or both the case expression and the case labels must be of type CHAR. Case labels are constants, and no value must occur more than once. If the value of the expression does not occur as a label of any case, the statement sequence following ELSE is selected, if there is one, otherwise the program is aborted.</div>
 <div style="margin-left:63px"><span class="label"><a name="18556">2.9.7.2</a></span>
-The type T of the case expression (case variable) may also be a variable parameter of object type or a pointer to object type. Then each case consists of exactly one case label which must be an <i>extension</i> of T (see <a href="#14532">3 Definition of terms</a>), and in the statements S<sub>i</sub> labelled by T<sub>i</sub>, the case variable is considered as of type T<sub>i</sub>. If the case variable is of POINTER type, then one case label can also be NIL. The evaluation order corresponds to the case label order; the first statement sequence is executed whose case label meets the condition.</div>
+The type T of the case expression (case variable) may also be a pointer to object type. Then each case consists of exactly one case label which must be an <i>extension</i> of T (see <a href="#14532">3 Definition of terms</a>), and in the statements S<sub>i</sub> labelled by T<sub>i</sub>, the case variable is considered as of type T<sub>i</sub>. If the case variable is of POINTER type, then one case label can also be NIL. The evaluation order corresponds to the case label order; the first statement sequence is executed whose case label meets the condition.</div>
 <div style="margin-left:63px"><span class="label"><a name="14389">2.9.7.3</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14390">2.9.7.3.1</a></span>
@@ -1608,24 +1618,26 @@ Note that both, FINALLY sections and also exceptions are an extended feature of 
 <h4 style="margin-left:45px"><span class="label"><a name="18516">2.11.13</a></span>
 Type-bound procedures</h4>
 <div style="margin-left:63px"><span class="label"><a name="18520">2.11.13.1</a></span>
-Procedures may be associated with an object type declared in the same scope. The procedures are said to be bound to the object type. The binding is expressed by the type of the receiver in the heading of a procedure declaration. The receiver must be a parameter of type POINTER TO T (where T is a object type). The procedure is bound to the type T and is considered local to it.</div>
-<div style="margin-left:63px"><span class="label"><a name="18536">2.11.13.2</a></span>
+Procedures may be associated with an object type declared in the same scope. The procedures are said to be bound to the object type. The binding is expressed by the receiver syntax in the heading of a procedure declaration. The receiver consists of a type name and the optional receiver parameter name. The type name can either reference the object type T or a pointer to T. The procedure is bound to the type T and is considered local to it. If the optional receiver parameter name is left out, the compiler automatically creates a hidden parameter which can be accessed from within the procedure body by the name &quot;SELF&quot; or &quot;self&quot;.</div>
+<div style="margin-left:63px"><span class="label"><a name="18589">2.11.13.2</a></span><span class="ident">NOTE</span>
+Regardless of whether the receiver is an object or pointer to object type, the receiver parameter is always a pointer to object type.</div>
+<div style="margin-left:63px"><span class="label"><a name="18536">2.11.13.3</a></span>
 Type-bound procedures cannot be INLINE, INVAR, nor EXTERN.</div>
-<div style="margin-left:63px"><span class="label"><a name="18521">2.11.13.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18521">2.11.13.4</a></span>
 Syntax:</div>
-<div style="margin-left:81px"><span class="label"><a name="18522">2.11.13.3.1</a></span>
-<code>ProcedureHeading = ( PROCEDURE | PROC ) [Receiver] identdef [ FormalParameters ] <br />Receiver = '(' ident ':' [POINTER TO | '^' ]ident ')'</code></div>
-<div style="margin-left:63px"><span class="label"><a name="18523">2.11.13.4</a></span>
+<div style="margin-left:81px"><span class="label"><a name="18522">2.11.13.4.1</a></span>
+<code>ProcedureHeading = ( PROCEDURE | PROC ) [Receiver] identdef [ FormalParameters ] <br />Receiver = '(' ReceiverParam ':' ReceiverType ')' | ReceiverType '.'<br />ReceiverParam = ident<br />ReceiverType = ident</code></div>
+<div style="margin-left:63px"><span class="label"><a name="18523">2.11.13.5</a></span>
 If a procedure P is bound to a type T0, it is implicitly also bound to any type T1 which is an extension of T0. However, a procedure P' (with the same name as P) may be explicitly bound to T1 in which case it overrides the binding of P. P' is considered a redefinition of P for T1. The formal parameters of P and P' must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). If P and T1 are exported (see <a href="#14160">2.4 Declarations and scope rules</a>), P' must be exported too.</div>
-<div style="margin-left:63px"><span class="label"><a name="18524">2.11.13.5</a></span><span class="ident">NOTE</span>
+<div style="margin-left:63px"><span class="label"><a name="18524">2.11.13.6</a></span><span class="ident">NOTE</span>
 The name of a type-bound procedure must be unique within the type to which it is bound, not within the scope in which it is declared.</div>
-<div style="margin-left:63px"><span class="label"><a name="18525">2.11.13.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18525">2.11.13.7</a></span>
 If <code>v</code> is a designator and <code>P</code> is a type-bound procedure, then <code>v.P</code> denotes that procedure <code>P</code> which is bound to the dynamic type of <code>v</code>. Note, that this may be a different procedure than the one bound to the static type of <code>v</code>. <code>v</code> is passed to `P’s receiver according to the parameter passing rules specified in Chapter <a href="#14458">2.11.11 Formal parameters</a>.</div>
-<div style="margin-left:63px"><span class="label"><a name="18526">2.11.13.7</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18526">2.11.13.8</a></span>
 If <code>r</code> is the receiver parameter of P declared with type T, <code>r.P^</code> denotes the (redefined, sometimes calles <i>super</i>) procedure P bound to a base type of T.</div>
-<div style="margin-left:63px"><span class="label"><a name="18527">2.11.13.8</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18527">2.11.13.9</a></span>
 Examples:</div>
-<div style="margin-left:81px"><span class="label"><a name="18528">2.11.13.8.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="18528">2.11.13.9.1</a></span>
 <pre><code>proc (t: Tree) Insert (node: Tree)</code></pre>
 <pre><code>  var p, father: Tree</code></pre>
 <pre><code>begin p := t</code></pre>
@@ -1644,12 +1656,12 @@ Examples:</div>
 <pre><code>  end</code></pre>
 <pre><code>  node.left := nil; node.right := nil</code></pre>
 <pre><code>end Insert</code></pre>
-<pre><code>proc (t: CenterTree) Insert (node: Tree) // redefinition</code></pre>
+<pre><code>proc CenterTree.Insert (node: Tree) // redefinition</code></pre>
 <pre><code>begin</code></pre>
 <pre><code>  WriteInt(node(CenterTree).width)</code></pre>
-<pre><code>  t.Insert^(node)  // calls the Insert procedure bound to Tree</code></pre>
+<pre><code>  self.Insert^(node)  // calls the Insert procedure bound to Tree</code></pre>
 <pre><code>end Insert</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="18529">2.11.13.9</a></span><span class="ident">NOTE</span>
+<div style="margin-left:63px"><span class="label"><a name="18529">2.11.13.10</a></span><span class="ident">NOTE</span>
 Object types and type-bound procedures are an extended feature of the language and not available in all language levels (see <a href="#18479">7 Language levels</a>).</div>
 <h4 style="margin-left:45px"><span class="label"><a name="18517">2.11.14</a></span>
 Type-bound procedure types</h4>
@@ -2179,7 +2191,7 @@ The result types of two procedures match if they are either of <i>equal type</i>
 <pre><code>FPSection        = [CONST] ident { [','] ident } ':' FormalType</code></pre>
 <pre><code>FormalType       = type</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="18530">4.35</a></span><a href="#18522">&#x21B3;</a>
-<code>ProcedureHeading = ( PROCEDURE | PROC ) [Receiver] identdef [ FormalParameters ] <br />Receiver = '(' ident ':' [POINTER TO | '^' ]ident ')'</code></div>
+<code>ProcedureHeading = ( PROCEDURE | PROC ) [Receiver] identdef [ FormalParameters ] <br />Receiver = '(' ReceiverParam ':' ReceiverType ')' | ReceiverType '.'<br />ReceiverParam = ident<br />ReceiverType = ident</code></div>
 <div style="margin-left:27px"><span class="label"><a name="18534">4.36</a></span><a href="#18533">&#x21B3;</a>
 <code>ProcedureType = PROCEDURE '(' ( POINTER | '^' ) ')' [FormalParameters]</code></div>
 <div style="margin-left:27px"><span class="label"><a name="14624">4.37</a></span><a href="#14501">&#x21B3;</a>

@@ -95,7 +95,7 @@ ExpList ::= expression { [','] expression }
 
 expression ::= SimpleExpression [ relation SimpleExpression ]
 
-relation ::= '=' | '#' | '<' | '<=' | '>' | '>=' | IN  
+relation ::= '=' | '#' | '<>' | '<' | '<=' | '>' | '>=' | IN  
 #ifdef LEVEL3
                      | IS
 #endif
@@ -189,12 +189,12 @@ ProcedureDeclaration ::=
 	
 ProcedureHeading ::= procedure 
 #ifdef LEVEL3
-                                        [ Receiver ]
+                                        [ Receiver | \LL:2\ ident '.' ]
 #endif
                                         identdef [ FormalParameters ]  
                                         
 #ifdef LEVEL3                                        
-Receiver ::= '(' ident ':' [POINTER TO | '^'] ident ')'
+Receiver ::= '(' ident ':' ident ')' // right ident is either a pointer or object type, which doesn't matter
 #endif
 
 block ::= BEGIN StatementSequence 
