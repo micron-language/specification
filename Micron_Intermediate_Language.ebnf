@@ -57,13 +57,15 @@ ProcedureType ::= (PROCEDURE|PROC) [FormalParameters]
 VariableDeclaration ::= IdentList ':' NamedType
 
 ProcedureDeclaration ::= ( PROCEDURE | PROC )  (
-                       '(' ident ':' ident ')' identdef [ FormalParameters ] [ ';' ] ProcedureBody
+                       Binding identdef [ FormalParameters ] [ ';' ] ProcedureBody
                        | identdef  
                            [ FormalParameters ] (
                                ['INLINE'|'INVAR'|'INIT'] [ ';' ] ProcedureBody  
                                | \LL:2\ [ ';' ] 'EXTERN' [ident] 
                             ) 
                         )
+                        
+Binding ::= ident '.'
                         
 ProcedureBody* ::= [VAR { LocalDeclaration [';'] }]  BEGIN StatementSequence END ident
 
@@ -87,8 +89,8 @@ DeclarationSequence*  ::= {
 	
 Expression ::= { ExpInstr }
 
-ExpInstr* ::= 'ADD' | 'AND' | ('CALL' | 'CALLI') qualident 
-                      | ('CALLVIRT'|'CALLVI') trident | 'CASTPTR' qualident
+ExpInstr* ::= 'ADD' | 'AND' | ('CALL' | 'CALLI'|'CALLVI') qualident 
+                      | 'CALLVIRT' trident | 'CASTPTR' qualident
                       | 'CEQ' | 'CGT' | 'CGT_UN' | 'CLT' | 'CLT_UN' 
                       | 'CONV_I1' | 'CONV_I2' | 'CONV_I4' | 'CONV_I8' | 'CONV_R4' | 'CONV_R8'
                       | 'CONV_U1' | 'CONV_U2' | 'CONV_U4' | 'CONV_U8' | 'CONV_IP'
@@ -104,7 +106,7 @@ ExpInstr* ::= 'ADD' | 'AND' | ('CALL' | 'CALLI') qualident
                       | 'LDELEM_U4' | 'LDELEM_U8' | 'LDELEM_R4' | 'LDELEM_R8' | 'LDELEM_IP'
                       | ('LDFLD'|'LDFLDA') trident 
                       | 'LDIND_I1' | 'LDIND_I2' | 'LDIND_I4' | 'LDIND_I8' | 'LDIND_U1' | 'LDIND_U2'
-                      | 'LDIND_U4' | 'LDIND_R4' | 'LDIND_U8' | 'LDIND_R8' | 'LDIND_IP'
+                      | 'LDIND_U4' | 'LDIND_R4' | 'LDIND_U8' | 'LDIND_R8' | 'LDIND_IP' | 'LDIND_IPP'
                       | ('LDLOC'|'LDLOC_S'|'LDLOCA'|'LDLOCA_S')(unsigned|ident)
                       | 'LDLOC_0' | 'LDLOC_1' | 'LDLOC_2' | 'LDLOC_3' | 'LDNULL' 
                       | 'LDOBJ' [qualident] | 'LDPROC' qualident | 'LDMETH' trident | 'LDSTR' (string|hexstring)
@@ -124,7 +126,7 @@ Statement* ::= 'FREE' | RepeatUntil
                          | 'STELEM' qualident | 'STELEM_I1' | 'STELEM_I2' | 'STELEM_I4' | 'STELEM_I8' 
                          | 'STELEM_R4' | 'STELEM_R8' | 'STELEM_IP'
                          | 'STFLD' trident
-                         | 'STIND_I1' | 'STIND_I2' | 'STIND_I4' | 'STIND_I8' | 'STIND_R4' | 'STIND_R8' | 'STIND_IP'
+                         | 'STIND_I1' | 'STIND_I2' | 'STIND_I4' | 'STIND_I8' | 'STIND_R4' | 'STIND_R8' | 'STIND_IP' | 'STIND_IPP'
                          | ('STLOC' |'STLOC_S') (unsigned|ident) | 'STLOC_0' | 'STLOC_1' | 'STLOC_2' | 'STLOC_3'
                          | 'STOBJ' qualident | 'STVAR' qualident | Switch | WhileDo
 

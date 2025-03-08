@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2025-03-03, work in progress</div>
+2025-03-08, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -385,7 +385,7 @@ An expression consists of a sequence of instructions which push or pop values of
 <div style="margin-left:45px"><span class="label"><a name="15554">2.5.3</a></span>
 The evaluation stack is empty upon procedure entry. Its contents are entirely local to a procedure and are preserved across <i>call</i> instructions. Arguments to other procedures and their return values are also placed on the evaluation stack. The evaluation stack is not addressable. At all times it is possible to deduce which one of a reduced set of types is stored in any stack location at a specific point in the instruction stream.</div>
 <div style="margin-left:45px"><span class="label"><a name="15555">2.5.4</a></span>
-While MIL, in general, supports the full set of types described in <a href="#14956">2.4 Types</a>, MIL only requires that values be one of:</div>
+While MIL, in general, supports the full set of types described in <a href="#14956">2.4 Types</a>, the MIL evaluation stack only requires that values be one of:</div>
 <div style="margin-left:63px"><span class="label"><a name="15556">2.5.4.1</a></span>
 int64 , an 8-byte signed integer</div>
 <div style="margin-left:63px"><span class="label"><a name="15557">2.5.4.2</a></span>
@@ -393,7 +393,7 @@ int32 , a 4-byte signed integer</div>
 <div style="margin-left:63px"><span class="label"><a name="15558">2.5.4.3</a></span>
 intptr, a signed integer of either 4 or 8 bytes, whichever is more convenient for the target architecture</div>
 <div style="margin-left:63px"><span class="label"><a name="18665">2.5.4.4</a></span>
-methref, an opaque compound of two intptr, one representing an object instance and the other a function pointer</div>
+methref, an opaque compound of two intptr, one representing an object instance and the other a function (table) pointer</div>
 <div style="margin-left:63px"><span class="label"><a name="15559">2.5.4.5</a></span>
 F , a floating point value (float32 , float64 , or other representation supported by the underlying hardware)</div>
 <div style="margin-left:63px"><span class="label"><a name="15560">2.5.4.6</a></span>
@@ -402,7 +402,7 @@ a user-defined value type</div>
 Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15550">2.5.5.1</a></span>
 <code>Expression = { ExpInstr }</code>
-<br><code>ExpInstr = 'add' | 'and' | ('call' | 'calli' ) qualident <br />| ('callvirt'|'callvi') trident | 'castptr' qualident</code>
+<br><code>ExpInstr = 'add' | 'and' | ('call' | 'calli' | 'callvi') qualident <br />| 'callvirt' trident | 'castptr' qualident</code>
 <br><code>| 'ceq' | 'cgt' | 'cgt_un' | 'clt' | 'clt_un' </code>
 <br><code>| 'conv_i1' | 'conv_i2' | 'conv_i4' | 'conv_i8' | 'conv_r4' | 'conv_r8'</code>
 <br><code>| 'conv_u1' | 'conv_u2' | 'conv_u4' | 'conv_u8' | 'conv_ip'</code>
@@ -682,7 +682,7 @@ TODO: tail calls</div>
 <br><b>Description</b> </td></tr>
 <tr>
 <td>
-<br>TODO &lt;<i>T</i>&gt; </td>
+<br>EE 14 &lt;<i>T</i>&gt; </td>
 <td>
 <br>calli <i>function</i> </td>
 <td>
@@ -692,7 +692,7 @@ TODO: tail calls</div>
 <div style="margin-left:63px"><span class="label"><a name="18661">2.5.11.3</a></span>
 <code>…, arg1, arg2 … argN, methref -&gt; …</code></div>
 <div style="margin-left:63px"><span class="label"><a name="18662">2.5.11.4</a></span>
-The callvi instruction calls methref (a compound of an object instance and a pointer to a procedure entry point) with the arguments arg1 … argN. The types of these arguments, and a possible return type, are described by the signature. Such a pointer can be created using the ldmeth instruction. The arguments are placed on the stack in left-to-right order. That is, the first argument is computed and placed on the stack, then the second argument, and so on. If the method has a return value, it is pushed on the stack upon method completion. </div>
+The callvi instruction calls methref (a pair of <i>intptr</i> pointing to an object instance and a function) with the arguments arg1 … argN. The types of these arguments, and a possible return type, are described by the signature. Such a methref can be created using the ldmeth instruction. The arguments are placed on the stack in left-to-right order. That is, the first argument is computed and placed on the stack, then the second argument, and so on. If the method has a return value, it is pushed on the stack upon method completion. </div>
 <h4 style="margin-left:45px"><span class="label"><a name="18455">2.5.12</a></span>
 <b>callvirt – call a method associated, at runtime, with an object</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="18457">2.5.12.1</a></span>
@@ -1405,7 +1405,7 @@ The ldarga instruction fetches the address (of type intptr) of the <i>argNum</i
 For procedures that take a variable-length argument list, the ldarga instructions can be used only for the initial fixed arguments, not those in the variable part of the signature.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15105">2.5.28</a></span>
 <b>ldc – load numeric constant</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15106">2.5.28.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18699">2.5.28.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1467,21 +1467,21 @@ For procedures that take a variable-length argument list, the ldarga instruction
 <td>
 <br>19 </td>
 <td>
-<br>ldc_i4_3</td>
+<br>ldc_i4_3 </td>
 <td>
 <br>Push 3 onto the stack as int32. </td></tr>
 <tr>
 <td>
 <br>1A </td>
 <td>
-<br>ldc_i4_4</td>
+<br>ldc_i4_4 </td>
 <td>
 <br>Push 4 onto the stack as int32. </td></tr>
 <tr>
 <td>
 <br>1B </td>
 <td>
-<br>ldc_i4_5</td>
+<br>ldc_i4_5 </td>
 <td>
 <br>Push 5 onto the stack as int32. </td></tr>
 <tr>
@@ -1495,7 +1495,7 @@ For procedures that take a variable-length argument list, the ldarga instruction
 <td>
 <br>1D </td>
 <td>
-<br>ldc_i4_7</td>
+<br>ldc_i4_7 </td>
 <td>
 <br>Push 7 onto the stack as int32. </td></tr>
 <tr>
@@ -1518,11 +1518,7 @@ For procedures that take a variable-length argument list, the ldarga instruction
 <td>
 <br>ldc_i4_s <i>num</i> </td>
 <td>
-<br>Push <i>num</i> onto the stack as int32, short form. </td></tr>
-<tr>
-<td></td>
-<td></td>
-<td></td></tr></table></div>
+<br>Push <i>num</i> onto the stack as int32, short form. </td></tr></table></div>
 <div style="margin-left:63px"><span class="label"><a name="15107">2.5.28.2</a></span>
 <code>… -&gt; …, num</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15108">2.5.28.3</a></span>
@@ -1561,7 +1557,7 @@ There is no way to express a floating-point constant that has a larger range or 
 The ldc_obj instruction pushes the object literal constructed by <i>constructor</i> onto the stack. </div>
 <h4 style="margin-left:45px"><span class="label"><a name="15238">2.5.30</a></span>
 ldelem – load element from array </h4>
-<div style="margin-left:63px"><span class="label"><a name="15239">2.5.30.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18695">2.5.30.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1576,12 +1572,10 @@ ldelem – load element from array </h4>
 <td>
 <br>ldelem <i>type</i> </td>
 <td>
-<br>Load the element at <i>index</i> onto the top of the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15242">2.5.30.2</a></span>
-<table border=1 cellspacing=0 CELLPADDING=3 >
+<br>Load the element at <i>index</i> onto the top of the stack. </td></tr>
 <tr>
 <td>
-90 </td>
+<br>90 </td>
 <td>
 <br>ldelem_i1 </td>
 <td>
@@ -1634,14 +1628,14 @@ ldelem – load element from array </h4>
 <td>
 <br>ldelem_u8 </td>
 <td>
-<br>Load the element with type unsigned int64 at <i>index</i> onto the top of the stack as an int64 (alias for ldelem.i8). </td></tr>
+<br>Load the element with type unsigned int64 at <i>index</i> onto the top of the stack as an int64.</td></tr>
 <tr>
 <td>
 <br>98 </td>
 <td>
-<br>ldelem_r4</td>
+<br>ldelem_r4 </td>
 <td>
-<br>Load the element with type float32 at <i>index</i> onto the top of the stack as an F </td></tr>
+<br>Load the element with type float32 at <i>index</i> onto the top of the stack as an F.</td></tr>
 <tr>
 <td>
 <br>99 </td>
@@ -1653,12 +1647,12 @@ ldelem – load element from array </h4>
 <td>
 <br>97 </td>
 <td>
-<br>ldelem_ip</td>
+<br>ldelem_ip </td>
 <td>
 <br>Load the element with type intptr at <i>index</i> onto the top of the stack as a intptr. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15240">2.5.30.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15240">2.5.30.2</a></span>
 <code>…, pointer to array, index -&gt; …, value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15241">2.5.30.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15241">2.5.30.3</a></span>
 The ldelem instruction loads the value of the element with index <i>index</i> (of type intptr or int32) in the zero-based one-dimensional array (pointed to by the intptr on the stack), and places it on the top of the stack. The type of the return value is indicated by the type<i> </i>in the instruction. </div>
 <h4 style="margin-left:45px"><span class="label"><a name="15243">2.5.31</a></span>
 ldelema – load address of an element of an array </h4>
@@ -1728,7 +1722,7 @@ ldflda – load field address </h4>
 The ldflda instruction pushes the address of a field of <i>ptr. ptr</i> is of type intptr. The value returned by ldflda is an intptr. <i>field</i> is a reference to an element of a structured type</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15119">2.5.34</a></span>
 ldind – load value indirect onto the stack</h4>
-<div style="margin-left:63px"><span class="label"><a name="15120">2.5.34.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18696">2.5.34.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1813,7 +1807,14 @@ ldind – load value indirect onto the stack</h4>
 <td>
 <br>ldind_ip </td>
 <td>
-<br>Indirect load value of type intptr on the stack </td></tr></table></div>
+<br>Indirect load value of type intptr on the stack </td></tr>
+<tr>
+<td>
+<br>EE 15 </td>
+<td>
+<br>ldind_ipp </td>
+<td>
+<br>Indirect load value of type intptr pair (methref) on the stack </td></tr></table></div>
 <div style="margin-left:63px"><span class="label"><a name="15121">2.5.34.2</a></span>
 <code>…, addr -&gt; …, value</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15122">2.5.34.3</a></span>
@@ -1933,7 +1934,7 @@ The ldloca instruction pushes the address of the local variable number <i>indx</
 <div style="margin-left:63px"><span class="label"><a name="18462">2.5.37.2</a></span>
 <code>…, obj -&gt; …, methref</code></div>
 <div style="margin-left:63px"><span class="label"><a name="18460">2.5.37.3</a></span>
-The ldmeth instruction pushes a method reference to the native code implementing the virtual method associated with object and described by the method reference onto the stack. </div>
+The ldmeth instruction pushes a method reference (pair of <i>intptr</i>) to the native code implementing the virtual method associated with object and described by the method reference onto the stack. </div>
 <h4 style="margin-left:45px"><span class="label"><a name="15136">2.5.38</a></span>
 ldnull – load a null pointer</h4>
 <div style="margin-left:63px"><span class="label"><a name="15137">2.5.38.1</a></span>
@@ -2630,12 +2631,12 @@ A procedure declared INLINE is expanded by the backend at the call site. A proce
 <div style="margin-left:45px"><span class="label"><a name="15463">2.8.7</a></span>
 A procedure can be an alias of another procedure. The other procedure is referenced with a qualident. If the other procedure is in another module, it must be exported.</div>
 <div style="margin-left:45px"><span class="label"><a name="18475">2.8.8</a></span>
-Procedures may be associated with an object type declared in the same module. The procedures are said to be bound to the object type. The binding is expressed by the name and type of the receiver in the heading of a procedure declaration. The receiver type must resolve to a local object type T. In consequence, the procedure is bound to the object type T and is considered local to it. The body of a bound procedure has access to a hidden parameter by the receiver name which carries the object instance of type POINTER TO T. If a procedure P is bound to an object type T0, it is implicitly also bound to any object type T1 which is an extension of T0. However, a procedure P' (with the same name as P) may be explicitly bound to T1 in which case it overrides the binding of P. P' is considered a redefinition of P for T1. The formal parameters of P and P' must match (see Definition of terms). If P and T1 are exported (see Declarations and scope rules), P' must be exported too. Note The name of a type-bound procedure must be unique within the object type to which it is bound, not within the scope in which it is declared. Type-bound procedures cannot be INLINE, INVAR, INIT or EXTERN.</div>
+Procedures may be associated with an object type declared in the same module. The procedures are said to be bound to the object type. The binding is expressed by prefixing the procedure name with the name of the local object type T the procedure is bound to. The receiver parameter is explicit and the first parameter in the parameter list. The receiver parameter must be of type POINTER TO T. If a procedure P is bound to an object type T0, it is implicitly also bound to any object type T1 which is an extension of T0. However, a procedure P' (with the same name as P) may be explicitly bound to T1 in which case it overrides the binding of P. P' is considered a redefinition of P for T1. The formal parameters of P and P' must match (see Definition of terms). If P and T1 are exported (see Declarations and scope rules), P' must be exported too. Note The name of a type-bound procedure must be unique within the object type to which it is bound, not within the scope in which it is declared. Type-bound procedures cannot be INLINE, INVAR, INIT or EXTERN.</div>
 <div style="margin-left:45px"><span class="label"><a name="15464">2.8.9</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15465">2.8.9.1</a></span>
 <pre><code>ProcedureDeclaration = ProcedureHeading [';'] <br />                         (['INLINE'|'INVAR'|'INIT'] [';'] ProcedureBody <br />                          | [';'] EXTERN [ident] ) </code></pre>
-<pre><code>ProcedureHeading     = ( PROCEDURE | PROC ) <br />                       [Receiver]<br />                       identdef [ FormalParameters ]<br />Receiver             = '(' ident ':' ident ')'<br /><br />ProcedureBody        = [VAR { LocalDeclaration [';'] }]<br />                       BEGIN StatementSequence END ident<br /><br />LocalDeclaration     = [IdentList ':'] NamedType</code></pre></div>
+<pre><code>ProcedureHeading     = (PROCEDURE | PROC) <br />                       [Binding]<br />                       identdef [FormalParameters]<br />Binding              = ident '.'<br /><br />ProcedureBody        = [VAR { LocalDeclaration [';'] }]<br />                       BEGIN StatementSequence END ident<br /><br />LocalDeclaration     = [IdentList ':'] NamedType</code></pre></div>
 <h4 style="margin-left:45px"><span class="label"><a name="15468">2.8.10</a></span>
 Formal parameters</h4>
 <div style="margin-left:63px"><span class="label"><a name="15469">2.8.10.1</a></span>
@@ -2997,7 +2998,7 @@ For procedures that take a variable argument list, the starg instructions can be
 Storing into arguments that hold an integer value smaller than 4 bytes long truncates the value as it moves from the stack to the argument. Floating-point values are rounded from their native size (type F) to the size associated with the argument.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15274">2.9.15</a></span>
 stelem – store element to array </h4>
-<div style="margin-left:63px"><span class="label"><a name="15275">2.9.15.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18698">2.9.15.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -3012,12 +3013,10 @@ stelem – store element to array </h4>
 <td>
 <br>stelem <i>etype</i> </td>
 <td>
-<br>Replace array element at <i>index</i> with the <i>value</i> on the stack </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15278">2.9.15.2</a></span>
-<table border=1 cellspacing=0 CELLPADDING=3 >
+<br>Replace array element at <i>index</i> with the <i>value</i> on the stack </td></tr>
 <tr>
 <td>
-9C </td>
+<br>9C </td>
 <td>
 <br>stelem_i1 </td>
 <td>
@@ -3064,9 +3063,9 @@ stelem – store element to array </h4>
 <br>stelem_ip </td>
 <td>
 <br>Replace <i>array</i> element at <i>index</i> with the intptr <i>value</i> on the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15276">2.9.15.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15276">2.9.15.2</a></span>
 <code>…, pointer to array, index, value, -&gt; …</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15277">2.9.15.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15277">2.9.15.3</a></span>
 The stelem instruction replaces the value of the element with zero-based index <i>index</i> (of type intptr or int32) in the one-dimensional array <i>array </i>(pointed to by a pointer), with <i>value</i>. The value has the type specified by <i>etype</i> or the instruction suffix. </div>
 <h4 style="margin-left:45px"><span class="label"><a name="15279">2.9.16</a></span>
 stfld – store into a field of an object </h4>
@@ -3092,7 +3091,7 @@ stfld – store into a field of an object </h4>
 The stfld instruction replaces the value of a field of an <i>obj</i> via a pointer (type intptr) with <i>value</i>. <i>field</i> is a field member reference. stfld pops the value and the pointer off the stack and updates the object.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15211">2.9.17</a></span>
 <b>stind – store value indirect from stack </b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15214">2.9.17.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18697">2.9.17.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -3147,9 +3146,16 @@ The stfld instruction replaces the value of a field of an <i>obj</i> via a point
 <td>
 <br>DF </td>
 <td>
-<br>stind_ip</td>
+<br>stind_ip </td>
 <td>
-<br>Store value of type intptr into memory at address </td></tr></table></div>
+<br>Store value of type intptr into memory at address </td></tr>
+<tr>
+<td>
+<br>EE 16 </td>
+<td>
+<br>stind_ipp </td>
+<td>
+<br>Store value of type intptr pair (methref) into memory at address </td></tr></table></div>
 <div style="margin-left:63px"><span class="label"><a name="15215">2.9.17.2</a></span>
 <code>…, addr, val -&gt; …</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15216">2.9.17.3</a></span>
@@ -3432,7 +3438,7 @@ TODO: type checking rules, structral compatibility, packing</div>
 <pre><code>MethodType = (PROCEDURE|PROC)^ [FormalParameters]</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15551">3.14</a></span><a href="#15550">&#x21B3;</a>
 <code>Expression = { ExpInstr }</code>
-<br><code>ExpInstr = 'add' | 'and' | ('call' | 'calli' ) qualident <br />| ('callvirt'|'callvi') trident | 'castptr' qualident</code>
+<br><code>ExpInstr = 'add' | 'and' | ('call' | 'calli' | 'callvi') qualident <br />| 'callvirt' trident | 'castptr' qualident</code>
 <br><code>| 'ceq' | 'cgt' | 'cgt_un' | 'clt' | 'clt_un' </code>
 <br><code>| 'conv_i1' | 'conv_i2' | 'conv_i4' | 'conv_i8' | 'conv_r4' | 'conv_r8'</code>
 <br><code>| 'conv_u1' | 'conv_u2' | 'conv_u4' | 'conv_u8' | 'conv_ip'</code>
@@ -3468,7 +3474,7 @@ TODO: type checking rules, structral compatibility, packing</div>
 <pre><code>VariableDeclaration = IdentList ':' NamedType</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15526">3.21</a></span><a href="#15465">&#x21B3;</a>
 <pre><code>ProcedureDeclaration = ProcedureHeading [';'] <br />                         (['INLINE'|'INVAR'|'INIT'] [';'] ProcedureBody <br />                          | [';'] EXTERN [ident] ) </code></pre>
-<pre><code>ProcedureHeading     = ( PROCEDURE | PROC ) <br />                       [Receiver]<br />                       identdef [ FormalParameters ]<br />Receiver             = '(' ident ':' ident ')'<br /><br />ProcedureBody        = [VAR { LocalDeclaration [';'] }]<br />                       BEGIN StatementSequence END ident<br /><br />LocalDeclaration     = [IdentList ':'] NamedType</code></pre></div>
+<pre><code>ProcedureHeading     = (PROCEDURE | PROC) <br />                       [Binding]<br />                       identdef [FormalParameters]<br />Binding              = ident '.'<br /><br />ProcedureBody        = [VAR { LocalDeclaration [';'] }]<br />                       BEGIN StatementSequence END ident<br /><br />LocalDeclaration     = [IdentList ':'] NamedType</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15527">3.22</a></span><a href="#15473">&#x21B3;</a>
 <pre><code>FormalParameters = '(' [ FPSection { ';' FPSection } [ ';' '..'] ] ')'<br />                   [ ':' ReturnType ]</code></pre>
 <pre><code>ReturnType       = NamedType</code></pre>
