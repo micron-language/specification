@@ -10,7 +10,7 @@
 // http://www.gnu.org/copyleft/gpl.html.
 
 
-Mil ::= module
+Mil ::= { module }
 
 
 ident ::= // ( letter | '_' | '$' ) {letter | digit | '_' | '$'}
@@ -19,7 +19,9 @@ unsigned ::= // digit {digit} | digit {hexDigit} 'H'
 
 integer ::= ['+'|'-'] unsigned
 
-real ::= // digit {digit} '.' {digit} ['E' ['+' | '-'] digit {digit}]
+float ::= // digit {digit} '.' {digit} ['E' ['+' | '-'] digit {digit}]
+
+number ::= ['+'|'-'] ( float | unsigned )
 
 string ::= // '"' {character} '"' 
 
@@ -57,7 +59,7 @@ ProcedureType ::= (PROCEDURE|PROC) [FormalParameters]
 VariableDeclaration ::= IdentList ':' NamedType
 
 ProcedureDeclaration ::= ( PROCEDURE | PROC )  (
-                       Binding identdef [ FormalParameters ] [ ';' ] ProcedureBody
+                       \LA: 1:ident & 2:'.'\ Binding identdef [ FormalParameters ] [ ';' ] ProcedureBody
                        | identdef  
                            [ FormalParameters ] (
                                ['INLINE'|'INVAR'|'INIT'] [ ';' ] ProcedureBody  
@@ -98,9 +100,9 @@ ExpInstr* ::= 'ADD' | 'AND' | ('CALL' | 'CALLI'|'CALLVI') qualident
                       | ('LDARG'|'LDARG_S') (unsigned|ident) 
                       | 'LDARG_0' | 'LDARG_1' | 'LDARG_2' | 'LDARG_3'
                       | ('LDARGA'|'LDARGA_S') (unsigned|ident)
-                      | ('LDC_I4'|'LDC_I8'|'LDC_I4_S') integer | ('LDC_R4'|'LDC_R8') ( real | integer )
+                      | ('LDC_I4'|'LDC_I8'|'LDC_I4_S') integer | ('LDC_R4'|'LDC_R8') number
                       | 'LDC_I4_0' | 'LDC_I4_1' | 'LDC_I4_2' | 'LDC_I4_3' | 'LDC_I4_4' | 'LDC_I4_5'
-                      | 'LDC_I4_6' | 'LDC_I4_7' | 'LDC_I4_8' | 'LDC_I4_M1' | 'LDC_OBJ' constructor
+                      | 'LDC_I4_6' | 'LDC_I4_7' | 'LDC_I4_8' | 'LDC_I4_M1' | 'LDOBJ' constructor
                       | ('LDELEM'|'LDELEMA') qualident | 'LDELEM_I1' | 'LDELEM_I2'
                       | 'LDELEM_I4' | 'LDELEM_I8' | 'LDELEM_U1' | 'LDELEM_U2' 
                       | 'LDELEM_U4' | 'LDELEM_U8' | 'LDELEM_R4' | 'LDELEM_R8' | 'LDELEM_IP'
@@ -109,7 +111,7 @@ ExpInstr* ::= 'ADD' | 'AND' | ('CALL' | 'CALLI'|'CALLVI') qualident
                       | 'LDIND_U4' | 'LDIND_R4' | 'LDIND_U8' | 'LDIND_R8' | 'LDIND_IP' | 'LDIND_IPP'
                       | ('LDLOC'|'LDLOC_S'|'LDLOCA'|'LDLOCA_S')(unsigned|ident)
                       | 'LDLOC_0' | 'LDLOC_1' | 'LDLOC_2' | 'LDLOC_3' | 'LDNULL' 
-                      | 'LDOBJ' [qualident] | 'LDPROC' qualident | 'LDMETH' trident | 'LDSTR' (string|hexstring)
+                      | 'LDIND' [qualident] | 'LDPROC' qualident | 'LDMETH' trident | 'LDSTR' (string|hexstring)
                       | ('LDVAR'|'LDVARA') qualident | 'MUL' | 'NEG' 
                       | ('NEWARR'|'NEWVLA'|'NEWOBJ') qualident 
                       | 'NOT' | 'OR' | 'REM' | 'REM_UN' | 'SHL' | 'SHR' | 'SHR_UN' 
@@ -128,7 +130,7 @@ Statement* ::= 'FREE' | RepeatUntil
                          | 'STFLD' trident
                          | 'STIND_I1' | 'STIND_I2' | 'STIND_I4' | 'STIND_I8' | 'STIND_R4' | 'STIND_R8' | 'STIND_IP' | 'STIND_IPP'
                          | ('STLOC' |'STLOC_S') (unsigned|ident) | 'STLOC_0' | 'STLOC_1' | 'STLOC_2' | 'STLOC_3'
-                         | 'STOBJ' qualident | 'STVAR' qualident | Switch | WhileDo
+                         | 'STIND' qualident | 'STVAR' qualident | Switch | WhileDo
 
 IfThenElse ::= 'IF' Expression 'THEN' StatementSequence [ 'ELSE' StatementSequence ] END
 Loop ::= 'LOOP' StatementSequence END
@@ -143,8 +145,8 @@ MetaActuals ::= '(' ConstExpression { [','] ConstExpression } ')'
 
 MetaParams ::= '(' ident { \LL:2\ [','] ident } ')'
 
-ConstExpression  ::= qualident | integer | real | string | hexstring
-ConstExpression2 ::= qualident [ component_list ] | integer | real | string | hexstring
+ConstExpression  ::= qualident | number | string | hexstring
+ConstExpression2 ::= qualident [ component_list ] | number | string | hexstring
 
 constructor ::= NamedType component_list | hexstring
 component_list ::= '{' [ component {[','] component} ] '}' 
