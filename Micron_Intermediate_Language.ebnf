@@ -46,10 +46,10 @@ length     ::= unsigned
 
 
 StructUnionType ::= ('STRUCT' | 'UNION') { \LA: 1:!'END'\ FieldList [';'] } 'END'
-FieldList  ::= IdentList ':' NamedType [ ':' integer ] | '..' integer
+FieldList  ::= IdentList ':' NamedType [ ':' unsigned ] | '..' unsigned
 IdentList  ::= identdef { [','] identdef }
 
-ObjectType ::= 'OBJECT' { MemberList [';'] } 'END'
+ObjectType ::= 'OBJECT' [ '(' NamedType ')' ] { MemberList [';'] } 'END'
 MemberList ::= IdentList ':' NamedType
 
 PointerType ::= ( 'POINTER' 'TO' | '^' ) NamedType
@@ -63,7 +63,7 @@ ProcedureDeclaration ::= ( PROCEDURE | PROC )  (
                        | identdef  
                            [ FormalParameters ] (
                                ['INLINE'|'INVAR'|'INIT'] [ ';' ] ProcedureBody  
-                               | \LL:2\ [ ';' ] 'EXTERN' [ident] 
+                               | \LA: 1:'EXTERN' | (1:';'&2:'EXTERN')\ [ ';' ] 'EXTERN' [ident]  // \LL:2\ produces nonsense!
                             ) 
                         )
                         

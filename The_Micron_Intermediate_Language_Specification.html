@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2025-03-23, work in progress</div>
+2025-03-30, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -333,8 +333,8 @@ Fields of boolean or integer type of a record can be packed at the bit level for
 Syntax of textual representation:</div>
 <div style="margin-left:99px"><span class="label"><a name="15427">2.4.5.2.5.1</a></span>
 <code>StructUnionType = (STRUCT | UNION) { FieldList [';'] } END</code>
-<br><code>FieldList  = IdentList ':' NamedType [':' integer] | '..' integer</code>
-<br><code>IdentList  = identdef { [','] identdef }</code></div>
+<br><code>FieldList = IdentList ':' NamedType [':' unsigned] | '..' </code>unsigned
+<br><code>IdentList = identdef { [','] identdef }</code></div>
 <h4 style="margin-left:63px"><span class="label"><a name="18465">2.4.5.3</a></span>
 Object types</h4>
 <div style="margin-left:81px"><span class="label"><a name="18467">2.4.5.3.1</a></span>
@@ -354,12 +354,14 @@ Syntax of textual representation:</div>
 <b>Pointer types</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15434">2.4.6.1</a></span>
 Variables of a pointer type P assume as values pointers to variables of some type T. T is called the pointer base type of P and can be of any type. A pointer is represented by an <i>intptr</i> in the runtime.</div>
-<div style="margin-left:63px"><span class="label"><a name="15435">2.4.6.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="19516">2.4.6.2</a></span>
+T can be of the special type ANY, which means that the type the pointer is referencing is not specified.</div>
+<div style="margin-left:63px"><span class="label"><a name="15435">2.4.6.3</a></span>
 Syntax of textual representation:</div>
-<div style="margin-left:81px"><span class="label"><a name="15436">2.4.6.2.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15436">2.4.6.3.1</a></span>
 <pre><code>PointerType = ( POINTER TO | '^' ) NamedType</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="15437">2.4.6.3</a></span>
-Any pointer variable or parameter may assume the value NIL, which points to no variable at all. </div>
+<div style="margin-left:63px"><span class="label"><a name="15437">2.4.6.4</a></span>
+A pointer variable or parameter may assume the value NIL, which points to no variable at all. </div>
 <h4 style="margin-left:45px"><span class="label"><a name="15433">2.4.7</a></span>
 <b>Procedure types</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15439">2.4.7.1</a></span>
@@ -1284,7 +1286,7 @@ initobj – initialize the value at an address </h4>
 <div style="margin-left:63px"><span class="label"><a name="15727">2.5.24.2</a></span>
 <code>…, dest -&gt; …,</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15728">2.5.24.3</a></span>
-The initobj instruction initializes a record or fixed length array with a default value. <i>type </i>is a reference to the declaration. <i>dest</i> is a pointer to the record or array. The initobj instruction initializes each field/element of <i>dest</i> to null or a zero of the appropriate built-in type. </div>
+The initobj instruction initializes a record, object or fixed length array with a default value. <i>type </i>is a reference to the declaration. <i>dest</i> is a pointer to the record or array. The initobj instruction initializes each field/element of <i>dest</i> to null or a zero of the appropriate built-in type. </div>
 <div style="margin-left:63px"><span class="label"><a name="15731">2.5.24.4</a></span>
 TODO: do we really need this?</div>
 <h4 style="margin-left:45px"><span class="label"><a name="18567">2.5.25</a></span>
@@ -2512,7 +2514,7 @@ The shr.un instruction shifts <i>value</i> (int32, int 64 or intptr) right by th
 <div style="margin-left:63px"><span class="label"><a name="15206">2.5.56.4</a></span>
 See table <a href="#15192">2.5.54.4.1</a> for details of which operand types are allowed, and their corresponding result type.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15988">2.5.57</a></span>
-<b>sizeof – load the si ze, in bytes,of a type</b></h4>
+<b>sizeof – load the size, in bytes,of a type</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15990">2.5.57.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
@@ -3406,8 +3408,8 @@ TODO: type checking rules, structral compatibility, packing</div>
 <br><code>length     = unsigned</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15522">3.10</a></span><a href="#15427">&#x21B3;</a>
 <code>StructUnionType = (STRUCT | UNION) { FieldList [';'] } END</code>
-<br><code>FieldList  = IdentList ':' NamedType [':' integer] | '..' integer</code>
-<br><code>IdentList  = identdef { [','] identdef }</code></div>
+<br><code>FieldList = IdentList ':' NamedType [':' unsigned] | '..' </code>unsigned
+<br><code>IdentList = identdef { [','] identdef }</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15523">3.11</a></span><a href="#15436">&#x21B3;</a>
 <pre><code>PointerType = ( POINTER TO | '^' ) NamedType</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15524">3.12</a></span><a href="#15441">&#x21B3;</a>
