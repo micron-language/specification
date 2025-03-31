@@ -37,7 +37,7 @@ directive- ::= '<*' '*>' // oadkwood source code directive
 
 hexstringdelim- ::= '$'
 
-qualident ::= [ \LL:2\ ident '.' ] ident  
+qualident ::= [ \LA: 1:ident & 2:'.'\ ident '.' ] ident  
 
 identdef ::= ident [ '*' | '-' ] 
 
@@ -184,7 +184,7 @@ ProcedureType ::= procedure
                                  [FormalParameters] 
 	
 ProcedureDeclaration ::= 
-	  \LL:2\ procedure '^' identdef [ FormalParameters ] [INLINE | INVAR | EXTERN]
+	\LA: 2:'^'\ ForwardDecl
 	|  ProcedureHeading ( [INLINE | INVAR] [ ';' ] ProcedureBody | \LL:2\ [ ';' ] EXTERN [ident] )
 	
 ProcedureHeading ::= procedure 
@@ -192,6 +192,13 @@ ProcedureHeading ::= procedure
                                         [ Receiver | \LL:2\ ident '.' ]
 #endif
                                         identdef [ FormalParameters ]  
+                                        
+ForwardDecl ::= procedure '^'
+#ifdef LEVEL3
+                             [ Receiver | \LL:2\ ident '.' ]
+#endif
+                             identdef [ FormalParameters ] 
+
                                         
 #ifdef LEVEL3                                        
 Receiver ::= '(' ident ':' ident ')' // right ident is either a pointer or object type, which doesn't matter

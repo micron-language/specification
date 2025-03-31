@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2025-03-03, work in progress</div>
+2025-03-31, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -1567,7 +1567,7 @@ A procedure can be forward declared in which case the formal parameters must be 
 <div style="margin-left:45px"><span class="label"><a name="14456">2.11.10</a></span>
 Syntax:</div>
 <div style="margin-left:63px"><span class="label"><a name="14457">2.11.10.1</a></span>
-<pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br />                                        [ INLINE | INVAR | EXTERN ]<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence <br />                       [FINALLY StatementSequence] END ident</code></pre>
+<pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN [ident] ) <br />                       | ForwardDeclaration<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br />ForwardDeclaration   = ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence <br />                       [FINALLY StatementSequence] END ident</code></pre>
 <pre><code>DeclarationSequence  = { CONST { ConstDeclaration [';'] }</code></pre>
 <pre><code>	           | TypeDeclarationSection</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
@@ -1626,7 +1626,7 @@ Type-bound procedures cannot be INLINE, INVAR, nor EXTERN.</div>
 <div style="margin-left:63px"><span class="label"><a name="18521">2.11.13.4</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="18522">2.11.13.4.1</a></span>
-<code>ProcedureHeading = ( PROCEDURE | PROC ) [Receiver] identdef [ FormalParameters ] <br />Receiver = '(' ReceiverParam ':' ReceiverType ')' | ReceiverType '.'<br />ReceiverParam = ident<br />ReceiverType = ident</code></div>
+<code>ProcedureHeading = ( PROCEDURE | PROC ) [Receiver] identdef [ FormalParameters ] <br />ForwardDeclaration = ( PROCEDURE | PROC ) '^' [Receiver] identdef [ FormalParameters ] <br />Receiver = '(' ReceiverParam ':' ReceiverType ')' | ReceiverType '.'<br />ReceiverParam = ident<br />ReceiverType = ident</code></div>
 <div style="margin-left:63px"><span class="label"><a name="18523">2.11.13.5</a></span>
 If a procedure P is bound to a type T0, it is implicitly also bound to any type T1 which is an extension of T0. However, a procedure P' (with the same name as P) may be explicitly bound to T1 in which case it overrides the binding of P. P' is considered a redefinition of P for T1. The formal parameters of P and P' must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). If P and T1 are exported (see <a href="#14160">2.4 Declarations and scope rules</a>), P' must be exported too.</div>
 <div style="margin-left:63px"><span class="label"><a name="18524">2.11.13.6</a></span><span class="ident">NOTE</span>
@@ -2179,7 +2179,7 @@ The result types of two procedures match if they are either of <i>equal type</i>
 <pre><code>GotoStatement = 'GOTO' ident</code></pre>
 <pre><code>gotoLabel = ident ':'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14622">4.33</a></span><a href="#14457">&#x21B3;</a>
-<pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN [ident] ) <br />                       | ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br />                                        [ INLINE | INVAR | EXTERN ]<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence <br />                       [FINALLY StatementSequence] END ident</code></pre>
+<pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN [ident] ) <br />                       | ForwardDeclaration<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br />ForwardDeclaration   = ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence <br />                       [FINALLY StatementSequence] END ident</code></pre>
 <pre><code>DeclarationSequence  = { CONST { ConstDeclaration [';'] }</code></pre>
 <pre><code>	           | TypeDeclarationSection</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
@@ -2191,7 +2191,7 @@ The result types of two procedures match if they are either of <i>equal type</i>
 <pre><code>FPSection        = [CONST] ident { [','] ident } ':' FormalType</code></pre>
 <pre><code>FormalType       = type</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="18530">4.35</a></span><a href="#18522">&#x21B3;</a>
-<code>ProcedureHeading = ( PROCEDURE | PROC ) [Receiver] identdef [ FormalParameters ] <br />Receiver = '(' ReceiverParam ':' ReceiverType ')' | ReceiverType '.'<br />ReceiverParam = ident<br />ReceiverType = ident</code></div>
+<code>ProcedureHeading = ( PROCEDURE | PROC ) [Receiver] identdef [ FormalParameters ] <br />ForwardDeclaration = ( PROCEDURE | PROC ) '^' [Receiver] identdef [ FormalParameters ] <br />Receiver = '(' ReceiverParam ':' ReceiverType ')' | ReceiverType '.'<br />ReceiverParam = ident<br />ReceiverType = ident</code></div>
 <div style="margin-left:27px"><span class="label"><a name="18534">4.36</a></span><a href="#18533">&#x21B3;</a>
 <code>ProcedureType = PROCEDURE '(' ( POINTER | '^' ) ')' [FormalParameters]</code></div>
 <div style="margin-left:27px"><span class="label"><a name="14624">4.37</a></span><a href="#14501">&#x21B3;</a>

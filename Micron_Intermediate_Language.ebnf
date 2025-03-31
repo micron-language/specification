@@ -64,6 +64,7 @@ ProcedureDeclaration ::= ( PROCEDURE | PROC )  (
                            [ FormalParameters ] (
                                ['INLINE'|'INVAR'|'INIT'] [ ';' ] ProcedureBody  
                                | \LA: 1:'EXTERN' | (1:';'&2:'EXTERN')\ [ ';' ] 'EXTERN' [ident]  // \LL:2\ produces nonsense!
+                               | \LA: 1:'FORWARD' | (1:';'&2:'FORWARD')\ [ ';' ] 'FORWARD' 
                             ) 
                         )
                         
@@ -81,7 +82,7 @@ module     ::= 'MODULE' ident [ MetaParams ] [';']
                         { ImportList | DeclarationSequence }
 	                END ident ['.']
 ImportList ::= IMPORT import { [','] import } [';']
-import     ::= { \LL:2\ ident '/' } ident [ MetaActuals ] 
+import     ::=  ident [ MetaActuals ] 
 
 DeclarationSequence*  ::= { 
                      CONST { ConstDeclaration [';'] }

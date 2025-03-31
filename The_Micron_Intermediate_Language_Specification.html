@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2025-03-30, work in progress</div>
+2025-03-31, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -2624,7 +2624,7 @@ Procedures may be associated with an object type declared in the same module. Th
 <div style="margin-left:45px"><span class="label"><a name="15464">2.8.9</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15465">2.8.9.1</a></span>
-<pre><code>ProcedureDeclaration = ProcedureHeading <br />                         (['INLINE'|'INVAR'|'INIT'] [';'] ProcedureBody <br />                          | [';'] EXTERN [ident] ) </code></pre>
+<pre><code>ProcedureDeclaration = ProcedureHeading <br />                         (['INLINE'|'INVAR'|'INIT'] [';'] ProcedureBody <br />                          | [';'] EXTERN [ident]<br />                          | [';'] FORWARD ) </code></pre>
 <pre><code>ProcedureHeading     = (PROCEDURE | PROC) <br />                       [Binding]<br />                       identdef [FormalParameters]<br />Binding              = ident '.'<br /><br />ProcedureBody        = [VAR { LocalDeclaration [';'] }]<br />                       BEGIN StatementSequence END ident<br /><br />LocalDeclaration     = [IdentList ':'] NamedType</code></pre></div>
 <h4 style="margin-left:45px"><span class="label"><a name="15468">2.8.10</a></span>
 Formal parameters</h4>
@@ -3344,7 +3344,7 @@ Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15499">2.10.2.1</a></span>
 <pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 END ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
-<pre><code>import     = {ident '/'} ident [MetaActuals]<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
+<pre><code>import     = ident [MetaActuals]<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
 <pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
 <div style="margin-left:45px"><span class="label"><a name="15506">2.10.3</a></span>
@@ -3453,7 +3453,7 @@ TODO: type checking rules, structral compatibility, packing</div>
 <div style="margin-left:27px"><span class="label"><a name="15525">3.20</a></span><a href="#15503">&#x21B3;</a>
 <pre><code>VariableDeclaration = IdentList ':' NamedType</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15526">3.21</a></span><a href="#15465">&#x21B3;</a>
-<pre><code>ProcedureDeclaration = ProcedureHeading <br />                         (['INLINE'|'INVAR'|'INIT'] [';'] ProcedureBody <br />                          | [';'] EXTERN [ident] ) </code></pre>
+<pre><code>ProcedureDeclaration = ProcedureHeading <br />                         (['INLINE'|'INVAR'|'INIT'] [';'] ProcedureBody <br />                          | [';'] EXTERN [ident]<br />                          | [';'] FORWARD ) </code></pre>
 <pre><code>ProcedureHeading     = (PROCEDURE | PROC) <br />                       [Binding]<br />                       identdef [FormalParameters]<br />Binding              = ident '.'<br /><br />ProcedureBody        = [VAR { LocalDeclaration [';'] }]<br />                       BEGIN StatementSequence END ident<br /><br />LocalDeclaration     = [IdentList ':'] NamedType</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15527">3.22</a></span><a href="#15473">&#x21B3;</a>
 <pre><code>FormalParameters = '(' [ FPSection { ';' FPSection } [ ';' '..'] ] ')'<br />                   [ ':' ReturnType ]</code></pre>
@@ -3464,7 +3464,7 @@ TODO: type checking rules, structral compatibility, packing</div>
 <div style="margin-left:27px"><span class="label"><a name="15528">3.24</a></span><a href="#15499">&#x21B3;</a>
 <pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 END ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
-<pre><code>import     = {ident '/'} ident [MetaActuals]<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
+<pre><code>import     = ident [MetaActuals]<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
 <pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15594">3.25</a></span><a href="#15591">&#x21B3;</a>
