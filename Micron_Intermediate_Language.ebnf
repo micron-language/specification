@@ -35,7 +35,7 @@ qualident ::= [\LL:2\ ident '!'] ident    // module : item
 trident ::= [\LL:2\ ident '!' ] ident '.' ident  // qualident '.' ident for field reference
 identdef  ::= ident ['*']
 
-ConstDeclaration ::= ident ['=' ConstExpression2 | ':' qualident]
+ConstDeclaration ::= ident ('=' ConstExpression2 | ':' qualident)
 
 TypeDeclaration ::= identdef ['=' type]
 type            ::= ArrayType | StructUnionType | ObjectType | PointerType | ProcedureType | NamedType
