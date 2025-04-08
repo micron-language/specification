@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2025-03-31, work in progress</div>
+2025-04-08, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -119,7 +119,7 @@ Identifiers are sequences of letters, digits and dollar signs. The first charact
 <div style="margin-left:81px"><span class="label"><a name="15372">2.2.2.3.2</a></span>
 Syntax:</div>
 <div style="margin-left:99px"><span class="label"><a name="15373">2.2.2.3.2.1</a></span>
-<pre><code>ident  = ( letter | '_' | '$' ) { letter | digit | '_' | '$' }</code></pre>
+<pre><code>ident  = ( letter | '_' ) { letter | digit | '_' | '$' }</code></pre>
 <pre><code>letter = 'A' ... 'Z' | 'a' ... 'z'</code></pre>
 <pre><code>digit  = '0' ... '9'</code></pre></div>
 <h4 style="margin-left:63px"><span class="label"><a name="15376">2.2.2.4</a></span>
@@ -1286,7 +1286,7 @@ initobj – initialize the value at an address </h4>
 <div style="margin-left:63px"><span class="label"><a name="15727">2.5.24.2</a></span>
 <code>…, dest -&gt; …,</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15728">2.5.24.3</a></span>
-The initobj instruction initializes a record, object or fixed length array with a default value. <i>type </i>is a reference to the declaration. <i>dest</i> is a pointer to the record or array. The initobj instruction initializes each field/element of <i>dest</i> to null or a zero of the appropriate built-in type. </div>
+The initobj instruction initializes a record, union, object or fixed length array with a default value. <i>type </i>is a reference to the declaration. <i>dest</i> is a pointer to the record, union, object or array. The initobj instruction initializes each field/element of <i>dest</i> to null or a zero of the appropriate built-in type. </div>
 <div style="margin-left:63px"><span class="label"><a name="15731">2.5.24.4</a></span>
 TODO: do we really need this?</div>
 <h4 style="margin-left:45px"><span class="label"><a name="18567">2.5.25</a></span>
@@ -1675,7 +1675,7 @@ ldfld – load field of a struct or union</h4>
 <td>
 <br>ldfld <i>field</i> </td>
 <td>
-<br>Push the value of <i>field</i> of struct or union <i>ptr,</i> onto the stack. </td></tr></table></div>
+<br>Push the value of <i>field</i> of struct, union or object <i>ptr,</i> onto the stack. </td></tr></table></div>
 <div style="margin-left:63px"><span class="label"><a name="15249">2.5.31.2</a></span>
 <code>…, ptr -&gt; …, value</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15250">2.5.31.3</a></span>
@@ -1697,7 +1697,7 @@ ldflda – load field address </h4>
 <td>
 <br>ldflda <i>field</i> </td>
 <td>
-<br>Push the address of <i>field</i> of struct or union <i>ptr</i> on the stack. </td></tr></table></div>
+<br>Push the address of <i>field</i> of struct, union or object <i>ptr</i> on the stack. </td></tr></table></div>
 <div style="margin-left:63px"><span class="label"><a name="15253">2.5.32.2</a></span>
 <code>…, ptr -&gt; …, address</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15254">2.5.32.3</a></span>
@@ -2295,7 +2295,7 @@ The acceptable operand types and their corresponding result data type are encaps
 <div style="margin-left:63px"><span class="label"><a name="17268">2.5.51.2</a></span>
 <code>…, pointer, offset -&gt; …, pointer</code></div>
 <div style="margin-left:63px"><span class="label"><a name="17266">2.5.51.3</a></span>
-Add offset to the pointer considering the size and alignment of the <i>basetype</i>. The byte offset is calculated by <i>offset</i> * sizeof(<i>basetype</i>).</div>
+Add offset to the pointer considering the size and alignment of the <i>basetype</i>. The byte offset is calculated by <i>offset</i> * sizeof(<i>basetype</i>). Offset can be of int32, int64 or intptr type.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15166">2.5.52</a></span>
 rem – compute remainder</h4>
 <div style="margin-left:63px"><span class="label"><a name="15171">2.5.52.1</a></span>
@@ -3380,7 +3380,7 @@ TODO: type checking rules, structral compatibility, packing</div>
 <h4 style="margin-left:9px"><span class="label"><a name="15512">3</a></span>
 <b>Complete syntax of the textual representation</b></h4>
 <div style="margin-left:27px"><span class="label"><a name="15514">3.1</a></span><a href="#15373">&#x21B3;</a>
-<pre><code>ident  = ( letter | '_' | '$' ) { letter | digit | '_' | '$' }</code></pre>
+<pre><code>ident  = ( letter | '_' ) { letter | digit | '_' | '$' }</code></pre>
 <pre><code>letter = 'A' ... 'Z' | 'a' ... 'z'</code></pre>
 <pre><code>digit  = '0' ... '9'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15515">3.2</a></span><a href="#15387">&#x21B3;</a>

@@ -13,7 +13,7 @@
 Mil ::= { module }
 
 
-ident ::= // ( letter | '_' | '$' ) {letter | digit | '_' | '$'}
+ident ::= // ( letter | '_'  ) {letter | digit | '_' | '$'}
 
 unsigned ::= // digit {digit} | digit {hexDigit} 'H'
 

@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2025-03-31, work in progress</div>
+2025-04-08, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -506,7 +506,7 @@ An object may only be referenced within its scope; </div>
 <div style="margin-left:63px"><span class="label"><a name="14165">2.4.2.3</a></span>
 A type<i>T</i> of the form POINTER TO <i>T1</i> (see <a href="#14278">2.6.8 Pointer types</a>) can be declared at a point where <i>T1</i> is still unknown. The declaration of <i>T1</i> must follow in the same type declaration section to which <i>T</i> belongs; </div>
 <div style="margin-left:63px"><span class="label"><a name="14166">2.4.2.4</a></span>
-Identifiers denoting record fields (see <a href="#14270">2.6.6 Record types</a>) are valid in record designators only. </div>
+Identifiers denoting record fields (see <a href="#14270">2.6.6 Record types</a>) are valid in record designators only;</div>
 <div style="margin-left:63px"><span class="label"><a name="18545">2.4.2.5</a></span>
 Identifiers denoting object fields (see <a href="#18500">2.6.7 Object types</a>) are valid in object designators only. </div>
 <div style="margin-left:45px"><span class="label"><a name="14167">2.4.3</a></span>
@@ -873,6 +873,8 @@ Each field or variant of a record must have a name which is unique within the re
 TODO: open array as last field (no variant part) with new(ptr,len)</div>
 <div style="margin-left:63px"><span class="label"><a name="18451">2.6.6.9</a></span>
 TODO: record layout like C</div>
+<div style="margin-left:63px"><span class="label"><a name="19690">2.6.6.10</a></span><span class="ident">NOTE</span>
+Self-referential records or objects are not directly supported. The name of the record type declaration is not known at the time the record fields are declared. By the deferred pointer type resolution (see <a href="#14160">2.4 Declarations and scope rules</a>), a pointer field to the currently declared record is still legal. In case of a pointer-to-record declaration, the following approach can be used (use the extra ItemDesc declaration so the Item type is already known when &quot;next&quot; is declared): <br /><code>Item = POINTER TO ItemDesc<br />ItemDesc = RECORD value: INTEGER; next: Item END</code></div>
 <h4 style="margin-left:45px"><span class="label"><a name="18500">2.6.7</a></span>
 Object types</h4>
 <div style="margin-left:63px"><span class="label"><a name="18501">2.6.7.1</a></span>
