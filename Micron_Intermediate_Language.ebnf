@@ -92,7 +92,7 @@ DeclarationSequence*  ::= {
 	
 Expression ::= { ExpInstr }
 
-ExpInstr* ::= 'ADD' | 'AND' | ('CALL' | 'CALLI'|'CALLVI') qualident 
+ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI'|'CALLVI') qualident 
                       | 'CALLVIRT' trident | 'CASTPTR' qualident
                       | 'CEQ' | 'CGT' | 'CGT_UN' | 'CLT' | 'CLT_UN' 
                       | 'CONV_I1' | 'CONV_I2' | 'CONV_I4' | 'CONV_I8' | 'CONV_R4' | 'CONV_R8'
@@ -123,7 +123,7 @@ CondOp ::= 'IIF' Expression 'THEN' Expression 'ELSE' Expression 'END'
 StatementSequence ::= { Statement|ExpInstr }
           
 Statement* ::= 'FREE' | RepeatUntil 
-                         | 'EXIT' | 'GOTO' ident | 'IFGOTO' ident | IfThenElse
+                         | 'EXIT' | 'GOTO' ident |  IfThenElse
                          | 'LABEL' ident | 'LINE' unsigned | Loop | 'POP' | 'RET' 
                          | ('STARG'|'STARG_S') (unsigned|ident)
                          | 'STELEM' qualident | 'STELEM_I1' | 'STELEM_I2' | 'STELEM_I4' | 'STELEM_I8' 
