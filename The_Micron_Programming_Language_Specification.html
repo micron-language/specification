@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2025-04-08, work in progress</div>
+2025-04-15, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -175,8 +175,8 @@ This specification was written in CrossLine (see <a href="https://github.com/roc
 Micron is a systems programming language with a syntax similar to Oberon+ and the flexibility of C. It is designed to be capable enough to represent the TBD (Lua, etc.) system, and thus to be an adequate alternative to C. </div>
 <div style="margin-left:45px"><span class="label"><a name="14238">2.1.2</a></span>
 The name &quot;Micron&quot; is an abbreviation of &quot;MicroOberon&quot;.</div>
-<div style="margin-left:45px"><span class="label"><a name="14157">2.1.3</a></span>
-The most important features of Micron are block structure, modularity, separate compilation, static typing with strong type checking, and generic programming.</div>
+<div style="margin-left:45px"><span class="label"><a name="19794">2.1.3</a></span>
+The most important features of Micron are block structure, modularity, separate compilation, static typing with strong type checking, and generic programming. Micron is a value-oriented language in the tradition of C-like systems languages, rather than reference-oriented language.</div>
 <div style="margin-left:45px"><span class="label"><a name="14158">2.1.4</a></span>
 Like Oberon+, the language allows several simplifications compared to previous Oberon versions: reserved words can be written in lower case, all semicolons and commas are optional, and for some reserved words there are shorter variants; a declaration sequence can contain more than one CONST, TYPE and VAR section in arbitrary order, interleaved with procedures. </div>
 <div style="margin-left:45px"><span class="label"><a name="14149">2.1.5</a></span>
@@ -843,7 +843,7 @@ Record types</h4>
 <div style="margin-left:63px"><span class="label"><a name="14271">2.6.6.1</a></span>
 A record type is a structure consisting of a fixed number of elements, called fields, with possibly different types. The record type declaration specifies the name and type of each field. The scope of the field identifiers extends from the point of their declaration to the end of the record type, but they are also visible within designators referring to elements of record variables (see <a href="#14306">2.8.2 Operands</a>). If a record type is exported, field identifiers that are to be visible outside the declaring module must be marked. They are called public fields; unmarked elements are called private fields.</div>
 <div style="margin-left:63px"><span class="label"><a name="14273">2.6.6.2</a></span>
-The syntax for a record type also makes provisions for an optional variant part, started by the CASE reserved word. The variant part implies that a record type may be specified as consisting of several variants. This means that different variables, although said to be of the same type, may assume structures which differ in a certain manner. The differences may consist of a different number and different types of components. Each variant is characterised by a field of record type, according to which the variants are discriminated.</div>
+The syntax for a record type also makes provisions for an optional variant part, started by the CASE reserved word. The variant part implies that a record type may be specified as consisting of several variants. This means that different variables, although said to be of the same type, may assume structures which differ in a certain manner. The differences may consist of a different number and different types of components. Each variant is characterised by a field of record type, according to which the variants are discriminated. No case of a variant part can be of object type (see <a href="#18500">2.6.7 Object types</a>).</div>
 <div style="margin-left:63px"><span class="label"><a name="14274">2.6.6.3</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14275">2.6.6.3.1</a></span>
@@ -894,15 +894,27 @@ Alternatively, a pointer to object type can be used as the base type; in this ca
 <div style="margin-left:63px"><span class="label"><a name="18510">2.6.7.6</a></span><span class="ident">NOTE</span>
 Object types and type-bound procedures are an extended feature of the language and not available in all language levels (see <a href="#18479">7 Language levels</a>).</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14278">2.6.8</a></span>
-<a href=""><b>P</b></a><b>ointer types</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="14281">2.6.8.1</a></span>
-Variables of a pointer type P assume as values pointers to variables of some type T. T is called the pointer base type of P and can be of any type. </div>
-<div style="margin-left:63px"><span class="label"><a name="14282">2.6.8.2</a></span>
+<b>Pointer types</b></h4>
+<div style="margin-left:63px"><span class="label"><a name="19751">2.6.8.1</a></span>
+A variable of a pointer type P assumes as value the memory address of a value of some type T. T is called the pointer base type of P and can be of any type. </div>
+<div style="margin-left:63px"><span class="label"><a name="14281">2.6.8.2</a></span>
+The pointer creates a level of indirection, allowing access to the value at that memory location through a process called dereferencing. Pointers can reference:</div>
+<div style="margin-left:81px"><span class="label"><a name="19741">2.6.8.2.1</a></span>
+dynamically allocated memory on the heap,</div>
+<div style="margin-left:81px"><span class="label"><a name="19742">2.6.8.2.2</a></span>
+local variables or parameters on the stack,</div>
+<div style="margin-left:81px"><span class="label"><a name="19743">2.6.8.2.3</a></span>
+elements within arrays,</div>
+<div style="margin-left:81px"><span class="label"><a name="19744">2.6.8.2.4</a></span>
+fields within records or objects,</div>
+<div style="margin-left:81px"><span class="label"><a name="19745">2.6.8.2.5</a></span>
+or module variables.</div>
+<div style="margin-left:63px"><span class="label"><a name="14282">2.6.8.3</a></span>
 Syntax:</div>
-<div style="margin-left:81px"><span class="label"><a name="14283">2.6.8.2.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14283">2.6.8.3.1</a></span>
 <pre><code>PointerType = ( POINTER TO | '^' ) type</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="14284">2.6.8.3</a></span>
-If p is a variable of type <code>P = POINTER TO T</code>, a call of the predeclared procedure <code>NEW(p)</code> (see <a href="#14136">6 Predeclared Procedure Reference</a>) allocates a variable of type T in free storage. If T is a record, object, or an array type with fixed length, the allocation is done with <code>NEW(p)</code>; if T is an open array type, the allocation has to be done with <code>NEW(p, e)</code> where T is allocated with the length given by the expression e. In either case a pointer to the allocated variable is assigned to <code>p</code>. <code>p</code> is of type P. The referenced variable <code>p^</code> is of type T. Any pointer variable may assume the value NIL, which points to no variable at all. If an allocated record, object or array is no longer used, it has to be explicitly deallocated with <code>DISPOSE(p)</code>.</div>
+<div style="margin-left:63px"><span class="label"><a name="14284">2.6.8.4</a></span>
+If p is a variable of type <code>P = POINTER TO T</code>, a call of the predeclared procedure <code>NEW(p)</code> (see <a href="#14136">6 Predeclared Procedure Reference</a>) allocates a variable of type T on heap storage. If T is a record, object, or an array type with fixed length, the allocation is done with <code>NEW(p)</code>; if T is an open array type, the allocation has to be done with <code>NEW(p, e)</code> where T is allocated with the length given by the expression e. In either case the pointer to the allocated memory is assigned to <code>p</code>. <code>p</code> is of type P. The dereferenced variable <code>p^</code> is of type T. Any pointer variable may assume the value NIL, which points to no memory at all. If an allocated record, object or array is no longer used, it can be explicitly deallocated with <code>DISPOSE(p)</code>. A pointer variable can also be set using the address operator (see <a href="#14662">2.8.3.8 Address operator</a>). </div>
 <h4 style="margin-left:45px"><span class="label"><a name="14285">2.6.9</a></span>
 Procedure types</h4>
 <div style="margin-left:63px"><span class="label"><a name="14286">2.6.9.1</a></span>
@@ -1622,7 +1634,7 @@ Type-bound procedures</h4>
 <div style="margin-left:63px"><span class="label"><a name="18520">2.11.13.1</a></span>
 Procedures may be associated with an object type declared in the same scope. The procedures are said to be bound to the object type. The binding is expressed by the receiver syntax in the heading of a procedure declaration. The receiver consists of a type name and the optional receiver parameter name. The type name can either reference the object type T or a pointer to T. The procedure is bound to the type T and is considered local to it. If the optional receiver parameter name is left out, the compiler automatically creates a hidden parameter which can be accessed from within the procedure body by the name &quot;SELF&quot; or &quot;self&quot;.</div>
 <div style="margin-left:63px"><span class="label"><a name="18589">2.11.13.2</a></span><span class="ident">NOTE</span>
-Regardless of whether the receiver is an object or pointer to object type, the receiver parameter is always a pointer to object type.</div>
+Regardless of whether the receiver is an object or pointer to object type, the receiver parameter is always a pointer to object type. </div>
 <div style="margin-left:63px"><span class="label"><a name="18536">2.11.13.3</a></span>
 Type-bound procedures cannot be INLINE, INVAR, nor EXTERN.</div>
 <div style="margin-left:63px"><span class="label"><a name="18521">2.11.13.4</a></span>
@@ -1634,12 +1646,14 @@ If a procedure P is bound to a type T0, it is implicitly also bound to any type 
 <div style="margin-left:63px"><span class="label"><a name="18524">2.11.13.6</a></span><span class="ident">NOTE</span>
 The name of a type-bound procedure must be unique within the type to which it is bound, not within the scope in which it is declared.</div>
 <div style="margin-left:63px"><span class="label"><a name="18525">2.11.13.7</a></span>
-If <code>v</code> is a designator and <code>P</code> is a type-bound procedure, then <code>v.P</code> denotes that procedure <code>P</code> which is bound to the dynamic type of <code>v</code>. Note, that this may be a different procedure than the one bound to the static type of <code>v</code>. <code>v</code> is passed to `P’s receiver according to the parameter passing rules specified in Chapter <a href="#14458">2.11.11 Formal parameters</a>.</div>
-<div style="margin-left:63px"><span class="label"><a name="18526">2.11.13.8</a></span>
+If <code>v</code> is a designator and <code>P</code> is a type-bound procedure, then <code>v.P</code> denotes that procedure <code>P</code> which is bound to the dynamic type of <code>v</code>. Note, that this may be a different procedure than the one bound to the static type of <code>v</code>. Depending on wheter <code>v</code> designates a pointer or a value, <code>v</code> or <code>@v</code> is passed to P’s receiver parameter.</div>
+<div style="margin-left:63px"><span class="label"><a name="19797">2.11.13.8</a></span><span class="ident">NOTE</span>
+As in Object Pascal, you can direcly call <code>v.P</code> in case v is e.g. a stack-allocated object, instead of <code>(@v).P</code>. The compiler takes care that a pointer is passed to the receiver parameter.</div>
+<div style="margin-left:63px"><span class="label"><a name="18526">2.11.13.9</a></span>
 If <code>r</code> is the receiver parameter of P declared with type T, <code>r.P^</code> denotes the (redefined, sometimes calles <i>super</i>) procedure P bound to a base type of T.</div>
-<div style="margin-left:63px"><span class="label"><a name="18527">2.11.13.9</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18527">2.11.13.10</a></span>
 Examples:</div>
-<div style="margin-left:81px"><span class="label"><a name="18528">2.11.13.9.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="18528">2.11.13.10.1</a></span>
 <pre><code>proc (t: Tree) Insert (node: Tree)</code></pre>
 <pre><code>  var p, father: Tree</code></pre>
 <pre><code>begin p := t</code></pre>
@@ -1663,7 +1677,7 @@ Examples:</div>
 <pre><code>  WriteInt(node(CenterTree).width)</code></pre>
 <pre><code>  self.Insert^(node)  // calls the Insert procedure bound to Tree</code></pre>
 <pre><code>end Insert</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="18529">2.11.13.10</a></span><span class="ident">NOTE</span>
+<div style="margin-left:63px"><span class="label"><a name="18529">2.11.13.11</a></span><span class="ident">NOTE</span>
 Object types and type-bound procedures are an extended feature of the language and not available in all language levels (see <a href="#18479">7 Language levels</a>).</div>
 <h4 style="margin-left:45px"><span class="label"><a name="18517">2.11.14</a></span>
 Type-bound procedure types</h4>
@@ -2920,20 +2934,22 @@ Level 0 is the minimal core language supposed to work in an environment where th
 <div style="margin-left:27px"><span class="label"><a name="18484">7.4</a></span>
 Level 1 in addition supports normal procedures and recursion, and FINALLY, and VLA.</div>
 <div style="margin-left:27px"><span class="label"><a name="18485">7.5</a></span>
-Level 2 in addition supports heap allocation and deallocation</div>
+Level 2 in addition supports heap allocation and deallocation.</div>
 <div style="margin-left:27px"><span class="label"><a name="18486">7.6</a></span>
 Level 3 in addition supports object types, bound procedures, type case and the IS operation.</div>
 <div style="margin-left:45px"><span class="label"><a name="18492">7.6.1</a></span>
 Possibly also Go-like interfaces</div>
-<div style="margin-left:27px"><span class="label"><a name="18496">7.7</a></span>
+<div style="margin-left:27px"><span class="label"><a name="19755">7.7</a></span>
+Level 4 in addition supports garbage collection of records, objects or arrays allocated with GCNEW().</div>
+<div style="margin-left:45px"><span class="label"><a name="19787">7.7.1</a></span>
+We assume a non-moving GC, i.e. pointers are guaranteed to remain stable even after GC runs</div>
+<div style="margin-left:45px"><span class="label"><a name="19788">7.7.2</a></span>
+We assume that the GC correctly traces interior pointers</div>
+<div style="margin-left:27px"><span class="label"><a name="18496">7.8</a></span>
 TODO: support PCALL and RAISE not below level 2 (?) and only if explicitly enabled</div>
-<div style="margin-left:27px"><span class="label"><a name="18488">7.8</a></span>
-TODO: references (&quot;ref to&quot; keyword) for &quot;safe&quot; pointers which is a stable reference to a heap-allocated object, emphasizing it's not an arbitrary memory address. With references we can add garbage collection as an option in future for higher levels.</div>
-<div style="margin-left:27px"><span class="label"><a name="18489">7.9</a></span>
-TODO: if we add references, we likely need VAR and IN parameters, which are a kind of &quot;safe&quot; (non-null) reference</div>
-<div style="margin-left:27px"><span class="label"><a name="18490">7.10</a></span>
+<div style="margin-left:27px"><span class="label"><a name="18490">7.9</a></span>
 TODO: the inverse approach where we remove the unsafe, low-level features of the language, which ends up as an alternative Oberon+ which we could call &quot;Macron&quot; ;-) or better &quot;Helion&quot; or &quot;Aeon&quot;</div>
-<div style="margin-left:45px"><span class="label"><a name="18491">7.10.1</a></span>
+<div style="margin-left:45px"><span class="label"><a name="18491">7.9.1</a></span>
 There is no Helion programming language so far, but Aeon and Macron are in use.</div>
 <h4 style="margin-left:9px"><span class="label"><a name="14628">8</a></span>
 References</h4>

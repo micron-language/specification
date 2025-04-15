@@ -54,7 +54,7 @@ MemberList ::= IdentList ':' NamedType
 
 PointerType ::= ( 'POINTER' 'TO' | '^' ) NamedType
 
-ProcedureType ::= (PROCEDURE|PROC) [FormalParameters]
+ProcedureType ::= (PROCEDURE|PROC)['^'] [FormalParameters]
 
 VariableDeclaration ::= IdentList ':' NamedType
 
