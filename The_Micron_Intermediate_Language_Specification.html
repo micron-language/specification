@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2025-04-15, work in progress</div>
+2025-04-27, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -328,7 +328,7 @@ A struct type is a structure consisting of a fixed number of elements, called fi
 <div style="margin-left:81px"><span class="label"><a name="15428">2.4.5.2.3</a></span>
 A union type is declared like a struct type, but in contrast to the latter all fields reside at the same memory position. A union can be pictured as a chunk of memory that is used to store variables of different data types. Once a new value is assigned to a field, the existing data is overwritten with the new data.</div>
 <div style="margin-left:81px"><span class="label"><a name="18453">2.4.5.2.4</a></span>
-Fields of boolean or integer type of a record can be packed at the bit level for memory optimization. This is achieved by explicitly specifying the number of bits each field occupies. Use another ':' after the type specifier followed by an integer to declare the bit width of a field. Sequences of fields with bit specifications are grouped into packing units. Each unit is sized to the nearest integer type that can contain the specified bits. Explicit padding can be inserted using  '..' followed by  the number of bits. This allows for precise control over field alignment within a unit. A new packing unit begins when either the sum of bits in the current sequence exceeds the maximum supported integer size, or padding of 0 bits is encountered. The type of a field with BITS specification determines how the field value is interpreted (e.g., signed vs unsigned overflow behavior); the number of bits of a signed integer type includes the sign bit.</div>
+Fields of boolean or integer type of a <u>struct</u> can be packed at the bit level for memory optimization. This is achieved by explicitly specifying the number of bits each field occupies. Use another ':' after the type specifier followed by an integer to declare the bit width of a field. Sequences of fields with bit specifications are grouped into packing units. Each unit is sized to the nearest integer type that can contain the specified bits. Explicit padding can be inserted using  '..' followed by  the number of bits. This allows for precise control over field alignment within a unit. A new packing unit begins when either the sum of bits in the current sequence exceeds the maximum supported integer size, or padding of 0 bits is encountered. The type of a field with BITS specification determines how the field value is interpreted (e.g., signed vs unsigned overflow behavior); the number of bits of a signed integer type includes the sign bit.</div>
 <div style="margin-left:81px"><span class="label"><a name="15426">2.4.5.2.5</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:99px"><span class="label"><a name="15427">2.4.5.2.5.1</a></span>
@@ -407,16 +407,16 @@ Syntax of textual representation:</div>
 <br><code>ExpInstr = 'add' | 'and' | ('call' | 'calli' | 'callvi') qualident <br />| 'callvirt' trident | 'castptr' qualident</code>
 <br><code>| 'ceq' | 'cgt' | 'cgt_un' | 'clt' | 'clt_un' </code>
 <br><code>| 'conv_i1' | 'conv_i2' | 'conv_i4' | 'conv_i8' | 'conv_r4' | 'conv_r8'</code>
-<br><code>| 'conv_u1' | 'conv_u2' | 'conv_u4' | 'conv_u8' | 'conv_ip'</code>
+<br><code>| 'conv_u1' | 'conv_u2' | 'conv_u4' | 'conv_u8' </code>
 <br><code>| 'div' | 'div_un' | 'dup' | 'initobj' qualident | 'isinst' qualident<br />| ('ldarg'|'ldarg_s') (unsigned|ident) </code>
 <br><code>| 'ldarg_0' | 'ldarg_1' | 'ldarg_2' | 'ldarg_3'</code>
 <br><code>| ('ldarga'|'ldarga_s') (unsigned|ident)</code>
-<br><code>| ('ldc_i4'|'ldc_i8'|'ldc_i4_s') integer | ('ldc_r4'|'ldc_r8') number</code>
+<br><code>| ('ldc_i4'|'ldc_i8'|'ldc_i4_s') integer | ('ldc_r4'|'ldc_r8') number | 'ldc_ip' unsigned</code>
 <br><code>| 'ldc_i4_0' | 'ldc_i4_1' | 'ldc_i4_2' | 'ldc_i4_3' | 'ldc_i4_4' | 'ldc_i4_5'</code>
 <br><code>| 'ldc_i4_6' | 'ldc_i4_7' | 'ldc_i4_8' | 'ldc_i4_m1' | 'ldc_obj' constructor</code>
 <br><code>| ('ldelem'|'ldelema') qualident | 'ldelem_i1' | 'ldelem_i2'</code>
 <br><code>| 'ldelem_i4' | 'ldelem_i8' | 'ldelem_u1' | 'ldelem_u2' </code>
-<br><code>| 'ldelem_u4' | 'ldelem_u8' | 'ldelem_r4' | 'ldelem_r8' | 'ldelem_ip'</code>
+<br><code>| 'ldelem_u4' | 'ldelem_u8' | 'ldelem_r4' | 'ldelem_r8' | 'ldelem_ip' | 'ldelem_ipp'</code>
 <br><code>| ('ldfld'|'ldflda') trident | 'ldind' [qualident]</code>
 <br><code>| 'ldind_i1' | 'ldind_i2' | 'ldind_i4' | 'ldind_i8' | 'ldind_u1' | 'ldind_u2'</code>
 <br><code>| 'ldind_u4' | 'ldind_r4' | 'ldind_u8' | 'ldind_r8' | 'ldind_ip'</code>
@@ -496,7 +496,7 @@ The acceptable operand types and their corresponding result data type are encaps
 <td>
 <br>x </td>
 <td>
-<br>intptr</td>
+<br>x</td>
 <td>
 <br>x </td>
 <td>
@@ -518,11 +518,11 @@ The acceptable operand types and their corresponding result data type are encaps
 <td>
 <br><b>intptr </b></td>
 <td>
-<br>intptr </td>
+<br>x </td>
 <td>
 <br>x </td>
 <td>
-<br>intptr</td>
+<br>x</td>
 <td>
 <br>x </td>
 <td>
@@ -574,7 +574,7 @@ The acceptable operand types and their corresponding result data types are encap
 <td>
 <br>int64 </td>
 <td>
-<br>intptr </td>
+<br>x </td>
 <td>
 <br>F </td></tr>
 <tr>
@@ -585,7 +585,7 @@ The acceptable operand types and their corresponding result data types are encap
 <td>
 <br>int64 </td>
 <td>
-<br>intptr</td>
+<br>x</td>
 <td>
 <br>F </td></tr></table></div>
 <h4 style="margin-left:45px"><span class="label"><a name="14987">2.5.9</a></span>
@@ -631,7 +631,7 @@ The and instruction computes the bitwise and of <i>value1</i> and <i>value2 </i>
 <td>
 <br>x </td>
 <td>
-<br>intptr </td>
+<br>x </td>
 <td>
 <br>x </td></tr>
 <tr>
@@ -649,11 +649,11 @@ The and instruction computes the bitwise and of <i>value1</i> and <i>value2 </i>
 <td>
 <br><b>intptr</b> </td>
 <td>
-<br>intptr </td>
+<br>x </td>
 <td>
 <br>x </td>
 <td>
-<br>intptr </td>
+<br>x </td>
 <td>
 <br>x </td></tr>
 <tr>
@@ -1062,12 +1062,9 @@ The acceptable operand types are encapsulated in table <a href="#15018">2.5.15.4
 <td>
 <br>Convert to unsigned int64, pushing int64 on stack. </td></tr>
 <tr>
-<td>
-<br>D3 </td>
-<td>
-<br>conv_ip</td>
-<td>
-<br>Convert to intptr, pushing intptr on stack. </td></tr></table></div>
+<td></td>
+<td></td>
+<td></td></tr></table></div>
 <div style="margin-left:63px"><span class="label"><a name="15041">2.5.20.2</a></span>
 <code>…, value -&gt; …, result</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15043">2.5.20.3</a></span>
@@ -1147,13 +1144,13 @@ The acceptable operand types and their corresponding result data type is encapsu
 <td>
 <br><b>intptr</b> </td>
 <td>
-<br>Sign extend </td>
+<br>Nop</td>
 <td>
-<br>Truncate<sup>1</sup> </td>
+<br>Nop</td>
 <td>
 <br>Nop </td>
 <td>
-<br>Truncate to zero<sup>2</sup> </td>
+<br>Nop</td>
 <td></td></tr>
 <tr>
 <td></td>
@@ -1678,12 +1675,12 @@ ldelem – load element from array </h4>
 <br>ldelem_ip </td>
 <td>
 <br>Load the element with type intptr at <i>index</i> onto the top of the stack as a intptr. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15240">2.5.30.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="19899">2.5.30.2</a></span>
+TODO: ldelem_ipp</div>
+<div style="margin-left:63px"><span class="label"><a name="15240">2.5.30.3</a></span>
 <code>…, pointer to array, index -&gt; …, value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15241">2.5.30.3</a></span>
-The ldelem instruction loads the value of the element with index <i>index</i> (of type intptr or int32) in the zero-based one-dimensional array (pointed to by the intptr on the stack), and places it on the top of the stack. The type of the return value is indicated by the type<i> </i>in the instruction. </div>
-<div style="margin-left:63px"><span class="label"><a name="19483">2.5.30.4</a></span>
-TODO: ipp</div>
+<div style="margin-left:63px"><span class="label"><a name="15241">2.5.30.4</a></span>
+The ldelem instruction loads the value of the element with index <i>index</i> (of type unsigned int32) in the zero-based one-dimensional array (pointed to by the intptr on the stack), and places it on the top of the stack. The type of the return value is indicated by the type<i> </i>in the instruction. </div>
 <h4 style="margin-left:45px"><span class="label"><a name="15243">2.5.31</a></span>
 ldelema – load address of an element of an array </h4>
 <div style="margin-left:63px"><span class="label"><a name="15244">2.5.31.1</a></span>
@@ -2183,7 +2180,7 @@ newarr – create a zero-based, one-dimensional array </h4>
 <div style="margin-left:63px"><span class="label"><a name="15267">2.5.46.2</a></span>
 <code>…, numElems</code><i><code> </code></i><code>-&gt; …, pointer to array</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15268">2.5.46.3</a></span>
-The newarr instruction pushes a pointer to a new zero-based, one-dimensional array whose elements are of type <i>etype. numElems</i> (of type intptr or int32) specifies the number of elements in the array. Valid array indexes are 0 ≤ index &lt; <i>numElems</i>. The elements of an array can be any type. Elements of the array are initialized to the default value of the appropriate type.</div>
+The newarr instruction pushes a pointer to a new zero-based, one-dimensional array whose elements are of type <i>etype. numElems</i> (of type unsigned int32) specifies the number of elements in the array. Valid array indexes are 0 ≤ index &lt; <i>numElems</i>. The elements of an array can be any type. Elements of the array are initialized to the default value of the appropriate type.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15328">2.5.47</a></span>
 newvla <b>– create a variable-length array on stack</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15330">2.5.47.1</a></span>
@@ -2205,7 +2202,7 @@ newvla <b>– create a variable-length array on stack</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15331">2.5.47.2</a></span>
 <code>…, numElems</code><i><code> </code></i><code>-&gt; …, pointer to array</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15332">2.5.47.3</a></span>
-The newvla instruction pushes a pointer to a new zero-based, one-dimensional array whose elements are of type <i>etype. numElems</i> (of type intptr or int32) specifies the number of elements in the array. In contrast to newarr, newvla tries to allocated the array on the stack, and the memory is automatically disposed when the function finishes. Valid array indexes are 0 ≤ index &lt; <i>numElems</i>. The elements of an array can be any type. Elements of the array are initialized to the default value of the appropriate type.</div>
+The newvla instruction pushes a pointer to a new zero-based, one-dimensional array whose elements are of type <i>etype. numElems</i> (of type unsigned int32) specifies the number of elements in the array. In contrast to newarr, newvla tries to allocated the array on the stack, and the memory is automatically disposed when the function finishes. Valid array indexes are 0 ≤ index &lt; <i>numElems</i>. The elements of an array can be any type. Elements of the array are initialized to the default value of the appropriate type.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15269">2.5.48</a></span>
 newobj – create a new object </h4>
 <div style="margin-left:63px"><span class="label"><a name="15270">2.5.48.1</a></span>
@@ -2273,7 +2270,31 @@ not – bitwise complement</h4>
 <div style="margin-left:63px"><span class="label"><a name="15155">2.5.50.3</a></span>
 The <i>not</i> instruction computes the bitwise complement of the integer value on top of the stack and leaves the result on top of the stack. The return type is the same as the operand type.</div>
 <div style="margin-left:63px"><span class="label"><a name="15156">2.5.50.4</a></span>
-The acceptable operand types and their corresponding result data type are encapsulated in <a href="#19715">2.5.8.4.1</a>.</div>
+The acceptable operand types and their corresponding result data type are as follows:</div>
+<div style="margin-left:81px"><span class="label"><a name="19840">2.5.50.4.1</a></span>
+<table border=1 cellspacing=0 CELLPADDING=3 >
+<tr>
+<td>
+<b>Operand Type</b> </td>
+<td>
+<br>int32 </td>
+<td>
+<br>int64 </td>
+<td>
+<br>x </td>
+<td>
+<br>x</td></tr>
+<tr>
+<td>
+<br><b>Result Type</b> </td>
+<td>
+<br>int32 </td>
+<td>
+<br>int64 </td>
+<td>
+<br>x</td>
+<td>
+<br>x </td></tr></table></div>
 <h4 style="margin-left:45px"><span class="label"><a name="15157">2.5.51</a></span>
 or – bitwise OR</h4>
 <div style="margin-left:63px"><span class="label"><a name="15162">2.5.51.1</a></span>
@@ -2343,7 +2364,7 @@ rem – compute remainder</h4>
 <div style="margin-left:63px"><span class="label"><a name="15173">2.5.53.3</a></span>
 The rem instruction divides <i>value1 </i>by <i>value2 </i>and pushes the remainder <i>result</i> on the stack.</div>
 <div style="margin-left:63px"><span class="label"><a name="15174">2.5.53.4</a></span>
-The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14996">2.5.7.4.1</a>.</div>
+The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14997">2.5.9.3.1</a>. </div>
 <div style="margin-left:63px"><span class="label"><a name="15175">2.5.53.5</a></span>
 <b><u>For integer operands</u></b></div>
 <div style="margin-left:81px"><span class="label"><a name="15176">2.5.53.5.1</a></span>
@@ -2356,10 +2377,6 @@ result = value1 – value2×(value1 div value2), and </div>
 sign(result) = sign(value1), </div>
 <div style="margin-left:81px"><span class="label"><a name="15180">2.5.53.5.2</a></span>
 where div is the division instruction, which truncates towards zero. </div>
-<div style="margin-left:63px"><span class="label"><a name="15181">2.5.53.6</a></span>
-<b><u>For floating-point operands</u></b></div>
-<div style="margin-left:81px"><span class="label"><a name="15182">2.5.53.6.1</a></span>
-rem is defined similarly as for integer operands, except that, if <i>value2</i> is zero or <i>value1</i> is infinity, <i>result</i> is NaN. If <i>value2</i> is infinity, <i>result</i> is <i>value1</i>. This definition is different from the one for floating-point remainder in the IEC 60559:1989 Standard. That Standard specifies that <i>value1</i> div <i>value2</i> is the nearest integer instead of truncating towards zero.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15821">2.5.54</a></span>
 rem_un – compute int eger remainder, unsi gned</h4>
 <div style="margin-left:63px"><span class="label"><a name="15823">2.5.54.1</a></span>
@@ -2391,7 +2408,7 @@ result = value1 – value2×(value1 div_un value2), and</div>
 <div style="margin-left:63px"><span class="label"><a name="15828">2.5.54.5</a></span>
 where div_un is the unsigned division instruction. rem_un is unspecified for floating-point numbers.</div>
 <div style="margin-left:63px"><span class="label"><a name="15829">2.5.54.6</a></span>
-The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14996">2.5.7.4.1</a>.</div>
+The acceptable operand types and their corresponding result data type are encapsulated in <a href="#14997">2.5.9.3.1</a>.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15183">2.5.55</a></span>
 shl – shift integer left </h4>
 <div style="margin-left:63px"><span class="label"><a name="15188">2.5.55.1</a></span>
@@ -2445,7 +2462,7 @@ See the following table for details of which operand types are allowed, and thei
 <td>
 <br>x </td>
 <td>
-<br>int32 </td>
+<br>x </td>
 <td>
 <br>x </td>
 <td>
@@ -2458,7 +2475,7 @@ See the following table for details of which operand types are allowed, and thei
 <td>
 <br>x </td>
 <td>
-<br>int64 </td>
+<br>x </td>
 <td>
 <br>x </td>
 <td>
@@ -2467,11 +2484,11 @@ See the following table for details of which operand types are allowed, and thei
 <td>
 <br><b>intptr</b></td>
 <td>
-<br>intptr</td>
+<br>x</td>
 <td>
 <br>x </td>
 <td>
-<br>intptr</td>
+<br>x</td>
 <td>
 <br>x </td>
 <td>
@@ -2679,7 +2696,7 @@ TODO: pcall and raise</div>
 <div style="margin-left:45px"><span class="label"><a name="15529">2.9.2</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15530">2.9.2.1</a></span>
-<code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'free' | RepeatUntil <br />| 'exit' | 'goto' ident | 'ifgoto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' trident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stind' qualident | 'stvar' qualident | Switch | WhileDo</code></div>
+<code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'free' | RepeatUntil <br />| 'exit' | 'goto' ident | 'ifgoto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip' | 'stelem_ipp'<br />| 'stfld' trident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stind' qualident | 'stvar' qualident | Switch | WhileDo</code></div>
 <h4 style="margin-left:45px"><span class="label"><a name="15196">2.9.3</a></span>
 <b>exit</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15298">2.9.3.1</a></span>
@@ -3054,12 +3071,12 @@ stelem – store element to array </h4>
 <br>stelem_ip </td>
 <td>
 <br>Replace <i>array</i> element at <i>index</i> with the intptr <i>value</i> on the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15276">2.9.14.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="19900">2.9.14.2</a></span>
+TODO: stelem_ipp</div>
+<div style="margin-left:63px"><span class="label"><a name="15276">2.9.14.3</a></span>
 <code>…, pointer to array, index, value, -&gt; …</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15277">2.9.14.3</a></span>
-The stelem instruction replaces the value of the element with zero-based index <i>index</i> (of type intptr or int32) in the one-dimensional array <i>array </i>(pointed to by a pointer), with <i>value</i>. The value has the type specified by <i>etype</i> or the instruction suffix. </div>
-<div style="margin-left:63px"><span class="label"><a name="19484">2.9.14.4</a></span>
-TODO: ipp</div>
+<div style="margin-left:63px"><span class="label"><a name="15277">2.9.14.4</a></span>
+The stelem instruction replaces the value of the element with zero-based index <i>index</i> (of type unsigned int32) in the one-dimensional array <i>array </i>(pointed to by a pointer), with <i>value</i>. The value has the type specified by <i>etype</i> or the instruction suffix. </div>
 <h4 style="margin-left:45px"><span class="label"><a name="15279">2.9.15</a></span>
 stfld – store into a field of an object </h4>
 <div style="margin-left:63px"><span class="label"><a name="15280">2.9.15.1</a></span>
@@ -3423,16 +3440,16 @@ TODO: type checking rules, structral compatibility, packing</div>
 <br><code>ExpInstr = 'add' | 'and' | ('call' | 'calli' | 'callvi') qualident <br />| 'callvirt' trident | 'castptr' qualident</code>
 <br><code>| 'ceq' | 'cgt' | 'cgt_un' | 'clt' | 'clt_un' </code>
 <br><code>| 'conv_i1' | 'conv_i2' | 'conv_i4' | 'conv_i8' | 'conv_r4' | 'conv_r8'</code>
-<br><code>| 'conv_u1' | 'conv_u2' | 'conv_u4' | 'conv_u8' | 'conv_ip'</code>
+<br><code>| 'conv_u1' | 'conv_u2' | 'conv_u4' | 'conv_u8' </code>
 <br><code>| 'div' | 'div_un' | 'dup' | 'initobj' qualident | 'isinst' qualident<br />| ('ldarg'|'ldarg_s') (unsigned|ident) </code>
 <br><code>| 'ldarg_0' | 'ldarg_1' | 'ldarg_2' | 'ldarg_3'</code>
 <br><code>| ('ldarga'|'ldarga_s') (unsigned|ident)</code>
-<br><code>| ('ldc_i4'|'ldc_i8'|'ldc_i4_s') integer | ('ldc_r4'|'ldc_r8') number</code>
+<br><code>| ('ldc_i4'|'ldc_i8'|'ldc_i4_s') integer | ('ldc_r4'|'ldc_r8') number | 'ldc_ip' unsigned</code>
 <br><code>| 'ldc_i4_0' | 'ldc_i4_1' | 'ldc_i4_2' | 'ldc_i4_3' | 'ldc_i4_4' | 'ldc_i4_5'</code>
 <br><code>| 'ldc_i4_6' | 'ldc_i4_7' | 'ldc_i4_8' | 'ldc_i4_m1' | 'ldc_obj' constructor</code>
 <br><code>| ('ldelem'|'ldelema') qualident | 'ldelem_i1' | 'ldelem_i2'</code>
 <br><code>| 'ldelem_i4' | 'ldelem_i8' | 'ldelem_u1' | 'ldelem_u2' </code>
-<br><code>| 'ldelem_u4' | 'ldelem_u8' | 'ldelem_r4' | 'ldelem_r8' | 'ldelem_ip'</code>
+<br><code>| 'ldelem_u4' | 'ldelem_u8' | 'ldelem_r4' | 'ldelem_r8' | 'ldelem_ip' | 'ldelem_ipp'</code>
 <br><code>| ('ldfld'|'ldflda') trident | 'ldind' [qualident]</code>
 <br><code>| 'ldind_i1' | 'ldind_i2' | 'ldind_i4' | 'ldind_i8' | 'ldind_u1' | 'ldind_u2'</code>
 <br><code>| 'ldind_u4' | 'ldind_r4' | 'ldind_u8' | 'ldind_r8' | 'ldind_ip'</code>
@@ -3462,7 +3479,7 @@ TODO: type checking rules, structral compatibility, packing</div>
 <pre><code>ReturnType       = NamedType</code></pre>
 <pre><code>FPSection        = [ident { [','] ident } ':'] NamedType</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15531">3.23</a></span><a href="#15530">&#x21B3;</a>
-<code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'free' | RepeatUntil <br />| 'exit' | 'goto' ident | 'ifgoto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip'<br />| 'stfld' trident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stind' qualident | 'stvar' qualident | Switch | WhileDo</code></div>
+<code>StatementSequence = { Statement | ExpInstr }<br />Statement = 'free' | RepeatUntil <br />| 'exit' | 'goto' ident | 'ifgoto' ident | IfThenElse<br />| 'label' ident | 'line' unsigned | Loop | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip' | 'stelem_ipp'<br />| 'stfld' trident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stind' qualident | 'stvar' qualident | Switch | WhileDo</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15528">3.24</a></span><a href="#15499">&#x21B3;</a>
 <pre><code>module     = MODULE ident [ MetaParams ] [';'] <br />             { ImportList | DeclarationSequence }<br />	 END ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>

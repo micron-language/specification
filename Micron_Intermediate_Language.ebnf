@@ -96,17 +96,17 @@ ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI'|'CALLVI') qualident
                       | 'CALLVIRT' trident | 'CASTPTR' qualident
                       | 'CEQ' | 'CGT' | 'CGT_UN' | 'CLT' | 'CLT_UN' 
                       | 'CONV_I1' | 'CONV_I2' | 'CONV_I4' | 'CONV_I8' | 'CONV_R4' | 'CONV_R8'
-                      | 'CONV_U1' | 'CONV_U2' | 'CONV_U4' | 'CONV_U8' | 'CONV_IP'
+                      | 'CONV_U1' | 'CONV_U2' | 'CONV_U4' | 'CONV_U8' 
                       | 'DIV' | 'DIV_UN' | 'DUP' | 'INITOBJ' qualident | 'ISINST' qualident
                       | ('LDARG'|'LDARG_S') (unsigned|ident) 
                       | 'LDARG_0' | 'LDARG_1' | 'LDARG_2' | 'LDARG_3'
                       | ('LDARGA'|'LDARGA_S') (unsigned|ident)
-                      | ('LDC_I4'|'LDC_I8'|'LDC_I4_S') integer | ('LDC_R4'|'LDC_R8') number
+                      | ('LDC_I4'|'LDC_I8'|'LDC_I4_S') integer | ('LDC_R4'|'LDC_R8') number | 'LDC_IP' unsigned
                       | 'LDC_I4_0' | 'LDC_I4_1' | 'LDC_I4_2' | 'LDC_I4_3' | 'LDC_I4_4' | 'LDC_I4_5'
                       | 'LDC_I4_6' | 'LDC_I4_7' | 'LDC_I4_8' | 'LDC_I4_M1' | 'LDOBJ' constructor
                       | ('LDELEM'|'LDELEMA') qualident | 'LDELEM_I1' | 'LDELEM_I2'
                       | 'LDELEM_I4' | 'LDELEM_I8' | 'LDELEM_U1' | 'LDELEM_U2' 
-                      | 'LDELEM_U4' | 'LDELEM_U8' | 'LDELEM_R4' | 'LDELEM_R8' | 'LDELEM_IP'
+                      | 'LDELEM_U4' | 'LDELEM_U8' | 'LDELEM_R4' | 'LDELEM_R8' | 'LDELEM_IP' | 'LDELEM_IPP'
                       | ('LDFLD'|'LDFLDA') trident 
                       | 'LDIND_I1' | 'LDIND_I2' | 'LDIND_I4' | 'LDIND_I8' | 'LDIND_U1' | 'LDIND_U2'
                       | 'LDIND_U4' | 'LDIND_R4' | 'LDIND_U8' | 'LDIND_R8' | 'LDIND_IP' | 'LDIND_IPP'
@@ -116,7 +116,9 @@ ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI'|'CALLVI') qualident
                       | ('LDVAR'|'LDVARA') qualident | 'MUL' | 'NEG' 
                       | ('NEWARR'|'NEWVLA'|'NEWOBJ') qualident 
                       | 'NOT' | 'OR' | 'REM' | 'REM_UN' | 'SHL' | 'SHR' | 'SHR_UN' 
-                      | 'SIZEOF' qualident |'SUB' | 'XOR' | 'PTROFF' qualident | 'NOP' | CondOp
+                      | 'SIZEOF' qualident |'SUB' | 'XOR' | 'PTROFF' qualident | 'NOP' | CondOp // | ArgsCall
+                      
+// TODO ArgsCall ::= 'ARGS' { ExpInstr } (('CALL' | 'CALLI'|'CALLVI') qualident | 'CALLVIRT' trident)
 
 CondOp ::= 'IIF' Expression 'THEN' Expression 'ELSE' Expression 'END' 
 
@@ -127,7 +129,7 @@ Statement* ::= 'FREE' | RepeatUntil
                          | 'LABEL' ident | 'LINE' unsigned | Loop | 'POP' | 'RET' 
                          | ('STARG'|'STARG_S') (unsigned|ident)
                          | 'STELEM' qualident | 'STELEM_I1' | 'STELEM_I2' | 'STELEM_I4' | 'STELEM_I8' 
-                         | 'STELEM_R4' | 'STELEM_R8' | 'STELEM_IP'
+                         | 'STELEM_R4' | 'STELEM_R8' | 'STELEM_IP' | 'STELEM_IPP'
                          | 'STFLD' trident
                          | 'STIND_I1' | 'STIND_I2' | 'STIND_I4' | 'STIND_I8' | 'STIND_R4' | 'STIND_R8' | 'STIND_IP' | 'STIND_IPP'
                          | ('STLOC' |'STLOC_S') (unsigned|ident) | 'STLOC_0' | 'STLOC_1' | 'STLOC_2' | 'STLOC_3'
