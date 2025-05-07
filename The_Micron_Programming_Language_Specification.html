@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2025-04-30, work in progress</div>
+2025-05-07, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -1636,7 +1636,7 @@ Procedures may be associated with an object type declared in the same scope. The
 <div style="margin-left:63px"><span class="label"><a name="18589">2.11.13.2</a></span><span class="ident">NOTE</span>
 Regardless of whether the receiver is an object or pointer to object type, the receiver parameter is always a pointer to object type. </div>
 <div style="margin-left:63px"><span class="label"><a name="18536">2.11.13.3</a></span>
-Type-bound procedures cannot be INLINE, INVAR, nor EXTERN.</div>
+Type-bound procedures cannot be INLINE, INVAR, nor EXTERN, nor can they have a variable number of parameters.</div>
 <div style="margin-left:63px"><span class="label"><a name="18521">2.11.13.4</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="18522">2.11.13.4.1</a></span>
@@ -2875,18 +2875,18 @@ Predeclared proper procedures</h4>
 <td>
 <br>p: pointer to T</td>
 <td>
-<br>allocate p^ of type T</td></tr>
+<br>allocate p^ of type T, uninitialized.</td></tr>
 <tr>
 <td>
 <br>NEW(p,n)</td>
 <td>
 <br>p: pointer to open array</td>
 <td>
-<br>allocate p^ with length n</td></tr>
+<br>allocate p^ with length n, uninitialized.</td></tr>
 <tr>
 <td></td>
 <td>
-<br>x: integer type</td>
+<br>n: integer type</td>
 <td></td></tr>
 <tr>
 <td>

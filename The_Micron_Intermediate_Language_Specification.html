@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2025-04-30, work in progress</div>
+2025-05-07, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -2164,7 +2164,7 @@ The neg instruction negates <i>value</i> and pushes the result on top of the sta
 <div style="margin-left:63px"><span class="label"><a name="15150">2.5.45.4</a></span>
 The acceptable operand types and their corresponding result data types are specified in <a href="#19715">2.5.8.4.1</a>.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15265">2.5.46</a></span>
-newarr – create a zero-based, one-dimensional array </h4>
+<b>newarr – create an open array </b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15266">2.5.46.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
@@ -2184,7 +2184,9 @@ newarr – create a zero-based, one-dimensional array </h4>
 <div style="margin-left:63px"><span class="label"><a name="15267">2.5.46.2</a></span>
 <code>…, numElems</code><i><code> </code></i><code>-&gt; …, pointer to array</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15268">2.5.46.3</a></span>
-The newarr instruction pushes a pointer to a new zero-based, one-dimensional array whose elements are of type <i>etype. numElems</i> (of type unsigned int32) specifies the number of elements in the array. Valid array indexes are 0 ≤ index &lt; <i>numElems</i>. The elements of an array can be any type. Elements of the array are initialized to the default value of the appropriate type.</div>
+The newarr instruction pushes a pointer to a new zero-based, one-dimensional, open array whose elements are of type <i>etype. numElems</i> (of type unsigned int32) specifies the number of elements in the array. Valid array indexes are 0 ≤ index &lt; <i>numElems</i>. The elements of an array can be any type. The elements are not initialized.</div>
+<div style="margin-left:63px"><span class="label"><a name="19963">2.5.46.4</a></span><span class="ident">NOTE</span>
+This operation is only for open array types. Array types with fixes size are created with newobj instead.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15328">2.5.47</a></span>
 newvla <b>– create a variable-length array on stack</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15330">2.5.47.1</a></span>
@@ -2206,7 +2208,7 @@ newvla <b>– create a variable-length array on stack</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15331">2.5.47.2</a></span>
 <code>…, numElems</code><i><code> </code></i><code>-&gt; …, pointer to array</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15332">2.5.47.3</a></span>
-The newvla instruction pushes a pointer to a new zero-based, one-dimensional array whose elements are of type <i>etype. numElems</i> (of type unsigned int32) specifies the number of elements in the array. In contrast to newarr, newvla tries to allocated the array on the stack, and the memory is automatically disposed when the function finishes. Valid array indexes are 0 ≤ index &lt; <i>numElems</i>. The elements of an array can be any type. Elements of the array are initialized to the default value of the appropriate type.</div>
+The newvla instruction pushes a pointer to a new zero-based, one-dimensional array whose elements are of type <i>etype. numElems</i> (of type unsigned int32) specifies the number of elements in the array. In contrast to newarr, newvla tries to allocated the array on the stack, and the memory is automatically disposed when the function finishes. Valid array indexes are 0 ≤ index &lt; <i>numElems</i>. The elements of an array can be any type. Elements of the array are not initialized.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15269">2.5.48</a></span>
 newobj – create a new object </h4>
 <div style="margin-left:63px"><span class="label"><a name="15270">2.5.48.1</a></span>
@@ -2228,7 +2230,9 @@ newobj – create a new object </h4>
 <div style="margin-left:63px"><span class="label"><a name="15273">2.5.48.2</a></span>
 <code>…,</code><i><code> </code></i><code>-&gt; …, pointer to instance</code></div>
 <div style="margin-left:63px"><span class="label"><a name="15271">2.5.48.3</a></span>
-The newobj instruction creates a new instance of <i>type</i> and initializes all the fields in the new instance to 0 (of the proper type) or null as appropriate.</div>
+The newobj instruction creates a new instance of <i>type</i>. The fields are not initialized.</div>
+<div style="margin-left:63px"><span class="label"><a name="19964">2.5.48.4</a></span><span class="ident">NOTE</span>
+This operation applies to all structured types of fixed size, including non-open arrays.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="17315">2.5.49</a></span>
 <b>nop – no operation</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="17316">2.5.49.1</a></span>
