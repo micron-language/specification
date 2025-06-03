@@ -35,9 +35,11 @@ qualident ::= [\LL:2\ ident '!'] ident    // module : item
 trident ::= [\LL:2\ ident '!' ] ident '.' ident  // qualident '.' ident for field reference
 identdef  ::= ident ['*']
 
-ConstDeclaration ::= ident ('=' ConstExpression2 | ':' qualident)
+Line ::=  'LINE' unsigned
 
-TypeDeclaration ::= identdef ['=' type]
+ConstDeclaration ::= [Line] ident ('=' ConstExpression2 | ':' qualident)
+
+TypeDeclaration ::= [Line] identdef ['=' type]
 type            ::= ArrayType | StructUnionType | ObjectType | PointerType | ProcedureType | NamedType
 NamedType       ::= qualident
 
@@ -47,18 +49,18 @@ length     ::= unsigned
 
 StructUnionType ::= ('STRUCT' | 'UNION') { \LA: 1:!'END'\ FieldList [';'] } 'END'
 FieldList  ::= IdentList ':' NamedType [ ':' unsigned ] | '..' unsigned
-IdentList  ::= identdef { [','] identdef }
+IdentList  ::= [Line] identdef { [','] [Line] identdef }
 
 ObjectType ::= 'OBJECT' [ '(' NamedType ')' ] { MemberList [';'] } 'END'
 MemberList ::= IdentList ':' NamedType
 
 PointerType ::= ( 'POINTER' 'TO' | '^' ) NamedType
 
-ProcedureType ::= (PROCEDURE|PROC)['^'] [FormalParameters]
+ProcedureType ::= ('PROCEDURE'|'PROC')['^'] [FormalParameters]
 
 VariableDeclaration ::= IdentList ':' NamedType
 
-ProcedureDeclaration ::= ( PROCEDURE | PROC )  (
+ProcedureDeclaration ::= ( 'PROCEDURE' | 'PROC' )  [Line] (
                        \LA: 1:ident & 2:'.'\ Binding identdef [ FormalParameters ] [ ';' ] ProcedureBody
                        | identdef  
                            [ FormalParameters ] (
@@ -70,27 +72,29 @@ ProcedureDeclaration ::= ( PROCEDURE | PROC )  (
                         
 Binding ::= ident '.'
                         
-ProcedureBody* ::= [VAR { LocalDeclaration [';'] }]  BEGIN StatementSequence END ident
+ProcedureBody* ::= ['VAR' { LocalDeclaration [';'] }]  'BEGIN' StatementSequence 'END' [Line] ident
 
 LocalDeclaration     ::= IdentList ':' NamedType
 
 FormalParameters ::= '(' [ FPSection { \LL:2\ ';' FPSection } [ ';' '..'] ] ')' [ ':' ReturnType ]
 ReturnType       ::= NamedType
-FPSection        ::= ident { [','] ident } ':' NamedType
+FPSection        ::= [Line] ident { [','] [Line] ident } ':' NamedType
 
-module     ::= 'MODULE' ident [ MetaParams ] [';'] 
+module     ::= 'MODULE' [Line] ident [ MetaParams ] [';'] 
+                        [ 'SOURCE' string [';'] ]
                         { ImportList | DeclarationSequence }
-	                END ident ['.']
-ImportList ::= IMPORT import { [','] import } [';']
-import     ::=  ident [ MetaActuals ] 
+	                'END' [Line] ident ['.']
+	                
+ImportList ::= 'IMPORT' import { [','] import } [';']
+import     ::=  [Line] ident [ MetaActuals ] 
 
 DeclarationSequence*  ::= { 
-                     CONST { ConstDeclaration [';'] }
-                   | TYPE {  TypeDeclaration [';'] }
-	           | VAR { VariableDeclaration [';'] }
+                     'CONST' { ConstDeclaration [';'] }
+                   | 'TYPE' {  TypeDeclaration [';'] }
+	           | 'VAR' { VariableDeclaration [';'] }
 	           | ProcedureDeclaration [';'] }
 	
-Expression ::= { ExpInstr }
+Expression ::= { ExpInstr|Line }
 
 ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI'|'CALLVI') qualident 
                       | 'CALLVIRT' trident | 'CASTPTR' qualident
@@ -122,11 +126,11 @@ ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI'|'CALLVI') qualident
 
 CondOp ::= 'IIF' Expression 'THEN' Expression 'ELSE' Expression 'END' 
 
-StatementSequence ::= { Statement|ExpInstr }
+StatementSequence ::= { Statement|ExpInstr|Line }
           
 Statement* ::= 'FREE' | RepeatUntil 
                          | 'EXIT' | 'GOTO' ident |  IfThenElse
-                         | 'LABEL' ident | 'LINE' unsigned | Loop | 'POP' | 'RET' 
+                         | 'LABEL' ident | Loop | 'POP' | 'RET' 
                          | ('STARG'|'STARG_S') (unsigned|ident)
                          | 'STELEM' qualident | 'STELEM_I1' | 'STELEM_I2' | 'STELEM_I4' | 'STELEM_I8' 
                          | 'STELEM_R4' | 'STELEM_R8' | 'STELEM_IP' | 'STELEM_IPP'
@@ -135,18 +139,18 @@ Statement* ::= 'FREE' | RepeatUntil
                          | ('STLOC' |'STLOC_S') (unsigned|ident) | 'STLOC_0' | 'STLOC_1' | 'STLOC_2' | 'STLOC_3'
                          | 'STIND' qualident | 'STVAR' qualident | 'STRCPY' | Switch | WhileDo
 
-IfThenElse ::= 'IF' Expression 'THEN' StatementSequence [ 'ELSE' StatementSequence ] END
-Loop ::= 'LOOP' StatementSequence END
+IfThenElse ::= 'IF' Expression 'THEN' StatementSequence [ 'ELSE' StatementSequence ] 'END'
+Loop ::= 'LOOP' StatementSequence 'END'
 Switch ::= 'SWITCH' Expression 
                  { 'CASE' integer { [','] integer }
                     'THEN' StatementSequence } 
-                  [ 'ELSE' StatementSequence ] END
-RepeatUntil ::= 'REPEAT' StatementSequence 'UNTIL' Expression END
-WhileDo ::= 'WHILE' Expression 'DO' StatementSequence END
+                  [ 'ELSE' StatementSequence ] 'END'
+RepeatUntil ::= 'REPEAT' StatementSequence 'UNTIL' Expression 'END'
+WhileDo ::= 'WHILE' Expression 'DO' StatementSequence 'END'
 
 MetaActuals ::= '(' ConstExpression { [','] ConstExpression } ')' 
 
-MetaParams ::= '(' ident { \LL:2\ [','] ident } ')'
+MetaParams ::= '(' [Line] ident { \LL:2\ [','] [Line] ident } ')'
 
 ConstExpression  ::= qualident | number | string | hexstring
 ConstExpression2 ::= qualident [ component_list ] | number | string | hexstring
