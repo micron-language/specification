@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2025-05-07, work in progress</div>
+2025-06-23, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -1573,15 +1573,15 @@ A procedure can be declared INLINE in which case the code of the procedure is em
 <div style="margin-left:45px"><span class="label"><a name="14486">2.11.6</a></span>
 A procedure can be declared INVAR (invariable) in which case it can be used in CONST declarations to derive a constant value at compile time. INVAR procedures can only call other INVAR procedures or predeclared procedures not depending on runtime information. INVAR procedures cannot access module variables, but they can access CONST declarations in the same or other modules.</div>
 <div style="margin-left:45px"><span class="label"><a name="15572">2.11.7</a></span>
-A procedure can be declared EXTERN to indicate that it is implemented in an external library with C calling conventions. EXTERN can be followed by the name the procedure has in that external library, otherwise the same name as in the identdef is assumed. </div>
+A procedure can be declared EXTERN to indicate that it is implemented elsewhere and the source code is not available. If EXTERN is followed by the ident C, then the procedure is implemented in an external library with C calling convention and called via the foreign function interface, otherwise it is assumed that the procedure is implemented in Micron. EXTERN C can be followed by a string literal with the name of the procedure in the external library, otherwise the same name as in the identdef is assumed. </div>
 <div style="margin-left:45px"><span class="label"><a name="15795">2.11.8</a></span><span class="ident">NOTE</span>
 EXTERN is regarded as an alternative to ProcedureBody, why it follows the (optional) semicolon. </div>
 <div style="margin-left:45px"><span class="label"><a name="15362">2.11.9</a></span>
-A procedure can be forward declared in which case the formal parameters must be identical with the actual procedure declaration. Forward declarations are marked by '^'.</div>
+In case of a forward declaration the formal parameters must be identical with the actual procedure declaration. Forward declarations are marked by '^'.</div>
 <div style="margin-left:45px"><span class="label"><a name="14456">2.11.10</a></span>
 Syntax:</div>
 <div style="margin-left:63px"><span class="label"><a name="14457">2.11.10.1</a></span>
-<pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN [ident] ) <br />                       | ForwardDeclaration<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br />ForwardDeclaration   = ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence <br />                       [FINALLY StatementSequence] END ident</code></pre>
+<pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN ['C' [string]]  ) <br />                       | ForwardDeclaration<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br />ForwardDeclaration   = ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence <br />                       [FINALLY StatementSequence] END ident</code></pre>
 <pre><code>DeclarationSequence  = { CONST { ConstDeclaration [';'] }</code></pre>
 <pre><code>	           | TypeDeclarationSection</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
@@ -1625,9 +1625,13 @@ Finally section</h4>
 The statement sequence after the symbol BEGIN can optionally be followed by the symbol FINALLY and yet another statement sequence. </div>
 <div style="margin-left:63px"><span class="label"><a name="18540">2.11.12.2</a></span>
 The statements in this FINALLY section are executed whenever the corresponding BEGIN section terminates.</div>
-<div style="margin-left:63px"><span class="label"><a name="18541">2.11.12.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20050">2.11.12.3</a></span>
+A FINALLY section cannot include a RETURN statement. </div>
+<div style="margin-left:63px"><span class="label"><a name="20051">2.11.12.4</a></span><span class="ident">NOTE</span>
+The expression of a RETURN statement is evaluated before the FINALLY section is run; it therefore cannot be modified in the FINALLY section.</div>
+<div style="margin-left:63px"><span class="label"><a name="18541">2.11.12.5</a></span>
 The statements in the FINALLY section are also executed if a nested BEGIN section is terminated with RAISE (see <a href="#14777">6.2 Predeclared proper procedures</a>). If a nested BEGIN section is terminated with RAISE, all FINALLY sections on the call chain up to (but not including) PCALL are executed in the reverse order of the call chain.</div>
-<div style="margin-left:63px"><span class="label"><a name="18543">2.11.12.4</a></span><span class="ident">NOTE</span>
+<div style="margin-left:63px"><span class="label"><a name="18543">2.11.12.6</a></span><span class="ident">NOTE</span>
 Note that both, FINALLY sections and also exceptions are an extended feature of the language and not available in all language levels (see <a href="#18479">7 Language levels</a>) and compiler configurations.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="18516">2.11.13</a></span>
 Type-bound procedures</h4>
@@ -1636,7 +1640,7 @@ Procedures may be associated with an object type declared in the same scope. The
 <div style="margin-left:63px"><span class="label"><a name="18589">2.11.13.2</a></span><span class="ident">NOTE</span>
 Regardless of whether the receiver is an object or pointer to object type, the receiver parameter is always a pointer to object type. </div>
 <div style="margin-left:63px"><span class="label"><a name="18536">2.11.13.3</a></span>
-Type-bound procedures cannot be INLINE, INVAR, nor EXTERN, nor can they have a variable number of parameters.</div>
+Type-bound procedures cannot be INLINE, nor INVAR, nor can they have a variable number of parameters.</div>
 <div style="margin-left:63px"><span class="label"><a name="18521">2.11.13.4</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="18522">2.11.13.4.1</a></span>
@@ -1798,7 +1802,7 @@ Signed integer types</h4>
 <h4 style="margin-left:27px"><span class="label"><a name="14537">3.3</a></span>
 Unsigned integer types</h4>
 <div style="margin-left:45px"><span class="label"><a name="14538">3.3.1</a></span>
-<a href="#14678">BYTE, UINT8, UINT16, UINT32, UINT64</a></div>
+<a href="#14678">BYTE, UINT8, UINT16, UINT32, UINT64, U8, U16, U32,...</a></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14539">3.4</a></span>
 <b>Floating-point types</b></h4>
 <div style="margin-left:45px"><span class="label"><a name="14682">3.4.1</a></span>
@@ -2195,7 +2199,7 @@ The result types of two procedures match if they are either of <i>equal type</i>
 <pre><code>GotoStatement = 'GOTO' ident</code></pre>
 <pre><code>gotoLabel = ident ':'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14622">4.33</a></span><a href="#14457">&#x21B3;</a>
-<pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN [ident] ) <br />                       | ForwardDeclaration<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br />ForwardDeclaration   = ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence <br />                       [FINALLY StatementSequence] END ident</code></pre>
+<pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN ['C' [string]]  ) <br />                       | ForwardDeclaration<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br />ForwardDeclaration   = ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence <br />                       [FINALLY StatementSequence] END ident</code></pre>
 <pre><code>DeclarationSequence  = { CONST { ConstDeclaration [';'] }</code></pre>
 <pre><code>	           | TypeDeclarationSection</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
@@ -2244,7 +2248,7 @@ Opaque type only usable as a pointer base type which is assignment compatible wi
 <div style="margin-left:45px"><span class="label"><a name="14685">5.2.1</a></span>
 see <a href="#14224">2.6.4 Basic types</a>.</div>
 <div style="margin-left:27px"><span class="label"><a name="14678">5.3</a></span>
-<b>BYTE, UINT8, UINT16, UINT32, UINT64</b></div>
+<b>BYTE, UINT8, UINT16, UINT32, UINT64, U8, U16, U32, U64</b></div>
 <div style="margin-left:45px"><span class="label"><a name="14679">5.3.1</a></span>
 Unsigned integer types, see <a href="#14224">2.6.4 Basic types</a>.</div>
 <div style="margin-left:27px"><span class="label"><a name="14686">5.4</a></span>
@@ -2252,7 +2256,7 @@ Unsigned integer types, see <a href="#14224">2.6.4 Basic types</a>.</div>
 <div style="margin-left:45px"><span class="label"><a name="14687">5.4.1</a></span>
 see <a href="#14224">2.6.4 Basic types</a>.</div>
 <div style="margin-left:27px"><span class="label"><a name="14676">5.5</a></span>
-<b>INT8, INT16, INT32, INT64, SHORTINT, INTEGER, LONGINT</b></div>
+<b>INT8, INT16, INT32, INT64, SHORTINT, INTEGER, LONGINT, I8, I16, I32, I64</b></div>
 <div style="margin-left:45px"><span class="label"><a name="14677">5.5.1</a></span>
 Signed integer types, see <a href="#14224">2.6.4 Basic types</a>.</div>
 <div style="margin-left:27px"><span class="label"><a name="14680">5.6</a></span>

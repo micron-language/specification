@@ -185,7 +185,7 @@ ProcedureType ::= procedure
 	
 ProcedureDeclaration ::= 
 	\LA: 2:'^'\ ForwardDecl
-	|  ProcedureHeading ( [INLINE | INVAR] [ ';' ] ProcedureBody | \LL:2\ [ ';' ] EXTERN [ident] )
+	|  ProcedureHeading ( [INLINE | INVAR] [ ';' ] ProcedureBody | \LL:2\ [ ';' ] EXTERN [ident [string]] ) // ident = 'C'
 	
 ProcedureHeading ::= procedure 
 #ifdef LEVEL3
