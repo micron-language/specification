@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2025-06-23, work in progress</div>
+2025-08-31, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -1578,9 +1578,33 @@ For constants that require 9–32 bits, use the ldc.i4 instruction followed by a
 For constants that can be expressed in 8 or fewer bits, use a short form instruction followed by a conv.i8. </div>
 <div style="margin-left:63px"><span class="label"><a name="15113">2.5.29.5</a></span>
 There is no way to express a floating-point constant that has a larger range or greater precision than a 64-bit IEC 60559:1989 number, since these representations are not portable across architectures. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15238">2.5.30</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="19477">2.5.30</a></span>
+<b>ldc_obj – load a literal object to the stack </b></h4>
+<div style="margin-left:63px"><span class="label"><a name="19478">2.5.30.1</a></span>
+<table border=1 cellspacing=0 CELLPADDING=3 >
+<tr>
+<td>
+<b>Binary</b> </td>
+<td>
+<br><b>Text Format</b> </td>
+<td>
+<br><b>Description</b> </td></tr>
+<tr>
+<td>
+<br>EE 12 &lt;<i>T</i>&gt; </td>
+<td>
+<br>ldc_obj <i>constructor</i> </td>
+<td>
+<br>Load the constructed literal object to the stack. </td></tr></table></div>
+<div style="margin-left:63px"><span class="label"><a name="19479">2.5.30.2</a></span>
+<code>… -&gt; …, val</code></div>
+<div style="margin-left:63px"><span class="label"><a name="19480">2.5.30.3</a></span>
+The ldobj instruction pushes the object literal constructed by <i>constructor</i> onto the stack. </div>
+<div style="margin-left:63px"><span class="label"><a name="20639">2.5.30.4</a></span>
+TODO: should this - like ldstr - be the address of the literal bytes in read-only memory?</div>
+<h4 style="margin-left:45px"><span class="label"><a name="15238">2.5.31</a></span>
 ldelem – load element from array </h4>
-<div style="margin-left:63px"><span class="label"><a name="20045">2.5.30.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20045">2.5.31.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1680,13 +1704,13 @@ ldelem – load element from array </h4>
 <br>ldelem_ipp </td>
 <td>
 <br>Load the element with type methref at <i>index</i> onto the top of the stack as a methref. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15240">2.5.30.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15240">2.5.31.2</a></span>
 <code>…, pointer to array, index -&gt; …, value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15241">2.5.30.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15241">2.5.31.3</a></span>
 The ldelem instruction loads the value of the element with index <i>index</i> (of type unsigned int32) in the zero-based one-dimensional array (pointed to by the intptr on the stack), and places it on the top of the stack. The type of the return value is indicated by the type<i> </i>in the instruction. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15243">2.5.31</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15243">2.5.32</a></span>
 ldelema – load address of an element of an array </h4>
-<div style="margin-left:63px"><span class="label"><a name="15244">2.5.31.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15244">2.5.32.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1702,13 +1726,13 @@ ldelema – load address of an element of an array </h4>
 <br>ldelema <i>type</i> </td>
 <td>
 <br>Load the address of element at <i>index</i> of type onto the top of the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15245">2.5.31.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15245">2.5.32.2</a></span>
 <code>…, pointer to array, index -&gt; …, address</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15246">2.5.31.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15246">2.5.32.3</a></span>
 The ldelema instruction loads the address of the element with index <i>index</i> (of type int32 or intptr) in the zero-based one-dimensional array <i>array</i> (pointed to by the intptr on the stack, of element type <i>type) </i>and places it on the top of the stack. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15247">2.5.32</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15247">2.5.33</a></span>
 ldfld – load field of a struct or union</h4>
-<div style="margin-left:63px"><span class="label"><a name="15248">2.5.32.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15248">2.5.33.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1724,13 +1748,13 @@ ldfld – load field of a struct or union</h4>
 <br>ldfld <i>field</i> </td>
 <td>
 <br>Push the value of <i>field</i> of struct, union or object <i>ptr,</i> onto the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15249">2.5.32.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15249">2.5.33.2</a></span>
 <code>…, ptr -&gt; …, value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15250">2.5.32.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15250">2.5.33.3</a></span>
 The ldfld instruction pushes onto the stack the value of a field of <i>ptr</i>. <i>ptr</i> shall be an of type intptr. <i>field</i> is a reference to an element of a structured type. The return type is that associated with <i>field</i>. ldfld pops the pointer off the stack and pushes the value for the field in its place. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15251">2.5.33</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15251">2.5.34</a></span>
 ldflda – load field address </h4>
-<div style="margin-left:63px"><span class="label"><a name="15252">2.5.33.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15252">2.5.34.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1746,13 +1770,13 @@ ldflda – load field address </h4>
 <br>ldflda <i>field</i> </td>
 <td>
 <br>Push the address of <i>field</i> of struct, union or object <i>ptr</i> on the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15253">2.5.33.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15253">2.5.34.2</a></span>
 <code>…, ptr -&gt; …, address</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15254">2.5.33.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15254">2.5.34.3</a></span>
 The ldflda instruction pushes the address of a field of <i>ptr. ptr</i> is of type intptr. The value returned by ldflda is an intptr. <i>field</i> is a reference to an element of a structured type</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15119">2.5.34</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15119">2.5.35</a></span>
 ldind – load value indirect onto the stack</h4>
-<div style="margin-left:63px"><span class="label"><a name="18828">2.5.34.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18828">2.5.35.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1852,21 +1876,21 @@ ldind – load value indirect onto the stack</h4>
 <br>ldind_ipp </td>
 <td>
 <br>Indirect load value of type intptr pair (methref) on the stack </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15121">2.5.34.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15121">2.5.35.2</a></span>
 <code>…, addr -&gt; …, value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15122">2.5.34.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15122">2.5.35.3</a></span>
 The ldind instruction indirectly loads a value from address <i>addr</i> (an intptr) onto the stack. The source value is indicated by <i>type</i> or by the instruction suffix. The <i>type</i> can be a struct, union, object, or a non-open array, or any basic or generic type.</div>
-<div style="margin-left:63px"><span class="label"><a name="15124">2.5.34.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15124">2.5.35.4</a></span>
 Note that integer values of less than 4 bytes are extended to int32 when they are loaded onto the evaluation stack. </div>
-<div style="margin-left:63px"><span class="label"><a name="19928">2.5.34.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="19928">2.5.35.5</a></span>
 If <i>type</i> is a non-open char array, and <i>addr</i> points to an open char array, the instruction copies the characters of the char array pointed to by <i>addr</i> to the char array on the stack, up to the minimum of the length of either <i>addr</i> or <i>type</i>. After the operation, the char array on the stack is always zero terminated.</div>
-<div style="margin-left:63px"><span class="label"><a name="15123">2.5.34.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15123">2.5.35.6</a></span>
 The address specified by <i>addr</i> shall be to a location with the natural alignment of &lt;<i>type</i>&gt;. </div>
-<div style="margin-left:63px"><span class="label"><a name="18832">2.5.34.7</a></span><span class="ident">NOTE</span>
+<div style="margin-left:63px"><span class="label"><a name="18832">2.5.35.7</a></span><span class="ident">NOTE</span>
 ldind can be used to pass records, object and arrays to procedures by value, but also for the right side of assignments or return values. In the latter case, there is usually a stind to copy the value to a variable, field or element (represented by their address). The backend in that case is free to avoid copying and instead just pass a pointer to the stack instead of a value copy.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15126">2.5.35</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15126">2.5.36</a></span>
 ldloc – load local variable onto the stack</h4>
-<div style="margin-left:63px"><span class="label"><a name="15127">2.5.35.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15127">2.5.36.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1917,17 +1941,17 @@ ldloc – load local variable onto the stack</h4>
 <br>ldloc_3 </td>
 <td>
 <br>Load local variable 3 onto stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15128">2.5.35.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15128">2.5.36.2</a></span>
 <code>… -&gt; …, value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15129">2.5.35.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15129">2.5.36.3</a></span>
 The ldloc <i>indx</i> instruction pushes the contents of the local variable number <i>indx</i> onto the evaluation stack, where local variables are numbered 0 onwards. The ldloc.0, ldloc.1, ldloc.2, and ldloc.3 instructions provide an efficient encoding for accessing the first 4 local variables. The ldloc.s instruction provides an efficient encoding for accessing local variables 4–255.</div>
-<div style="margin-left:63px"><span class="label"><a name="15130">2.5.35.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15130">2.5.36.4</a></span>
 The type of the value is the same as the type of the local variable, which is specified in the method header.</div>
-<div style="margin-left:63px"><span class="label"><a name="15131">2.5.35.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15131">2.5.36.5</a></span>
 Local variables that are smaller than 4 bytes are expanded to type int32 when they are loaded onto the stack. Floating-point values are expanded to their native size (type F).</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15132">2.5.36</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15132">2.5.37</a></span>
 <b>ldloca – load local variable address</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15133">2.5.36.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15133">2.5.37.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1950,13 +1974,13 @@ Local variables that are smaller than 4 bytes are expanded to type int32 when t
 <br>ldloca_s <i>indx</i> </td>
 <td>
 <br>Load address of local variable with index <i>indx, short form.</i> </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15134">2.5.36.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15134">2.5.37.2</a></span>
 <code>… -&gt; …, address</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15135">2.5.36.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15135">2.5.37.3</a></span>
 The ldloca instruction pushes the address of the local variable number <i>indx</i> onto the stack, where local variables are numbered 0 onwards. The value pushed on the stack is already aligned correctly for use with instructions like ldind and stind. The result is a pointer (type intptr). The ldloca.s instruction provides an efficient encoding for use with the local variables 0–255. (Local variables that are the subject of ldloca shall be aligned as described in the ldind instruction, since the address obtained by ldloca can be used as an argument to ldind.)</div>
-<h4 style="margin-left:45px"><span class="label"><a name="18459">2.5.37</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="18459">2.5.38</a></span>
 <b>ldmeth – load a virtual method pointer</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="18461">2.5.37.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18461">2.5.38.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1972,13 +1996,13 @@ The ldloca instruction pushes the address of the local variable number <i>indx</
 <br>ldmeth <i>method</i> </td>
 <td>
 <br>Push address of virtual method method on the stack.</td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="18462">2.5.37.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18462">2.5.38.2</a></span>
 <code>…, obj -&gt; …, methref</code></div>
-<div style="margin-left:63px"><span class="label"><a name="18460">2.5.37.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="18460">2.5.38.3</a></span>
 The ldmeth instruction pushes a method reference (pair of <i>intptr</i>) to the native code implementing the virtual method associated with object and described by the method reference onto the stack. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="15136">2.5.38</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15136">2.5.39</a></span>
 ldnull – load a null pointer</h4>
-<div style="margin-left:63px"><span class="label"><a name="15137">2.5.38.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15137">2.5.39.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
@@ -1994,32 +2018,10 @@ ldnull – load a null pointer</h4>
 <br>ldnull </td>
 <td>
 <br>Push a null reference on the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="15138">2.5.38.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15138">2.5.39.2</a></span>
 <code>… -&gt; …, null value</code></div>
-<div style="margin-left:63px"><span class="label"><a name="15139">2.5.38.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15139">2.5.39.3</a></span>
 The ldnull<i> </i>pushes a null pointer (type intptr) on the stack. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="19477">2.5.39</a></span>
-<b>ldobj – load a literal object to the stack </b></h4>
-<div style="margin-left:63px"><span class="label"><a name="19478">2.5.39.1</a></span>
-<table border=1 cellspacing=0 CELLPADDING=3 >
-<tr>
-<td>
-<b>Binary</b> </td>
-<td>
-<br><b>Text Format</b> </td>
-<td>
-<br><b>Description</b> </td></tr>
-<tr>
-<td>
-<br>EE 12 &lt;<i>T</i>&gt; </td>
-<td>
-<br>ldobj <i>constructor</i> </td>
-<td>
-<br>Load the constructed literal object to the stack. </td></tr></table></div>
-<div style="margin-left:63px"><span class="label"><a name="19479">2.5.39.2</a></span>
-<code>… -&gt; …, val</code></div>
-<div style="margin-left:63px"><span class="label"><a name="19480">2.5.39.3</a></span>
-The ldobj instruction pushes the object literal constructed by <i>constructor</i> onto the stack. </div>
 <h4 style="margin-left:45px"><span class="label"><a name="15114">2.5.40</a></span>
 <b>ldproc – load procedure pointer</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="15115">2.5.40.1</a></span>
@@ -2688,15 +2690,17 @@ The formal parameter names are optional. If present, they must be unique within 
 Formal parameters are numbered from left to right, starting from zero. In case of a bound procedure, the hidden receiver parameter is assumed to be at position zero.</div>
 <div style="margin-left:63px"><span class="label"><a name="18577">2.8.11.5</a></span>
 Formal parameters can be referenced by their name or by their number.</div>
-<div style="margin-left:63px"><span class="label"><a name="15472">2.8.11.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20430">2.8.11.6</a></span>
+The return type is optional. The named type can reference all types defined in <a href="#14956">2.4 Types</a> besides open arrays.</div>
+<div style="margin-left:63px"><span class="label"><a name="15472">2.8.11.7</a></span>
 Syntax of textual representation:</div>
-<div style="margin-left:81px"><span class="label"><a name="15473">2.8.11.6.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15473">2.8.11.7.1</a></span>
 <pre><code>FormalParameters = '(' [ FPSection { ';' FPSection } [ ';' '..'] ] ')'<br />                   [ ':' ReturnType ]</code></pre>
 <pre><code>ReturnType       = NamedType</code></pre>
 <pre><code>FPSection        = [ [Line] ident { [','] [Line] ident } ':'] NamedType</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="15474">2.8.11.7</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15474">2.8.11.8</a></span>
 Procedures can have a variable number of parameters, which is indicated by <code>'..'</code> (ellipsis). </div>
-<div style="margin-left:63px"><span class="label"><a name="15337">2.8.11.8</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15337">2.8.11.9</a></span>
 TODO: va_list and access instruction</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15287">2.8.12</a></span>
 <b>line</b></h4>
@@ -3442,7 +3446,7 @@ Generic modules can be instantiated with different sets of meta actuals which en
 <div style="margin-left:63px"><span class="label"><a name="15590">2.10.10.3</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:81px"><span class="label"><a name="15591">2.10.10.3.1</a></span>
-<pre><code>MetaParams       = '(' [Line] ident { [','] [Line] ident } ')'<br />TypeDeclaration = ident<br />ConstDeclaration = ident ':' NamedType<br />MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
+<pre><code>MetaParams       = '(' ident { [','] ident } ')'<br />TypeDeclaration = ident<br />ConstDeclaration = ident ':' NamedType<br />MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="15592">2.10.10.4</a></span>
 Meta parameters can be used within the generic module like normal types or constants. If no type constraint is present, the types and constants can be used wherever no information about the actual type is required; otherwise the type constraint determines the permitted operations. </div>
 <div style="margin-left:63px"><span class="label"><a name="15595">2.10.10.5</a></span><span class="ident">NOTE</span>
@@ -3542,7 +3546,7 @@ TODO: type checking rules, structral compatibility, packing</div>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
 <pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15594">3.25</a></span><a href="#15591">&#x21B3;</a>
-<pre><code>MetaParams       = '(' [Line] ident { [','] [Line] ident } ')'<br />TypeDeclaration = ident<br />ConstDeclaration = ident ':' NamedType<br />MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
+<pre><code>MetaParams       = '(' ident { [','] ident } ')'<br />TypeDeclaration = ident<br />ConstDeclaration = ident ':' NamedType<br />MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15534">3.26</a></span><a href="#15533">&#x21B3;</a>
 <code>IfThenElse = 'IF' Expression 'THEN' StatementSequence <br />[ 'ELSE' StatementSequence ] 'END'</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15546">3.27</a></span><a href="#15545">&#x21B3;</a>

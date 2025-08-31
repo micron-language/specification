@@ -86,7 +86,8 @@ module     ::= 'MODULE' [Line] ident [ MetaParams ] [';']
 	                'END' [Line] ident ['.']
 	                
 ImportList ::= 'IMPORT' import { [','] import } [';']
-import     ::=  [Line] ident [ MetaActuals ] 
+import     ::=  [Line] ident [instantiation]
+instantiation ::= ':=' ident MetaActuals
 
 DeclarationSequence*  ::= { 
                      'CONST' { ConstDeclaration [';'] }
@@ -107,7 +108,7 @@ ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI'|'CALLVI') qualident
                       | ('LDARGA'|'LDARGA_S') (unsigned|ident)
                       | ('LDC_I4'|'LDC_I8'|'LDC_I4_S') integer | ('LDC_R4'|'LDC_R8') number | 'LDC_IP' unsigned
                       | 'LDC_I4_0' | 'LDC_I4_1' | 'LDC_I4_2' | 'LDC_I4_3' | 'LDC_I4_4' | 'LDC_I4_5'
-                      | 'LDC_I4_6' | 'LDC_I4_7' | 'LDC_I4_8' | 'LDC_I4_M1' | 'LDOBJ' constructor
+                      | 'LDC_I4_6' | 'LDC_I4_7' | 'LDC_I4_8' | 'LDC_I4_M1' | 'LDC_OBJ' constructor
                       | ('LDELEM'|'LDELEMA') qualident | 'LDELEM_I1' | 'LDELEM_I2'
                       | 'LDELEM_I4' | 'LDELEM_I8' | 'LDELEM_U1' | 'LDELEM_U2' 
                       | 'LDELEM_U4' | 'LDELEM_U8' | 'LDELEM_R4' | 'LDELEM_R8' | 'LDELEM_IP' | 'LDELEM_IPP'
@@ -120,9 +121,9 @@ ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI'|'CALLVI') qualident
                       | ('LDVAR'|'LDVARA') qualident | 'MUL' | 'NEG' 
                       | ('NEWARR'|'NEWVLA'|'NEWOBJ') qualident 
                       | 'NOT' | 'OR' | 'REM' | 'REM_UN' | 'SHL' | 'SHR' | 'SHR_UN' 
-                      | 'SIZEOF' qualident |'SUB' | 'XOR' | 'PTROFF' qualident | 'NOP' | CondOp // | ArgsCall
+                      | 'SIZEOF' qualident |'SUB' | 'XOR' | 'PTROFF' qualident | 'NOP' | CondOp // | CallOp
                       
-// TODO ArgsCall ::= 'ARGS' { ExpInstr } (('CALL' | 'CALLI'|'CALLVI') qualident | 'CALLVIRT' trident)
+// CallOp ::= 'VARARGS' Expression (('CALL' | 'CALLI'|'CALLVI') qualident | 'CALLVIRT' trident)
 
 CondOp ::= 'IIF' Expression 'THEN' Expression 'ELSE' Expression 'END' 
 
