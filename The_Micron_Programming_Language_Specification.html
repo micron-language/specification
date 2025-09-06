@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2025-06-23, work in progress</div>
+2025-09-06, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -186,7 +186,7 @@ The language is designed to work with a single-pass compiler. ABI compatibility 
 <h4 style="margin-left:45px"><span class="label"><a name="14227">2.1.7</a></span>
 Main differences to Oberon+</h4>
 <div style="margin-left:63px"><span class="label"><a name="14155">2.1.7.1</a></span>
-In contrast to Oberon+, Micron has no garbage collector. Data allocated with NEW has to be explicitly deleted with DISPOSE.</div>
+In contrast to Oberon+, Micron has no garbage collector in the default language level. Data allocated with NEW has to be explicitly deleted with DISPOSE.</div>
 <div style="margin-left:63px"><span class="label"><a name="14228">2.1.7.2</a></span>
 Record embedding (similar to Go) using the INLINE keyword is supported.</div>
 <div style="margin-left:63px"><span class="label"><a name="18544">2.1.7.3</a></span>
@@ -504,7 +504,7 @@ No identifier may denote more than one object within a given scope (i.e. no iden
 <div style="margin-left:63px"><span class="label"><a name="14164">2.4.2.2</a></span>
 An object may only be referenced within its scope; </div>
 <div style="margin-left:63px"><span class="label"><a name="14165">2.4.2.3</a></span>
-A type<i>T</i> of the form POINTER TO <i>T1</i> (see <a href="#14278">2.6.8 Pointer types</a>) can be declared at a point where <i>T1</i> is still unknown. The declaration of <i>T1</i> must follow in the same type declaration section to which <i>T</i> belongs; </div>
+A type <i>T</i> of the form POINTER TO <i>T1</i> (see <a href="#14278">2.6.8 Pointer types</a>) can be declared at a point where <i>T1</i> is still unknown. The declaration of <i>T1</i> must follow before the base type of T is accessed for the first time; </div>
 <div style="margin-left:63px"><span class="label"><a name="14166">2.4.2.4</a></span>
 Identifiers denoting record fields (see <a href="#14270">2.6.6 Record types</a>) are valid in record designators only;</div>
 <div style="margin-left:63px"><span class="label"><a name="18545">2.4.2.5</a></span>
@@ -649,13 +649,10 @@ ABS</td>
 <br>UINT8</td>
 <td>
 <br>UNSIGNED</td>
-<td>
-<br>VA_LIST</td></tr>
+<td></td></tr>
 <tr>
-<td>
-<br>VARARG</td>
-<td>
-<br>VARARGS</td>
+<td></td>
+<td></td>
 <td></td>
 <td></td>
 <td></td></tr></table></div>
@@ -1021,8 +1018,6 @@ Syntax:</div>
 <pre><code>MulOperator      = '*' | '/' | DIV | MOD | '&amp;' | AND</code></pre>
 <pre><code>literal          = number | string | hexstring | hexchar</code></pre>
 <pre><code>                   | NIL | TRUE | FALSE | set</code></pre>
-<pre><code>constructor      = NamedType '{' [ component {',' component} ] '}'</code></pre>
-<pre><code>component        = ConstExpression</code></pre>
 <pre><code>factor           = literal | designator [ActualParameters]</code></pre>
 <pre><code>	       | '(' expression ')' | ('~'|NOT) factor</code></pre>
 <pre><code>	       | '@' designator | constructor</code></pre>
@@ -1256,7 +1251,7 @@ The concatenation operator applies to string and character literals. The resulti
 <h4 style="margin-left:63px"><span class="label"><a name="14662">2.8.3.8</a></span>
 Address operator</h4>
 <div style="margin-left:81px"><span class="label"><a name="14663">2.8.3.8.1</a></span>
-The address operator '@' can be applied to a variable, parameter, record field, object field, or array element, which is visible and not read-only; the operator yields the address of the value.</div>
+The address operator '@' applies to a variable, parameter, record field, object field, or array element, which is visible and not read-only; the operator yields the address of the value.</div>
 <div style="margin-left:81px"><span class="label"><a name="14664">2.8.3.8.2</a></span>
 If <code>v</code> designates a variable or parameter of type T, then <code>@v</code> denotes the address of <code>v</code> with the type <code>POINTER TO T.</code></div>
 <div style="margin-left:81px"><span class="label"><a name="14665">2.8.3.8.3</a></span>
@@ -1274,11 +1269,11 @@ Syntax:</div>
 <h4 style="margin-left:45px"><span class="label"><a name="14347">2.8.4</a></span>
 Constructors</h4>
 <div style="margin-left:63px"><span class="label"><a name="14348">2.8.4.1</a></span>
-With constructors, record, object, array and pointer literals can be declared. </div>
+Constructors can be used to initialize records, objects, arrays and pointers via assignments, or to create an anonymous variable of the constructed type.</div>
 <div style="margin-left:63px"><span class="label"><a name="14354">2.8.4.2</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="17796">2.8.4.2.1</a></span>
-<code>constructor = [NamedType] '{' [ component {[','] component} ] '}' </code>
+<code>constructor = ['@'][NamedType] '{' [ component {[','] component} ] '}' </code>
 <br><code>component = ident ':' expression </code>
 <br><code>	| '[' ConstExpression ']' ':' expression </code>
 <br><code>	| expression ['..' expression] </code></div>
@@ -1286,31 +1281,35 @@ Syntax:</div>
 A constructor consists of an optional  NamedType and a list of either named, indexed or anonymous components. Named, Indexed and anonymous components can be mixed in the list.</div>
 <div style="margin-left:63px"><span class="label"><a name="17798">2.8.4.4</a></span>
 When the type of a constructor can be inferred (e.g. by the left side of an assignment), the NamedType prefix can be left out.</div>
-<div style="margin-left:63px"><span class="label"><a name="14633">2.8.4.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20680">2.8.4.5</a></span>
+A constructor is a literal and thus can appear in a constant expression, if all expressions appearing in its components are constant expressions. </div>
+<div style="margin-left:63px"><span class="label"><a name="20681">2.8.4.6</a></span>
+When a constructor is prefixed with the address-of operator ('@'), then it represents an anonymous, local variable in the current scope.</div>
+<div style="margin-left:63px"><span class="label"><a name="14633">2.8.4.7</a></span>
 If NamedType is a record or object type, then anonymous or named components can be used to assign field values; anonymous components are associated with fields in the order of declaration (in case of object types, inherited fields come first in the order). If the record type has a variant part, only named component can be used, and only one option of the variant part can be initialized in the constructor. If an object type has a base type imported from another module where one or more fields are not public or read-only, then a constructor is not available.</div>
-<div style="margin-left:63px"><span class="label"><a name="14634">2.8.4.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14634">2.8.4.8</a></span>
 If NamedType is an array type, then anonymous or indexed components can be used to assign element values; anonymous components are associated with elements in the order of indizes. The array type may be an open array in which case the number of elements is determined by the number of components or the largest index component.</div>
-<div style="margin-left:63px"><span class="label"><a name="14635">2.8.4.7</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14635">2.8.4.9</a></span>
 If NamedType is a pointer type, then there is exactly one anonymous component which is an unsigned integer type constant representing the address. </div>
-<div style="margin-left:63px"><span class="label"><a name="14636">2.8.4.8</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14636">2.8.4.10</a></span>
 For each field or element which is of record, object, array or pointer type, an embedded constructor is required. </div>
-<div style="margin-left:63px"><span class="label"><a name="14637">2.8.4.9</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14637">2.8.4.11</a></span>
 Example:</div>
-<div style="margin-left:81px"><span class="label"><a name="14638">2.8.4.9.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14638">2.8.4.11.1</a></span>
 <code>myVal := Rect{0,0,x1,y1};</code></div>
-<h4 style="margin-left:63px"><span class="label"><a name="16058">2.8.4.10</a></span>
+<h4 style="margin-left:63px"><span class="label"><a name="16058">2.8.4.12</a></span>
 Hex Strings</h4>
-<div style="margin-left:81px"><span class="label"><a name="16059">2.8.4.10.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="16059">2.8.4.12.1</a></span>
 Hex strings are sequences of bytes encoded in hexadecimal format and enclosed in dollar signs. The number of hex digits in the string must be even, two hex digits per byte. The number of bytes encoded in a hex string is called its length. Line breaks and other white space between the dollar signs is ignored. Both upper and lower-case hex digits are supported. </div>
-<div style="margin-left:81px"><span class="label"><a name="16061">2.8.4.10.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="16061">2.8.4.12.2</a></span>
 Syntax:</div>
-<div style="margin-left:99px"><span class="label"><a name="16062">2.8.4.10.2.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="16062">2.8.4.12.2.1</a></span>
 <pre><code>hexstring = '$' {hexDigit} '$'</code></pre></div>
-<div style="margin-left:81px"><span class="label"><a name="16063">2.8.4.10.3</a></span>
+<div style="margin-left:81px"><span class="label"><a name="16063">2.8.4.12.3</a></span>
 Examples:</div>
-<div style="margin-left:99px"><span class="label"><a name="16064">2.8.4.10.3.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="16064">2.8.4.12.3.1</a></span>
 <pre><code>const arrow = $0F0F 0060 0070 0038 001C 000E 0007 8003 C101 E300 <br />               7700 3F00 1F00 3F00 7F00 FF00$</code></pre></div>
-<div style="margin-left:81px"><span class="label"><a name="16066">2.8.4.10.4</a></span><span class="ident">NOTE</span>
+<div style="margin-left:81px"><span class="label"><a name="16066">2.8.4.12.4</a></span><span class="ident">NOTE</span>
 Hex strings are provided for compatibility with Oberon+; they are essentially an alternative syntax for an open byte array constructor.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14355">2.9</a></span>
 <a href=""><b>S</b></a><b>tatements</b></h4>
@@ -1597,7 +1596,7 @@ The scope of a formal parameter extends from its declaration to the end of the p
 <div style="margin-left:63px"><span class="label"><a name="14488">2.11.11.4</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="14489">2.11.11.4.1</a></span>
-<pre><code>FormalParameters = '(' [ FPSection { [';'] FPSection } [ [';'] '..'] ] ')'</code></pre>
+<pre><code>FormalParameters = '(' [ FPSection { [';'] FPSection } ] ')'</code></pre>
 <pre><code>                   [ ':' ReturnType ]</code></pre>
 <pre><code>ReturnType       = [ POINTER TO | '^' ] NamedType</code></pre>
 <pre><code>FPSection        = [CONST] ident { [','] ident } ':' FormalType</code></pre>
@@ -1606,11 +1605,15 @@ Syntax:</div>
 Let T<sub>f</sub> be the type of a formal parameter <code>f</code> and T<sub>a</sub> the type of the corresponding actual parameter <code>a</code>. T<sub>a</sub> must be <i>parameter compatible</i> to <code>f</code> (see <a href="#14532">3 Definition of terms</a>).</div>
 <div style="margin-left:63px"><span class="label"><a name="16021">2.11.11.6</a></span>
 CONST parameters are read-only in the procedure body. The read-only feature is transitive, i.e. also the variables, elements or fields designated from a CONST parameter are read-only. </div>
-<div style="margin-left:63px"><span class="label"><a name="14490">2.11.11.7</a></span>
-Procedures can have a variable number of parameters, which is indicated by '..' (ellipsis). In that case the additional parameters (called &quot;variable parameters&quot;) can be accessed in the procedure body using the VARARG() and VARARGS() predeclared procedures. Only actual parameters of basic or pointer type (including enumerations and procedure types) can be passed as variable parameters.</div>
-<div style="margin-left:63px"><span class="label"><a name="14491">2.11.11.8</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20679">2.11.11.7</a></span><span class="ident">NOTE</span>
+In contrast to C, Micron doesn't support variable (variadic) parameters, because there are viable alternatives, and the impact on compilers and runtime systems is much greater than the potential benefits. When passing a variable number of arguments of the same type to a procedure, use an pointer to array parameter with an explicit count; pass both the array pointer and the number of elements to ensure bounds safety. When passing a variable number of arguments of different types along with a format specification string, use an array of pointer to ANY; the procedure should parse the format string to determine the type of each argument and perform appropriate type casting. In both cases, constructors can be used to create the array on the fly.</div>
+<div style="margin-left:63px"><span class="label"><a name="20428">2.11.11.8</a></span>
+The return type is optional. The named return type can reference all types defined in <a href="#14218">2.6 Type declarations</a> besides open array types.</div>
+<div style="margin-left:63px"><span class="label"><a name="20429">2.11.11.9</a></span><span class="ident">NOTE</span>
+In contrast to Oberon and Oberon-2, Micron allows array and record return types.</div>
+<div style="margin-left:63px"><span class="label"><a name="14491">2.11.11.10</a></span>
 Examples:</div>
-<div style="margin-left:81px"><span class="label"><a name="14492">2.11.11.8.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14492">2.11.11.10.1</a></span>
 <pre><code>proc ReadInt(x: pointer to integer)</code></pre>
 <pre><code>  var i: integer; ch: char</code></pre>
 <pre><code>begin i := 0; Read(ch)</code></pre>
@@ -2140,8 +2143,6 @@ The result types of two procedures match if they are either of <i>equal type</i>
 <pre><code>MulOperator      = '*' | '/' | DIV | MOD | '&amp;' | AND</code></pre>
 <pre><code>literal          = number | string | hexstring | hexchar</code></pre>
 <pre><code>                   | NIL | TRUE | FALSE | set</code></pre>
-<pre><code>constructor      = NamedType '{' [ component {',' component} ] '}'</code></pre>
-<pre><code>component        = ConstExpression</code></pre>
 <pre><code>factor           = literal | designator [ActualParameters]</code></pre>
 <pre><code>	       | '(' expression ')' | ('~'|NOT) factor</code></pre>
 <pre><code>	       | '@' designator | constructor</code></pre>
@@ -2151,7 +2152,7 @@ The result types of two procedures match if they are either of <i>equal type</i>
 <div style="margin-left:27px"><span class="label"><a name="14608">4.17</a></span><a href="#14352">&#x21B3;</a>
 <pre><code>FunctionCall           = designator ActualParameters</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="17797">4.18</a></span><a href="#17796">&#x21B3;</a>
-<code>constructor = [NamedType] '{' [ component {[','] component} ] '}' </code>
+<code>constructor = ['@'][NamedType] '{' [ component {[','] component} ] '}' </code>
 <br><code>component = ident ':' expression </code>
 <br><code>	| '[' ConstExpression ']' ':' expression </code>
 <br><code>	| expression ['..' expression] </code></div>
@@ -2205,7 +2206,7 @@ The result types of two procedures match if they are either of <i>equal type</i>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
 <pre><code>	           | ProcedureDeclaration [';'] }<br /><br />TypeDeclarationSection = TYPE { TypeDeclaration [';'] }</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14623">4.34</a></span><a href="#14489">&#x21B3;</a>
-<pre><code>FormalParameters = '(' [ FPSection { [';'] FPSection } [ [';'] '..'] ] ')'</code></pre>
+<pre><code>FormalParameters = '(' [ FPSection { [';'] FPSection } ] ')'</code></pre>
 <pre><code>                   [ ':' ReturnType ]</code></pre>
 <pre><code>ReturnType       = [ POINTER TO | '^' ] NamedType</code></pre>
 <pre><code>FPSection        = [CONST] ident { [','] ident } ':' FormalType</code></pre>
@@ -2267,10 +2268,6 @@ Floating-point types, see <a href="#14224">2.6.4 Basic types</a>.</div>
 <b>SET</b></div>
 <div style="margin-left:45px"><span class="label"><a name="14689">5.7.1</a></span>
 see <a href="#14224">2.6.4 Basic types</a>.</div>
-<div style="margin-left:27px"><span class="label"><a name="14651">5.8</a></span>
-<b>VA_LIST</b></div>
-<div style="margin-left:45px"><span class="label"><a name="14683">5.8.1</a></span>
-Opaque type representing the list of variable parameters, see <a href="#14458">2.11.11 Formal parameters</a>.</div>
 <h4 style="margin-left:9px"><span class="label"><a name="14136">6</a></span>
 <b>Predeclared Procedure Reference</b></h4>
 <h4 style="margin-left:27px"><span class="label"><a name="14775">6.1</a></span>
@@ -2726,31 +2723,20 @@ Predeclared function procedures</h4>
 <td>
 <br>interprets the raw bytes of x as unsigned integer of the same byte width</td></tr>
 <tr>
-<td>
-<br>VARARG(T,n)</td>
-<td>
-<br>T: target type, n: argument number</td>
-<td>
-<br>value of type T</td>
-<td>
-<br>Returns the value of the nth variable argument. Only valid in a function declared with variable arguments.</td></tr>
-<tr>
-<td>
-<br>VARARG(v,T,n)</td>
-<td>
-<br>v: VA_LIST, T: target type, n: argument number</td>
-<td>
-<br>value of type T</td>
-<td>
-<br>Returns the value of the nth variable argument of the VA_LIST. Can be used in procedures with a VA_LIST formal parameter.</td></tr>
-<tr>
-<td>
-<br>VARARGS()</td>
 <td></td>
-<td>
-<br>VA_LIST</td>
-<td>
-<br>Returns an opaque value of the built-in type VA_LIST which can be passed as argument to another procedure. Only valid in a function declared with variable arguments.</td></tr></table></div>
+<td></td>
+<td></td>
+<td></td></tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td></tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td></tr></table></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14777">6.2</a></span>
 Predeclared proper procedures</h4>
 <div style="margin-left:45px"><span class="label"><a name="15971">6.2.1</a></span>

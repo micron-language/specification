@@ -118,12 +118,14 @@ component ::=
         | expression ['..' expression] // value mapped to record or array by field/element order; '..' only for sets
 
 factor ::= 
-        \LA: 1:ident & 2:'{'\ constructor
+        \LA: 1:'{' | (1:ident & 2:'{') \ constructor
         | literal
-	| variableOrFunctionCall // replaces: designator [ActualParameters]
-	| '(' expression ')' 
-	| ('~'| NOT) factor // negation
-	| '@' designator // address of operator
+        | variableOrFunctionCall // replaces: designator [ActualParameters]
+        | '(' expression ')' 
+        | ('~'| NOT) factor // negation
+        | '@' (
+            \LA: 1:'{' | (1:ident & 2:'{') \ constructor
+            designator )
 
 variableOrFunctionCall ::= designator // designator includes [ ActualParameters ] 
 
@@ -221,7 +223,7 @@ ReturnStatement ::= RETURN
 	[ expression ] // leads to LL(k) ambig with qualident statement; resolve by checking if proc has return type
 
 FormalParameters ::= '(' [ FPSection { \LA: 1:(ident|'CONST') | (2:';' & 3:(ident|'CONST'))\ 
-                                              [';'] FPSection } [ [';'] '..'] ]  ')' [ ':' ReturnType ]
+                                              [';'] FPSection } ]  ')' [ ':' ReturnType ]
 
 ReturnType ::= [POINTER TO | '^'] NamedType
 
