@@ -89,7 +89,7 @@ VariableDeclaration ::= IdentList ':' type
 
 designator ::= qualident {selector}
 
-selector ::= '.' ident | '[' expression ']' | '^'  | '(' [ ExpList ] ')' 
+selector ::= '.' ident | '[' expression ']' | '^' | '(' [ ExpList ] ')' 
 
 ExpList ::= expression { [','] expression }
 

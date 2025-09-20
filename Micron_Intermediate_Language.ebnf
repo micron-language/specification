@@ -32,7 +32,7 @@ comment- ::= '(*' '*)' '//'
 Comment ::=
 
 qualident ::= [\LL:2\ ident '!'] ident    // module : item
-trident ::= [\LL:2\ ident '!' ] ident '.' ident  // qualident '.' ident for field reference
+trident ::= [\LL:2\ ident '!' ] ident '.' ident  // qualident '.' ident for field or method reference
 identdef  ::= ident ['*']
 
 Line ::=  'LINE' unsigned
@@ -98,7 +98,7 @@ DeclarationSequence*  ::= {
 Expression ::= { ExpInstr|Line }
 
 ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI'|'CALLVI') qualident 
-                      | 'CALLVIRT' trident | 'CASTPTR' qualident
+                      | ('CALLINST'|'CALLVIRT') trident | 'CASTPTR' qualident
                       | 'CEQ' | 'CGT' | 'CGT_UN' | 'CLT' | 'CLT_UN' 
                       | 'CONV_I1' | 'CONV_I2' | 'CONV_I4' | 'CONV_I8' | 'CONV_R4' | 'CONV_R8'
                       | 'CONV_U1' | 'CONV_U2' | 'CONV_U4' | 'CONV_U8' 
