@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2025-09-20, work in progress</div>
+2025-09-22, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -3440,9 +3440,9 @@ A module is a collection of declarations of constants, types, variables, and pro
 <div style="margin-left:45px"><span class="label"><a name="15498">2.10.2</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:63px"><span class="label"><a name="15499">2.10.2.1</a></span>
-<pre><code>module     = MODULE [Line] ident [ MetaParams ] [';'] <br />             [ SOURCE string [';'] ]<br />             { ImportList | DeclarationSequence }<br />	 END [Line] ident ['.']</code></pre>
+<pre><code>module     = MODULE [Line] ident [ MetaParams ] [';'] <br />             [ SOURCE string [';'] ]<br />             { ImportList | ImporterList | DeclarationSequence }<br />	 END [Line] ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
-<pre><code>import     = [Line] ident [MetaActuals]<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
+<pre><code>import     = [Line] ident [MetaActuals]<br /><br />ImporterList = IMPORTER ident { [','] ident }<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
 <pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
 <div style="margin-left:45px"><span class="label"><a name="15506">2.10.3</a></span>
@@ -3457,23 +3457,27 @@ A module must not import itself (neither directly nor indirectly).</div>
 Identifiers that are to be exported (i.e. that are to be visible in client modules) must be marked by an export mark in their declaration.</div>
 <div style="margin-left:45px"><span class="label"><a name="20133">2.10.8</a></span>
 The optional SOURCE clause is used to specify the source file from which the present intermediate language module was derived. If there is a SOURCE clause, LINE clauses have to be specified as well.</div>
-<div style="margin-left:45px"><span class="label"><a name="15511">2.10.9</a></span>
+<div style="margin-left:45px"><span class="label"><a name="20689">2.10.9</a></span>
+The optional importer list can be used to explicitly specify the modules importing the present module.</div>
+<div style="margin-left:45px"><span class="label"><a name="20690">2.10.10</a></span><span class="ident">NOTE</span>
+The importer list is used to relax the acyclic module import relations; when e.g. implementing generic module instantiations in the host language can result in a mutual dependency between the instantiating and instantiated module, if the instantiated module depends on types or constants declared in the instantiating module; this dependency can be represented using the importer list.</div>
+<div style="margin-left:45px"><span class="label"><a name="15511">2.10.11</a></span>
 The statement sequence following the symbol BEGIN is executed when the module is loaded, which is done after the imported modules have been loaded. It follows that cyclic import of modules is illegal.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="15587">2.10.10</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15587">2.10.12</a></span>
 <b>Generic Modules</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="15588">2.10.10.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15588">2.10.12.1</a></span>
 Modules can be made generic by adding formal meta parameters. Meta parameters are a list of names which represent types or constants; the latter include procedure names. For each meta parameter there must be either a TYPE or a CONST declaration, of which there is a dedicated version for this purpose. A CONST meta parameter can be constrained with a named type, in which case the actual meta parameter must correspond to this type; the correspondence is established when the generic module is instantiated; the type of the actual meta parameter must be compatible with the constraint type.</div>
-<div style="margin-left:63px"><span class="label"><a name="15589">2.10.10.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15589">2.10.12.2</a></span>
 Generic modules can be instantiated with different sets of meta actuals which enables the design of reusable algorithms and data structures. The instantiation of a generic module occurs when importing it. A generic module can be instantiated more than once in the same module with different actual meta parameters. </div>
-<div style="margin-left:63px"><span class="label"><a name="15590">2.10.10.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15590">2.10.12.3</a></span>
 Syntax of textual representation:</div>
-<div style="margin-left:81px"><span class="label"><a name="15591">2.10.10.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="15591">2.10.12.3.1</a></span>
 <pre><code>MetaParams       = '(' ident { [','] ident } ')'<br />TypeDeclaration = ident<br />ConstDeclaration = ident ':' NamedType<br />MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="15592">2.10.10.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15592">2.10.12.4</a></span>
 Meta parameters can be used within the generic module like normal types or constants. If no type constraint is present, the types and constants can be used wherever no information about the actual type is required; otherwise the type constraint determines the permitted operations. </div>
-<div style="margin-left:63px"><span class="label"><a name="15595">2.10.10.5</a></span><span class="ident">NOTE</span>
+<div style="margin-left:63px"><span class="label"><a name="15595">2.10.12.5</a></span><span class="ident">NOTE</span>
 Generics in MIL are useful to transport generic implementations in symbol files for later instantiations (instead of the source code).</div>
-<div style="margin-left:63px"><span class="label"><a name="19485">2.10.10.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="19485">2.10.12.6</a></span>
 TODO: reconsider MetaParams</div>
 <div style="margin-left:27px"><span class="label"><a name="15596">2.11</a></span>
 TODO: type checking rules, structral compatibility, packing</div>
@@ -3562,9 +3566,9 @@ TODO: type checking rules, structral compatibility, packing</div>
 <div style="margin-left:27px"><span class="label"><a name="15531">3.23</a></span><a href="#15530">&#x21B3;</a>
 <code>StatementSequence = { Statement | ExpInstr | Line }<br />Statement = SimpleStatement | CompoundStatement<br />SimpleStatement = 'free'| 'exit' | 'goto' ident <br />| 'label' ident | 'pop' | 'ret' <br />| ('starg'|'starg_s') (unsigned|ident)<br />| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8' <br />| 'stelem_r4' | 'stelem_r8' | 'stelem_ip' | 'stelem_ipp'<br />| 'stfld' trident | 'stind' qualident<br />| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'<br />| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'<br />| 'stind' qualident | 'strcpy' | 'stvar' qualident<br />CompoundStatement = IfThenElse | Loop | RepeatUntil | Switch | WhileDo</code></div>
 <div style="margin-left:27px"><span class="label"><a name="15528">3.24</a></span><a href="#15499">&#x21B3;</a>
-<pre><code>module     = MODULE [Line] ident [ MetaParams ] [';'] <br />             [ SOURCE string [';'] ]<br />             { ImportList | DeclarationSequence }<br />	 END [Line] ident ['.']</code></pre>
+<pre><code>module     = MODULE [Line] ident [ MetaParams ] [';'] <br />             [ SOURCE string [';'] ]<br />             { ImportList | ImporterList | DeclarationSequence }<br />	 END [Line] ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
-<pre><code>import     = [Line] ident [MetaActuals]<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
+<pre><code>import     = [Line] ident [MetaActuals]<br /><br />ImporterList = IMPORTER ident { [','] ident }<br /><br />DeclarationSequence  = { TYPE { TypeDeclaration [';'] }</code></pre>
 <pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
 <pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="15594">3.25</a></span><a href="#15591">&#x21B3;</a>

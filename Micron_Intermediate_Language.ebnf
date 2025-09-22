@@ -82,9 +82,10 @@ FPSection        ::= [Line] ident { [','] [Line] ident } ':' NamedType
 
 module     ::= 'MODULE' [Line] ident [ MetaParams ] [';'] 
                         [ 'SOURCE' string [';'] ]
-                        { ImportList | DeclarationSequence }
+                        { ImportList | ImporterList | DeclarationSequence }
 	                'END' [Line] ident ['.']
 	                
+ImporterList ::= 'IMPORTER' ident { [','] ident }
 ImportList ::= 'IMPORT' import { [','] import } [';']
 import     ::=  [Line] ident [instantiation]
 instantiation ::= ':=' ident MetaActuals
