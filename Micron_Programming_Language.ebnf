@@ -51,6 +51,9 @@ ConstExpression ::= expression
 TypeDeclaration ::= identdef 	'=' type
 
 type ::= NamedType | ArrayType | RecordType | PointerType | ProcedureType | enumeration
+#ifdef LEVEL1
+                | InterfaceType
+#endif
 #ifdef LEVEL3
                 | ObjectType
 #endif
@@ -180,11 +183,16 @@ ExitStatement ::= EXIT
 procedure ::= PROCEDURE | PROC
 
 ProcedureType ::= procedure 
-#ifdef LEVEL3
+#ifdef LEVEL1
                                  [\LL:2\'(' ( POINTER | '^' ) ')']  // type-bound procedure type, includes an object pointer
 #endif                                 
                                  [FormalParameters] 
-	
+
+#ifdef LEVEL1
+InterfaceType ::= INTERFACE {InterfaceProc} END
+InterfaceProc ::= procedure ident [FormalParameters] [';']
+#endif
+
 ProcedureDeclaration ::= 
 	\LA: 2:'^'\ ForwardDecl
 	|  ProcedureHeading ( [INLINE | INVAR] [ ';' ] ProcedureBody | \LL:2\ [ ';' ] EXTERN [ident [string]] ) // ident = 'C'
@@ -247,7 +255,7 @@ MetaParams ::= '(' MetaSection { [';'] MetaSection } ')'
 
 MetaSection ::= [ TYPE | CONST ] ident { \LL:2\ [','] ident } [ ':' NamedType ]
 
-reserved_for_future_extensions- ::= 'AUTOPTR' OBJECT IS FINALLY INTERFACE
+reserved_for_future_extensions- ::= 'AUTOPTR' 
 
 /// Pragmas
 %module ::= 'Micron'

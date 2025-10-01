@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2025-09-06, work in progress</div>
+2025-10-01, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -139,8 +139,10 @@ This specification was written in CrossLine (see <a href="https://github.com/roc
 <a href="#18516">2.11.13 Type-bound procedures</a></div>
 <div style="margin-left:81px"><span class="label"><a name="18519">1.6.2.11.3</a></span>
 <a href="#18517">2.11.14 Type-bound procedure types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14748">1.6.2.11.4</a></span>
-<a href="#14493">2.11.15 Predeclared procedures</a></div>
+<div style="margin-left:81px"><span class="label"><a name="20772">1.6.2.11.4</a></span>
+<a href="#20755">2.11.15 Interface types</a></div>
+<div style="margin-left:81px"><span class="label"><a name="14748">1.6.2.11.5</a></span>
+<a href="#14493">2.11.16 Predeclared procedures</a></div>
 <div style="margin-left:63px"><span class="label"><a name="14749">1.6.2.12</a></span>
 <a href="#14498">2.12 Modules</a></div>
 <div style="margin-left:63px"><span class="label"><a name="14750">1.6.2.13</a></span>
@@ -190,37 +192,41 @@ In contrast to Oberon+, Micron has no garbage collector in the default language 
 <div style="margin-left:63px"><span class="label"><a name="14228">2.1.7.2</a></span>
 Record embedding (similar to Go) using the INLINE keyword is supported.</div>
 <div style="margin-left:63px"><span class="label"><a name="18544">2.1.7.3</a></span>
-Type extension (inheritance) and type-bound procedures are optional and only available for object types (not record types).</div>
-<div style="margin-left:63px"><span class="label"><a name="14229">2.1.7.4</a></span>
+Type extension (inheritance) is optional and only available for object types (not record types).</div>
+<div style="margin-left:63px"><span class="label"><a name="20767">2.1.7.4</a></span>
+Type-bound procedures are supported for record and object types, but only the latter support dynamic dispatch.</div>
+<div style="margin-left:63px"><span class="label"><a name="14229">2.1.7.5</a></span>
 A pointer can also point to basic types, enums and to objects on the stack, or to record fields or array elements.</div>
-<div style="margin-left:63px"><span class="label"><a name="14230">2.1.7.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14230">2.1.7.6</a></span>
 The address of an designated value can be taken with the @ operator and assigned to a pointer.</div>
-<div style="margin-left:63px"><span class="label"><a name="14231">2.1.7.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14231">2.1.7.7</a></span>
 INC and DEC can also be applied to pointers. The difference of two pointers can be calculated using ORD().</div>
-<div style="margin-left:63px"><span class="label"><a name="14232">2.1.7.7</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14232">2.1.7.8</a></span>
 There are no VAR parameters; instead a pointer to the variable has to be passed as a parameter.</div>
-<div style="margin-left:63px"><span class="label"><a name="14233">2.1.7.8</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14233">2.1.7.9</a></span>
 No DEFINITION modules; separate compilation fully depends on compiler-specific symbol files.</div>
-<div style="margin-left:63px"><span class="label"><a name="14234">2.1.7.9</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14234">2.1.7.10</a></span>
 No WCHAR type.</div>
-<div style="margin-left:63px"><span class="label"><a name="14235">2.1.7.10</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14235">2.1.7.11</a></span>
 Predeclared signed and unsigned types, INT8, UINT8, etc.; SIGNED() and UNSIGNED() cast built-in procedures.</div>
-<div style="margin-left:63px"><span class="label"><a name="14481">2.1.7.11</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14481">2.1.7.12</a></span>
 Integer literals are unsigned, and there are different suffix types.</div>
-<div style="margin-left:63px"><span class="label"><a name="14236">2.1.7.12</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14236">2.1.7.13</a></span>
 Only one-dimensional arrays (but array x of array y of T is still possible).</div>
-<div style="margin-left:63px"><span class="label"><a name="14237">2.1.7.13</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14237">2.1.7.14</a></span>
 There is a goto statement (mostly to easy porting existing C code).</div>
-<div style="margin-left:63px"><span class="label"><a name="14353">2.1.7.14</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14353">2.1.7.15</a></span>
 String concatenation only allowed for string and character literals.</div>
-<div style="margin-left:63px"><span class="label"><a name="15417">2.1.7.15</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15417">2.1.7.16</a></span>
 The WHILE statement has no ELSIF part in Micron.</div>
-<div style="margin-left:63px"><span class="label"><a name="15600">2.1.7.16</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15600">2.1.7.17</a></span>
 Non-local access is not supported. Nested procedures only have access to the objects declared on module level, but not to declarations in the outer (nesting) procedures.</div>
-<div style="margin-left:63px"><span class="label"><a name="15623">2.1.7.17</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15623">2.1.7.18</a></span>
 The initial values of module and local variables are undefined in Micron.</div>
-<div style="margin-left:63px"><span class="label"><a name="15630">2.1.7.18</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15630">2.1.7.19</a></span>
 AND and NOT are supported in addition to &amp; and ~.</div>
+<div style="margin-left:63px"><span class="label"><a name="20766">2.1.7.20</a></span>
+Interface types similar to Go.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14127">2.2</a></span>
 <a href=""><b>S</b></a><b>yntax</b></h4>
 <div style="margin-left:45px"><span class="label"><a name="14128">2.2.1</a></span>
@@ -389,106 +395,107 @@ Operators and delimiters are the special characters, or character pairs listed b
 Reserved Words</h4>
 <div style="margin-left:63px"><span class="label"><a name="14202">2.3.9.1</a></span>
 The reserved words consist of either all capital or all lower case letters and cannot be used as identifiers. All words listed below are reserved (only capital letter versions shown).</div>
-<div style="margin-left:63px"><span class="label"><a name="18666">2.3.9.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20753">2.3.9.2</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
-AND</td>
+AND </td>
 <td>
-<br>ARRAY</td>
+<br>ARRAY </td>
 <td>
-<br>BEGIN</td>
+<br>BEGIN </td>
 <td>
-<br>BITS</td>
+<br>BITS </td>
 <td>
-<br>BY</td></tr>
+<br>BY </td></tr>
 <tr>
 <td>
-<br>CASE</td>
+<br>CASE </td>
 <td>
-<br>CONST</td>
+<br>CONST </td>
 <td>
-<br>DIV</td>
+<br>DIV </td>
 <td>
-<br>DO</td>
+<br>DO </td>
 <td>
-<br>ELSE</td></tr>
+<br>ELSE </td></tr>
 <tr>
 <td>
-<br>ELSIF</td>
+<br>ELSIF </td>
 <td>
-<br>END</td>
+<br>END </td>
 <td>
-<br>EXIT</td>
+<br>EXIT </td>
 <td>
-<br>EXTERN</td>
+<br>EXTERN </td>
 <td>
-<br>FALSE</td></tr>
+<br>FALSE </td></tr>
 <tr>
 <td>
-<br>FINALLY</td>
+<br>FINALLY </td>
 <td>
-<br>FOR</td>
+<br>FOR </td>
 <td>
-<br>IF</td>
+<br>IF </td>
 <td>
-<br>IMPORT</td>
+<br>IMPORT </td>
 <td>
-<br>IN</td></tr>
+<br>IN </td></tr>
 <tr>
 <td>
-<br>INLINE</td>
+<br>INLINE </td>
 <td>
-<br>INVAR</td>
+<br>INTERFACE </td>
 <td>
-<br>IS</td>
+<br>INVAR </td>
 <td>
-<br>LOOP</td>
+<br>IS </td>
 <td>
-<br>MOD</td></tr>
+<br>LOOP </td></tr>
 <tr>
 <td>
-<br>MODULE</td>
+<br>MOD </td>
 <td>
-<br>NIL</td>
+<br>MODULE </td>
 <td>
-<br>NOT</td>
+<br>NIL </td>
 <td>
-<br>OBJECT</td>
+<br>NOT </td>
 <td>
-<br>OF</td></tr>
+<br>OBJECT </td></tr>
 <tr>
 <td>
-<br>OR</td>
+<br>OF </td>
 <td>
-<br>POINTER</td>
+<br>OR </td>
 <td>
-<br>PROC</td>
+<br>POINTER </td>
 <td>
-<br>PROCEDURE</td>
+<br>PROC </td>
 <td>
-<br>RECORD</td></tr>
+<br>PROCEDURE </td></tr>
 <tr>
 <td>
-<br>REPEAT</td>
+<br>RECORD </td>
 <td>
-<br>RETURN</td>
+<br>REPEAT </td>
 <td>
-<br>THEN</td>
+<br>RETURN </td>
 <td>
-<br>TO</td>
+<br>THEN </td>
 <td>
-<br>TRUE</td></tr>
+<br>TO </td></tr>
 <tr>
 <td>
-<br>TYPE</td>
+<br>TRUE </td>
 <td>
-<br>UNTIL</td>
+<br>TYPE </td>
 <td>
-<br>VAR</td>
+<br>UNTIL </td>
 <td>
-<br>WHILE</td>
-<td></td></tr></table></div>
+<br>VAR </td>
+<td>
+<br>WHILE </td></tr></table></div>
 <h4 style="margin-left:45px"><span class="label"><a name="14204">2.3.10</a></span>
 Comments</h4>
 <div style="margin-left:63px"><span class="label"><a name="14205">2.3.10.1</a></span>
@@ -508,7 +515,9 @@ A type <i>T</i> of the form POINTER TO <i>T1</i> (see <a href="#14278">2.6.8 Poi
 <div style="margin-left:63px"><span class="label"><a name="14166">2.4.2.4</a></span>
 Identifiers denoting record fields (see <a href="#14270">2.6.6 Record types</a>) are valid in record designators only;</div>
 <div style="margin-left:63px"><span class="label"><a name="18545">2.4.2.5</a></span>
-Identifiers denoting object fields (see <a href="#18500">2.6.7 Object types</a>) are valid in object designators only. </div>
+Identifiers denoting object fields (see <a href="#18500">2.6.7 Object types</a>) are valid in object designators only;</div>
+<div style="margin-left:63px"><span class="label"><a name="20771">2.4.2.6</a></span>
+Identifiers denoting interface procedures (see <a href="#20755">2.11.15 Interface types</a>) are valid in interface designators only.</div>
 <div style="margin-left:45px"><span class="label"><a name="14167">2.4.3</a></span>
 An identifier declared in a module block may be followed by an export mark (&quot; * &quot; or &quot; - &quot;) in its declaration to indicate that it is exported. An identifier <i>x</i> exported by a module <i>M</i> may be used in other modules, if they import <i>M</i> (see <a href="#14498">2.12 Modules</a>). The identifier is then denoted as <i>M.x</i> in these modules and is called a <i>qualified identifier</i>. Identifiers marked with &quot; - &quot; in their declaration are <i>read-only</i> in importing modules. </div>
 <div style="margin-left:45px"><span class="label"><a name="14206">2.4.4</a></span>
@@ -518,143 +527,137 @@ Syntax:</div>
 <pre><code>identdef  = ident ['*' | '-']</code></pre></div>
 <div style="margin-left:45px"><span class="label"><a name="14208">2.4.5</a></span>
 The following identifiers are predeclared; their meaning is defined in the indicated sections; either all capital or all lower case identifiers are supported (only capital versions shown).</div>
-<div style="margin-left:45px"><span class="label"><a name="15953">2.4.6</a></span>
+<div style="margin-left:45px"><span class="label"><a name="20754">2.4.6</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 >
 <tr>
 <td>
-ABS</td>
+ABS </td>
 <td>
-<br>ANY</td>
+<br>ANY </td>
 <td>
-<br>ASSERT</td>
+<br>ASSERT </td>
 <td>
-<br>BITAND</td>
+<br>BITAND </td>
 <td>
-<br>BITASR</td></tr>
+<br>BITASR </td></tr>
 <tr>
 <td>
-<br>BITNOT</td>
+<br>BITNOT </td>
 <td>
-<br>BITOR</td>
+<br>BITOR </td>
 <td>
-<br>BITS</td>
+<br>BITS </td>
 <td>
-<br>BITSHL</td>
+<br>BITSHL </td>
 <td>
-<br>BITSHR</td></tr>
+<br>BITSHR </td></tr>
 <tr>
 <td>
-<br>BITXOR</td>
+<br>BITXOR </td>
 <td>
-<br>BOOLEAN</td>
+<br>BOOLEAN </td>
 <td>
-<br>BYTE</td>
+<br>BYTE </td>
 <td>
-<br>CAP</td>
+<br>CAP </td>
 <td>
-<br>CAST</td></tr>
+<br>CAST </td></tr>
 <tr>
 <td>
-<br>CHAR</td>
+<br>CHAR </td>
 <td>
-<br>CHR</td>
+<br>CHR </td>
 <td>
-<br>DEC</td>
+<br>DEC </td>
 <td>
-<br>DEFAULT</td>
+<br>DEFAULT </td>
 <td>
-<br>DISPOSE</td></tr>
+<br>DISPOSE </td></tr>
 <tr>
 <td>
-<br>EXCL</td>
+<br>EXCL </td>
 <td>
-<br>FLT</td>
+<br>FLT </td>
 <td>
-<br>FLT32</td>
+<br>FLT32 </td>
 <td>
-<br>FLT64</td>
+<br>FLT64 </td>
 <td>
-<br>FLOOR</td></tr>
+<br>FLOOR </td></tr>
 <tr>
 <td>
-<br>HALT</td>
+<br>HALT </td>
 <td>
-<br>INC</td>
+<br>INC </td>
 <td>
-<br>INCL</td>
+<br>INCL </td>
 <td>
-<br>INT16</td>
+<br>INT16 </td>
 <td>
-<br>INT32</td></tr>
+<br>INT32 </td></tr>
 <tr>
 <td>
-<br>INT64</td>
+<br>INT64 </td>
 <td>
-<br>INT8</td>
+<br>INT8 </td>
 <td>
-<br>INTEGER</td>
+<br>INTEGER </td>
 <td>
-<br>LEN</td>
+<br>LEN </td>
 <td>
-<br>LONG</td></tr>
+<br>LONG </td></tr>
 <tr>
 <td>
-<br>LONGINT</td>
+<br>LONGINT </td>
 <td>
-<br>LONGREAL</td>
+<br>LONGREAL </td>
 <td>
-<br>MAX</td>
+<br>MAX </td>
 <td>
-<br>MIN</td>
+<br>MIN </td>
 <td>
-<br>NEW</td></tr>
+<br>NEW </td></tr>
 <tr>
 <td>
-<br>ODD</td>
+<br>ODD </td>
 <td>
-<br>ORD</td>
+<br>ORD </td>
 <td>
-<br>PCALL</td>
+<br>PCALL </td>
 <td>
-<br>PRINT</td>
+<br>PRINT </td>
 <td>
-<br>PRINTLN</td></tr>
+<br>PRINTLN </td></tr>
 <tr>
 <td>
-<br>RAISE</td>
+<br>RAISE </td>
 <td>
-<br>REAL</td>
+<br>REAL </td>
 <td>
-<br>SET</td>
+<br>SET </td>
 <td>
-<br>SHORT</td>
+<br>SHORT </td>
 <td>
-<br>SHORTINT</td></tr>
+<br>SHORTINT </td></tr>
 <tr>
 <td>
-<br>SIGNED</td>
+<br>SIGNED </td>
 <td>
-<br>SIZE</td>
+<br>SIZE </td>
 <td>
-<br>STRLEN</td>
+<br>STRLEN </td>
 <td></td>
 <td>
-<br>UINT16</td></tr>
+<br>UINT16 </td></tr>
 <tr>
 <td>
-<br>UINT32</td>
+<br>UINT32 </td>
 <td>
-<br>UINT64</td>
+<br>UINT64 </td>
 <td>
-<br>UINT8</td>
+<br>UINT8 </td>
 <td>
-<br>UNSIGNED</td>
-<td></td></tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<br>UNSIGNED </td>
 <td></td></tr></table></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14210">2.5</a></span>
 Constant declarations</h4>
@@ -683,7 +686,7 @@ A data type determines the set of values which variables of that type may assume
 Syntax:</div>
 <div style="margin-left:63px"><span class="label"><a name="14221">2.6.2.1</a></span>
 <pre><code>TypeDeclaration = identdef '=' type</code></pre>
-<pre><code>type            = NamedType | ArrayType | RecordType | PointerType | ProcedureType <br />                 | enumeration | ObjectType</code></pre>
+<pre><code>type            = NamedType | ArrayType | RecordType | PointerType | ProcedureType <br />                 | enumeration | ObjectType | InterfaceType</code></pre>
 <pre><code>NamedType       = qualident</code></pre></div>
 <div style="margin-left:45px"><span class="label"><a name="14222">2.6.3</a></span>
 Examples:</div>
@@ -1639,23 +1642,23 @@ Note that both, FINALLY sections and also exceptions are an extended feature of 
 <h4 style="margin-left:45px"><span class="label"><a name="18516">2.11.13</a></span>
 Type-bound procedures</h4>
 <div style="margin-left:63px"><span class="label"><a name="18520">2.11.13.1</a></span>
-Procedures may be associated with an object type declared in the same scope. The procedures are said to be bound to the object type. The binding is expressed by the receiver syntax in the heading of a procedure declaration. The receiver consists of a type name and the optional receiver parameter name. The type name can either reference the object type T or a pointer to T. The procedure is bound to the type T and is considered local to it. If the optional receiver parameter name is left out, the compiler automatically creates a hidden parameter which can be accessed from within the procedure body by the name &quot;SELF&quot; or &quot;self&quot;.</div>
+Procedures may be associated with a record or object type declared in the same scope. The procedures are said to be bound to the type. The binding is expressed by the receiver syntax in the heading of a procedure declaration. The receiver consists of a type name and the optional receiver parameter name. The type name can either reference the record or object type T, or a pointer to T. The procedure is bound to the type T and is considered local to it. If the optional receiver parameter name is left out, the compiler automatically creates a hidden parameter which can be accessed from within the procedure body by the name &quot;SELF&quot; or &quot;self&quot;.</div>
 <div style="margin-left:63px"><span class="label"><a name="18589">2.11.13.2</a></span><span class="ident">NOTE</span>
-Regardless of whether the receiver is an object or pointer to object type, the receiver parameter is always a pointer to object type. </div>
+Regardless of whether the receiver is an object, record or pointer type, the receiver parameter is always a pointer to record or object type. </div>
 <div style="margin-left:63px"><span class="label"><a name="18536">2.11.13.3</a></span>
-Type-bound procedures cannot be INLINE, nor INVAR, nor can they have a variable number of parameters.</div>
+Type-bound procedures cannot be INLINE, nor INVAR.</div>
 <div style="margin-left:63px"><span class="label"><a name="18521">2.11.13.4</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="18522">2.11.13.4.1</a></span>
 <code>ProcedureHeading = ( PROCEDURE | PROC ) [Receiver] identdef [ FormalParameters ] <br />ForwardDeclaration = ( PROCEDURE | PROC ) '^' [Receiver] identdef [ FormalParameters ] <br />Receiver = '(' ReceiverParam ':' ReceiverType ')' | ReceiverType '.'<br />ReceiverParam = ident<br />ReceiverType = ident</code></div>
 <div style="margin-left:63px"><span class="label"><a name="18523">2.11.13.5</a></span>
-If a procedure P is bound to a type T0, it is implicitly also bound to any type T1 which is an extension of T0. However, a procedure P' (with the same name as P) may be explicitly bound to T1 in which case it overrides the binding of P. P' is considered a redefinition of P for T1. The formal parameters of P and P' must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). If P and T1 are exported (see <a href="#14160">2.4 Declarations and scope rules</a>), P' must be exported too.</div>
+If a procedure P is bound to an object type T0, it is implicitly also bound to any object type T1 which is an extension of T0. However, a procedure P' (with the same name as P) may be explicitly bound to T1 in which case it overrides the binding of P. P' is considered a redefinition of P for T1. The formal parameters of P and P' must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). If P and T1 are exported (see <a href="#14160">2.4 Declarations and scope rules</a>), P' must be exported too.</div>
 <div style="margin-left:63px"><span class="label"><a name="18524">2.11.13.6</a></span><span class="ident">NOTE</span>
 The name of a type-bound procedure must be unique within the type to which it is bound, not within the scope in which it is declared.</div>
 <div style="margin-left:63px"><span class="label"><a name="18525">2.11.13.7</a></span>
 If <code>v</code> is a designator and <code>P</code> is a type-bound procedure, then <code>v.P</code> denotes that procedure <code>P</code> which is bound to the dynamic type of <code>v</code>. Note, that this may be a different procedure than the one bound to the static type of <code>v</code>. Depending on wheter <code>v</code> designates a pointer or a value, <code>v</code> or <code>@v</code> is passed to P’s receiver parameter.</div>
 <div style="margin-left:63px"><span class="label"><a name="19797">2.11.13.8</a></span><span class="ident">NOTE</span>
-As in Object Pascal, you can direcly call <code>v.P</code> in case v is e.g. a stack-allocated object, instead of <code>(@v).P</code>. The compiler takes care that a pointer is passed to the receiver parameter.</div>
+As in Object Pascal or Go, you can direcly call <code>v.P</code> in case v is e.g. a stack-allocated object, instead of <code>(@v).P</code>. The compiler takes care that a pointer is passed to the receiver parameter.</div>
 <div style="margin-left:63px"><span class="label"><a name="18526">2.11.13.9</a></span>
 If <code>r</code> is the receiver parameter of P declared with type T, <code>r.P^</code> denotes the (redefined, sometimes calles <i>super</i>) procedure P bound to a base type of T.</div>
 <div style="margin-left:63px"><span class="label"><a name="18527">2.11.13.10</a></span>
@@ -1685,22 +1688,41 @@ Examples:</div>
 <pre><code>  self.Insert^(node)  // calls the Insert procedure bound to Tree</code></pre>
 <pre><code>end Insert</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="18529">2.11.13.11</a></span><span class="ident">NOTE</span>
-Object types and type-bound procedures are an extended feature of the language and not available in all language levels (see <a href="#18479">7 Language levels</a>).</div>
+Object types and type-bound procedures are an extended feature of the language and not available in all language levels (see <a href="#18479">7 Language levels</a>). Record types also support type-bound procedures, but in contrast to object types, these procedures are not virtual (since records don't support inheritance). </div>
 <h4 style="margin-left:45px"><span class="label"><a name="18517">2.11.14</a></span>
 Type-bound procedure types</h4>
 <div style="margin-left:63px"><span class="label"><a name="18531">2.11.14.1</a></span>
-Variables of a type-bound procedure type T have a type-bound procedure or NIL as value. To assign a type-bound procedure P to a variable of a type-bound procedure type T, the right side of the assignment must be a designator of the form <code>v^.P</code> or <code>v.P</code>, where <code>v</code> is a pointer to object and <code>P</code> is a procedure bound to this object. Note, that the dynamic type of <code>v</code> determines which procedure is assigned; this may be a different procedure than the one bound to the static type of <code>v</code>. The formal parameter lists and result types (see <a href="#14458">2.11.11 Formal parameters</a>) of P and T must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). The same rules apply when passing a type-bound procedure to a formal argument of a type-bound procedure type.</div>
+Variables of a type-bound procedure type T have a type-bound procedure or NIL as value. To assign a type-bound procedure P to a variable of a type-bound procedure type T, the right side of the assignment must be a designator of the form <code>v^.P</code> or <code>v.P</code>, where <code>v</code> is a pointer to record or object, and <code>P</code> is a procedure bound to this record or object. Note, that in case of procedures bound to an object type, the dynamic type of <code>v</code> determines which procedure is assigned; this may be a different procedure than the one bound to the static type of <code>v</code>. The formal parameter lists and result types (see <a href="#14458">2.11.11 Formal parameters</a>) of P and T must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). The same rules apply when passing a type-bound procedure to a formal argument of a type-bound procedure type.</div>
 <div style="margin-left:63px"><span class="label"><a name="18532">2.11.14.2</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="18533">2.11.14.2.1</a></span>
-<code>ProcedureType = PROCEDURE '(' ( POINTER | '^' ) ')' [FormalParameters]</code></div>
+<code>ProcedureType = ( PROCEDURE | PROC ) '(' ( POINTER | '^' ) ')' [FormalParameters]</code></div>
 <div style="margin-left:63px"><span class="label"><a name="18535">2.11.14.3</a></span><span class="ident">NOTE</span>
-Type-bound procedures and procedure types are an extended feature of the language and not available in all language levels (see <a href="#18479">7 Language levels</a>).</div>
-<h4 style="margin-left:45px"><span class="label"><a name="14493">2.11.15</a></span>
+Type-bound procedure types support both, procedures bound to records and to objects, but the latter are an extended feature of the language and not available in all language levels (see <a href="#18479">7 Language levels</a>).</div>
+<h4 style="margin-left:45px"><span class="label"><a name="20755">2.11.15</a></span>
+Interface types</h4>
+<div style="margin-left:63px"><span class="label"><a name="20756">2.11.15.1</a></span>
+An interface type specifies a set of type-bound procedures by their signatures (see <a href="#14582">3.14 Matching formal parameter lists</a>). An interface type defines a contract without implementation. </div>
+<div style="margin-left:63px"><span class="label"><a name="20758">2.11.15.2</a></span>
+A variable of interface type may hold NIL or a pointer to any record or object type whose type-bound procedures satisfy the interface. Satisfaction is determined structurally: a pointer type satisfies an interface if it provides type-bound procedures with signatures that are parameter-compatible with all procedures declared in the interface. Both record types and object types may satisfy interfaces through their type-bound procedures. No explicit declaration of intent to implement an interface is required.</div>
+<div style="margin-left:63px"><span class="label"><a name="20770">2.11.15.3</a></span>
+If an interface type is exported, all procedure identifiers of the interface are visible outside the declaring module. Satisfaction determination considers whether the procedures bound to the candidate record or object type are exported (see <a href="#14160">2.4 Declarations and scope rules</a>).</div>
+<div style="margin-left:63px"><span class="label"><a name="20759">2.11.15.4</a></span>
+Assignment of a pointer value to an interface variable is valid if the pointed-to type satisfies the interface. The special value NIL is assignable to any interface variable.</div>
+<div style="margin-left:63px"><span class="label"><a name="20763">2.11.15.5</a></span>
+In case of an object type, the dynamic type of the pointer determines the set of procedures; this may be a different set than the one bound to the static object type of the pointer.</div>
+<div style="margin-left:63px"><span class="label"><a name="20764">2.11.15.6</a></span>
+Syntax:</div>
+<div style="margin-left:81px"><span class="label"><a name="20765">2.11.15.6.1</a></span>
+<code>InterfaceType = INTERFACE {InterfaceProc} END</code>
+<br><code>InterfaceProc = ( PROCEDURE | PROC ) ident [FormalParameters] [';']</code></div>
+<div style="margin-left:63px"><span class="label"><a name="20760">2.11.15.7</a></span><span class="ident">NOTE</span>
+Micron interfaces are adopted from Go and follow similar semantics. </div>
+<h4 style="margin-left:45px"><span class="label"><a name="14493">2.11.16</a></span>
 Predeclared procedures</h4>
-<div style="margin-left:63px"><span class="label"><a name="14495">2.11.15.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14495">2.11.16.1</a></span>
 Predeclared procedures are provided by the compiler and accessible without extra imports. Some are generic procedures, i.e. they apply to several types of operands.</div>
-<div style="margin-left:63px"><span class="label"><a name="14494">2.11.15.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14494">2.11.16.2</a></span>
 See <a href="#14136">6 Predeclared Procedure Reference</a> for the list of predeclared procedures each Micron compiler has to provide.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14498">2.12</a></span>
 Modules</h4>
@@ -1730,7 +1752,7 @@ The statement sequence following the symbol BEGIN is executed when the module is
 <h4 style="margin-left:27px"><span class="label"><a name="14508">2.13</a></span>
 Generics</h4>
 <div style="margin-left:45px"><span class="label"><a name="14509">2.13.1</a></span>
-Micron, as Oberon+, supports generic programming. Modules can be made generic by adding formal meta parameters. Meta parameters represent types or constants; the latter include procedures. Meta parameters default to types, but can be explicitly prefixed with the TYPE reserved word; the CONST prefix designates a constant meta parameter. A CONST meta parameter can be constrained with a named type using a special form of the ConstDeclaration, in which case the actual meta parameter must correspond to this type; the correspondence is established when the generic module is instantiated; the type of the actual meta parameter must be assignment compatible with the constraint type (see <a href="#14532">3 Definition of terms</a>). The special form of the ConstDeclaration may only used for a CONST meta parameter with the same ident.</div>
+Micron supports generic programming. Modules can be made generic by adding formal meta parameters. Meta parameters represent types or constants; the latter include procedures. Meta parameters default to types, but can be explicitly prefixed with the TYPE reserved word; the CONST prefix designates a constant meta parameter. A CONST meta parameter can be constrained with a named type using a special form of the ConstDeclaration, in which case the actual meta parameter must correspond to this type; the correspondence is established when the generic module is instantiated; the type of the actual meta parameter must be assignment compatible with the constraint type (see <a href="#14532">3 Definition of terms</a>). The special form of the ConstDeclaration may only be used for a CONST meta parameter with the same ident.</div>
 <div style="margin-left:45px"><span class="label"><a name="14510">2.13.2</a></span>
 Generic modules can be instantiated with different sets of meta actuals which enables the design of reusable algorithms and data structures. The instantiation of a generic module occurs when importing it. A generic module can be instantiated more than once in the same module with different actual meta parameters. See also <a href="#14498">2.12 Modules</a>.</div>
 <div style="margin-left:45px"><span class="label"><a name="14511">2.13.3</a></span>
@@ -1885,9 +1907,11 @@ T<sub>v</sub> is an enumeration type and <code>e</code> is a valid element of th
 <div style="margin-left:63px"><span class="label"><a name="14567">3.11.1.12</a></span>
 T<sub>v</sub> is a non-open array of CHAR, T<sub>e</sub> is a string literal, or an open array of CHAR;</div>
 <div style="margin-left:63px"><span class="label"><a name="14568">3.11.1.13</a></span>
-T<sub>v</sub> is a procedure type and <code>e</code> is the name of a procedure whose formal parameters <i>match</i> those of T<sub>v</sub>.</div>
+T<sub>v</sub> is a procedure type and <code>e</code> is the name of a procedure whose formal parameters <i>match</i> those of T<sub>v</sub>;</div>
 <div style="margin-left:63px"><span class="label"><a name="16003">3.11.1.14</a></span>
-T<sub>v</sub> is a signed integer and <code>e</code> is an unsigned integer constant, and T<sub>v</sub> <i>includes</i> the smallest integer type necessary to represent <code>e</code>.</div>
+T<sub>v</sub> is a signed integer and <code>e</code> is an unsigned integer constant, and T<sub>v</sub> <i>includes</i> the smallest integer type necessary to represent <code>e</code>;</div>
+<div style="margin-left:63px"><span class="label"><a name="20768">3.11.1.15</a></span>
+T<sub>v</sub> is an interface type and T<sub>e</sub> is a pointer to a record or object type, and their bound procedures <i>satisfy</i> (see <a href="#20755">2.11.15 Interface types</a>) the interface type.</div>
 <div style="margin-left:45px"><span class="label"><a name="16053">3.11.2</a></span><span class="ident">NOTE</span>
 Also remember <a href="#16054">2.3.7.2</a>.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14569">3.12</a></span>
@@ -2076,9 +2100,7 @@ they have the same number of parameters, and</div>
 <div style="margin-left:63px"><span class="label"><a name="14586">3.14.1.2</a></span>
 parameters at corresponding positions have <i>equal types</i>, and</div>
 <div style="margin-left:63px"><span class="label"><a name="16035">3.14.1.3</a></span>
-parameters at corresponding positions are both either CONST or not, and</div>
-<div style="margin-left:63px"><span class="label"><a name="14587">3.14.1.4</a></span>
-both parameter lists either end with an ellipsis or not</div>
+parameters at corresponding positions are both either CONST.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14588">3.15</a></span>
 Matching result types</h4>
 <div style="margin-left:45px"><span class="label"><a name="14589">3.15.1</a></span>
@@ -2108,7 +2130,7 @@ The result types of two procedures match if they are either of <i>equal type</i>
 <pre><code>ConstExpression  = expression</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14599">4.7</a></span><a href="#14221">&#x21B3;</a>
 <pre><code>TypeDeclaration = identdef '=' type</code></pre>
-<pre><code>type            = NamedType | ArrayType | RecordType | PointerType | ProcedureType <br />                 | enumeration | ObjectType</code></pre>
+<pre><code>type            = NamedType | ArrayType | RecordType | PointerType | ProcedureType <br />                 | enumeration | ObjectType | InterfaceType</code></pre>
 <pre><code>NamedType       = qualident</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14600">4.8</a></span><a href="#14262">&#x21B3;</a>
 <pre><code>ArrayType  = ARRAY [ length ] OF type | '[' [ length ] ']' type</code></pre>
@@ -2214,22 +2236,25 @@ The result types of two procedures match if they are either of <i>equal type</i>
 <div style="margin-left:27px"><span class="label"><a name="18530">4.35</a></span><a href="#18522">&#x21B3;</a>
 <code>ProcedureHeading = ( PROCEDURE | PROC ) [Receiver] identdef [ FormalParameters ] <br />ForwardDeclaration = ( PROCEDURE | PROC ) '^' [Receiver] identdef [ FormalParameters ] <br />Receiver = '(' ReceiverParam ':' ReceiverType ')' | ReceiverType '.'<br />ReceiverParam = ident<br />ReceiverType = ident</code></div>
 <div style="margin-left:27px"><span class="label"><a name="18534">4.36</a></span><a href="#18533">&#x21B3;</a>
-<code>ProcedureType = PROCEDURE '(' ( POINTER | '^' ) ')' [FormalParameters]</code></div>
-<div style="margin-left:27px"><span class="label"><a name="14624">4.37</a></span><a href="#14501">&#x21B3;</a>
+<code>ProcedureType = ( PROCEDURE | PROC ) '(' ( POINTER | '^' ) ')' [FormalParameters]</code></div>
+<div style="margin-left:27px"><span class="label"><a name="20769">4.37</a></span><a href="#20765">&#x21B3;</a>
+<code>InterfaceType = INTERFACE {InterfaceProc} END</code>
+<br><code>InterfaceProc = ( PROCEDURE | PROC ) ident [FormalParameters] [';']</code></div>
+<div style="margin-left:27px"><span class="label"><a name="14624">4.38</a></span><a href="#14501">&#x21B3;</a>
 <pre><code>module     = MODULE ident [ MetaParams ] [';']</code></pre>
 <pre><code>             { ImportList | DeclarationSequence }</code></pre>
 <pre><code>	 [ BEGIN StatementSequence [FINALLY StatementSequence] ] <br />             END ident ['.']</code></pre>
 <pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
 <pre><code>import     = [ ident ':=' ] ImportPath ident [ MetaActuals ]</code></pre>
 <pre><code>ImportPath = { ident '.' }</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14625">4.38</a></span><a href="#14512">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14625">4.39</a></span><a href="#14512">&#x21B3;</a>
 <pre><code>MetaParams       = '(' MetaSection { [';'] MetaSection } ')'</code></pre>
 <pre><code>MetaSection      = ['CONST' | 'TYPE'] ident { [','] ident } [ ':' NamedType ]<br />ConstDeclaration = identdef ':' NamedType</code></pre>
 <pre><code>TypeConstraint   = NamedType</code></pre>
 <pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14626">4.39</a></span><a href="#14519">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14626">4.40</a></span><a href="#14519">&#x21B3;</a>
 <pre><code>directive = '&lt;*' ident ( '+' | '-' ) '*&gt;'</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14627">4.40</a></span><a href="#14528">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14627">4.41</a></span><a href="#14528">&#x21B3;</a>
 <pre><code>directive  = '&lt;*' [ scIf | scElsif | scElse | scEnd ] '*&gt;'</code></pre>
 <pre><code>scIf       = IF scExpr THEN</code></pre>
 <pre><code>scElsif    = ELSIF condition THEN</code></pre>
@@ -2922,13 +2947,11 @@ The Micron language explicitly defines different language levels, starting at le
 <div style="margin-left:27px"><span class="label"><a name="18483">7.3</a></span>
 Level 0 is the minimal core language supposed to work in an environment where there is no stack and no heap. All procedures are implicitly INLINE and optionally INVAR. EXTERN is not supported. Recursion is not supported. NEW and DISPOSE are not supported. PCALL and RAISE are not supported. VLA not supported.</div>
 <div style="margin-left:27px"><span class="label"><a name="18484">7.4</a></span>
-Level 1 in addition supports normal procedures and recursion, and FINALLY, and VLA.</div>
+Level 1 in addition supports normal procedures and recursion, and FINALLY, and VLA, and INTERFACE, bound procedures</div>
 <div style="margin-left:27px"><span class="label"><a name="18485">7.5</a></span>
 Level 2 in addition supports heap allocation and deallocation.</div>
 <div style="margin-left:27px"><span class="label"><a name="18486">7.6</a></span>
-Level 3 in addition supports object types, bound procedures, type case and the IS operation.</div>
-<div style="margin-left:45px"><span class="label"><a name="18492">7.6.1</a></span>
-Possibly also Go-like interfaces</div>
+Level 3 in addition supports object types, type case and the IS operation.</div>
 <div style="margin-left:27px"><span class="label"><a name="19755">7.7</a></span>
 Level 4 in addition supports garbage collection of records, objects or arrays allocated with GCNEW().</div>
 <div style="margin-left:45px"><span class="label"><a name="19787">7.7.1</a></span>
