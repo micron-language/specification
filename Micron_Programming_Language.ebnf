@@ -41,11 +41,7 @@ qualident ::= [ \LA: 1:ident & 2:'.'\ ident '.' ] ident
 
 identdef ::= ident [ '*' | '-' ] 
 
-ConstDeclaration ::= identdef ( 
-                                    '=' ConstExpression 
-                                    | ':' NamedType // for each CONST meta param, and only there, whereas same ident
-                                    )
-
+ConstDeclaration ::= identdef '=' ConstExpression 
 ConstExpression ::= expression
 
 TypeDeclaration ::= identdef 	'=' type
@@ -87,6 +83,8 @@ PointerType ::= (POINTER TO | '^') type // any type in Micron, also simple or pr
 
 enumeration ::= '(' constEnum ')'                       
 constEnum ::= ident [ '=' ConstExpression ] { [','] ident }
+
+WhereDeclaration ::= ident ':' type // used to constrain meta params
 
 VariableDeclaration ::= IdentList ':' type
 
@@ -190,7 +188,7 @@ ProcedureType ::= procedure
 
 #ifdef LEVEL1
 InterfaceType ::= INTERFACE {InterfaceProc} END
-InterfaceProc ::= procedure ident [FormalParameters] [';']
+InterfaceProc ::= [procedure] ident [FormalParameters] [';']
 #endif
 
 ProcedureDeclaration ::= 
@@ -224,6 +222,7 @@ ProcedureBody ::= DeclarationSequence block END ident
 DeclarationSequence ::= 
 	{ CONST { ConstDeclaration [';'] } 
 	| TYPE { TypeDeclaration [';'] } 
+	| WHERE { WhereDeclaration [';'] }
 	| VAR { VariableDeclaration [';'] } 
 	| ProcedureDeclaration [';'] }
 
@@ -253,7 +252,7 @@ MetaActuals ::= '(' ConstExpression { [','] ConstExpression } ')'
 
 MetaParams ::= '(' MetaSection { [';'] MetaSection } ')'
 
-MetaSection ::= [ TYPE | CONST ] ident { \LL:2\ [','] ident } [ ':' NamedType ]
+MetaSection ::= [ TYPE | CONST ] ident { \LL:2\ [','] ident }
 
 reserved_for_future_extensions- ::= 'AUTOPTR' 
 

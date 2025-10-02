@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2025-10-01, work in progress</div>
+2025-10-02, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -36,138 +36,172 @@ A lot of text is derived from the Oberon+ language specification <a href="#14631
 <div style="margin-left:45px"><span class="label"><a name="14071">1.5.2</a></span>
 This specification was written in CrossLine (see <a href="https://github.com/rochus-keller/CrossLine"><u>github.com/.../CrossLine</u></a>)</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14072">1.6</a></span>
-<b>Table of Contents</b></h4>
-<div style="margin-left:45px"><span class="label"><a name="14693">1.6.1</a></span>
+<b>Table of Contkents</b></h4>
+<div style="margin-left:45px"><span class="label"><a name="20774">1.6.1</a></span>
 <a href="#14061">1 Front Matter</a></div>
-<div style="margin-left:45px"><span class="label"><a name="14699">1.6.2</a></span>
+<div style="margin-left:45px"><span class="label"><a name="20781">1.6.2</a></span>
 <a href="#14060">2 Language Specification</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14700">1.6.2.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20782">1.6.2.1</a></span>
 <a href="#14125">2.1 Introduction</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14702">1.6.2.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20784">1.6.2.2</a></span>
 <a href="#14127">2.2 Syntax</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14703">1.6.2.3</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20785">1.6.2.3</a></span>
 <a href="#14126">2.3 Vocabulary and Representation</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14704">1.6.2.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20786">1.6.2.3.1</a></span>
 <a href="#14168">2.3.4 Identifiers</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14705">1.6.2.3.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20787">1.6.2.3.2</a></span>
 <a href="#14174">2.3.5 Numbers</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14706">1.6.2.3.3</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20788">1.6.2.3.3</a></span>
 <a href="#14181">2.3.6 Character literals</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14707">1.6.2.3.4</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20789">1.6.2.3.4</a></span>
 <a href="#14186">2.3.7 String literals</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14709">1.6.2.3.5</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20790">1.6.2.3.5</a></span>
 <a href="#14198">2.3.8 Operators and Delimiters</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14710">1.6.2.3.6</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20791">1.6.2.3.6</a></span>
 <a href="#14201">2.3.9 Reserved Words</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14711">1.6.2.3.7</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20792">1.6.2.3.7</a></span>
 <a href="#14204">2.3.10 Comments</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14712">1.6.2.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20793">1.6.2.4</a></span>
 <a href="#14160">2.4 Declarations and scope rules</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14713">1.6.2.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20794">1.6.2.5</a></span>
 <a href="#14210">2.5 Constant declarations</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14714">1.6.2.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20795">1.6.2.6</a></span>
 <a href="#14218">2.6 Type declarations</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14715">1.6.2.6.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20796">1.6.2.6.1</a></span>
 <a href="#14224">2.6.4 Basic types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14716">1.6.2.6.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20797">1.6.2.6.2</a></span>
 <a href="#14257">2.6.5 Array types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14717">1.6.2.6.3</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20798">1.6.2.6.3</a></span>
 <a href="#14270">2.6.6 Record types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="18502">1.6.2.6.4</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20799">1.6.2.6.4</a></span>
 <a href="#18500">2.6.7 Object types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14718">1.6.2.6.5</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20800">1.6.2.6.5</a></span>
 <a href="#14278">2.6.8 Pointer types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14719">1.6.2.6.6</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20801">1.6.2.6.6</a></span>
 <a href="#14285">2.6.9 Procedure types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14720">1.6.2.6.7</a></span>
-<a href="#14291">2.6.10 Enumeration types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="15367">1.6.2.6.8</a></span>
-<a href="#15364">2.6.11 Alias types</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14721">1.6.2.7</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20802">1.6.2.6.7</a></span>
+<a href="#18517">2.6.10 Type-bound procedure types</a></div>
+<div style="margin-left:81px"><span class="label"><a name="20803">1.6.2.6.8</a></span>
+<a href="#20755">2.6.11 Interface types</a></div>
+<div style="margin-left:81px"><span class="label"><a name="20804">1.6.2.6.9</a></span>
+<a href="#14291">2.6.12 Enumeration types</a></div>
+<div style="margin-left:81px"><span class="label"><a name="20805">1.6.2.6.10</a></span>
+<a href="#15364">2.6.13 Alias types</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20806">1.6.2.7</a></span>
 <a href="#14298">2.7 Variable declarations</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14722">1.6.2.8</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20807">1.6.2.8</a></span>
 <a href="#14304">2.8 Expressions</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14723">1.6.2.8.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20808">1.6.2.8.1</a></span>
 <a href="#14306">2.8.2 Operands</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14724">1.6.2.8.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20809">1.6.2.8.2</a></span>
 <a href="#14322">2.8.3 Operators</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14725">1.6.2.8.2.1</a></span>
+<div style="margin-left:99px"><span class="label"><a name="20810">1.6.2.8.2.1</a></span>
 <a href="#14325">2.8.3.3 Logical operators</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14726">1.6.2.8.2.2</a></span>
+<div style="margin-left:99px"><span class="label"><a name="20811">1.6.2.8.2.2</a></span>
 <a href="#14328">2.8.3.4 Arithmetic operators</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14727">1.6.2.8.2.3</a></span>
+<div style="margin-left:99px"><span class="label"><a name="20812">1.6.2.8.2.3</a></span>
 <a href="#14335">2.8.3.5 Set Operators</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14728">1.6.2.8.2.4</a></span>
+<div style="margin-left:99px"><span class="label"><a name="20813">1.6.2.8.2.4</a></span>
 <a href="#14339">2.8.3.6 Relations</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14729">1.6.2.8.2.5</a></span>
+<div style="margin-left:99px"><span class="label"><a name="20814">1.6.2.8.2.5</a></span>
 <a href="#14344">2.8.3.7 String operators</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14730">1.6.2.8.2.6</a></span>
+<div style="margin-left:99px"><span class="label"><a name="20815">1.6.2.8.2.6</a></span>
 <a href="#14662">2.8.3.8 Address operator</a></div>
-<div style="margin-left:99px"><span class="label"><a name="14731">1.6.2.8.2.7</a></span>
+<div style="margin-left:99px"><span class="label"><a name="20816">1.6.2.8.2.7</a></span>
 <a href="#14349">2.8.3.9 Function Call</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14732">1.6.2.8.3</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20817">1.6.2.8.3</a></span>
 <a href="#14347">2.8.4 Constructors</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14733">1.6.2.9</a></span>
+<div style="margin-left:99px"><span class="label"><a name="20818">1.6.2.8.3.1</a></span>
+<a href="#16058">2.8.4.12 Hex Strings</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20819">1.6.2.9</a></span>
 <a href="#14355">2.9 Statements</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14734">1.6.2.9.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20820">1.6.2.9.1</a></span>
 <a href="#14359">2.9.3 Statement sequences</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14736">1.6.2.9.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20821">1.6.2.9.2</a></span>
 <a href="#14363">2.9.4 Assignments</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14737">1.6.2.9.3</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20822">1.6.2.9.3</a></span>
 <a href="#14374">2.9.5 Procedure calls</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14738">1.6.2.9.4</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20823">1.6.2.9.4</a></span>
 <a href="#14381">2.9.6 If statements</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14739">1.6.2.9.5</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20824">1.6.2.9.5</a></span>
 <a href="#14387">2.9.7 Case statements</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14740">1.6.2.9.6</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20825">1.6.2.9.6</a></span>
 <a href="#14393">2.9.8 While statements</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14741">1.6.2.9.7</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20826">1.6.2.9.7</a></span>
 <a href="#14400">2.9.9 Repeat statements</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14742">1.6.2.9.8</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20827">1.6.2.9.8</a></span>
 <a href="#14404">2.9.10 For statements</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14743">1.6.2.9.9</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20828">1.6.2.9.9</a></span>
 <a href="#14415">2.9.11 Loop statements</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14744">1.6.2.9.10</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20829">1.6.2.9.10</a></span>
 <a href="#14422">2.9.12 Return, exit and goto statements</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14745">1.6.2.10</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20830">1.6.2.10</a></span>
 <a href="#14434">2.10 Exception handling</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14746">1.6.2.11</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20831">1.6.2.11</a></span>
 <a href="#14440">2.11 Procedure declarations</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14747">1.6.2.11.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20832">1.6.2.11.1</a></span>
 <a href="#14458">2.11.11 Formal parameters</a></div>
-<div style="margin-left:81px"><span class="label"><a name="18518">1.6.2.11.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20833">1.6.2.11.2</a></span>
+<a href="#18537">2.11.12 Finally section</a></div>
+<div style="margin-left:81px"><span class="label"><a name="20834">1.6.2.11.3</a></span>
 <a href="#18516">2.11.13 Type-bound procedures</a></div>
-<div style="margin-left:81px"><span class="label"><a name="18519">1.6.2.11.3</a></span>
-<a href="#18517">2.11.14 Type-bound procedure types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="20772">1.6.2.11.4</a></span>
-<a href="#20755">2.11.15 Interface types</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14748">1.6.2.11.5</a></span>
-<a href="#14493">2.11.16 Predeclared procedures</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14749">1.6.2.12</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20835">1.6.2.11.4</a></span>
+<a href="#14493">2.11.14 Predeclared procedures</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20836">1.6.2.12</a></span>
 <a href="#14498">2.12 Modules</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14750">1.6.2.13</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20837">1.6.2.13</a></span>
 <a href="#14508">2.13 Generics</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14751">1.6.2.14</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20838">1.6.2.14</a></span>
 <a href="#14514">2.14 Source code directives</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14752">1.6.2.14.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20839">1.6.2.14.1</a></span>
 <a href="#14516">2.14.2 Configuration Variables</a></div>
-<div style="margin-left:81px"><span class="label"><a name="14753">1.6.2.14.2</a></span>
+<div style="margin-left:81px"><span class="label"><a name="20840">1.6.2.14.2</a></span>
 <a href="#14525">2.14.3 Conditional compilation</a></div>
-<div style="margin-left:45px"><span class="label"><a name="14754">1.6.3</a></span>
+<div style="margin-left:45px"><span class="label"><a name="20841">1.6.3</a></span>
 <a href="#14532">3 Definition of terms</a></div>
-<div style="margin-left:45px"><span class="label"><a name="14769">1.6.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20842">1.6.3.1</a></span>
+<a href="#14533">3.1 Integer types</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20843">1.6.3.2</a></span>
+<a href="#14535">3.2 Signed integer types</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20844">1.6.3.3</a></span>
+<a href="#14537">3.3 Unsigned integer types</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20845">1.6.3.4</a></span>
+<a href="#14539">3.4 Floating-point types</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20846">1.6.3.5</a></span>
+<a href="#14541">3.5 Numeric types</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20847">1.6.3.6</a></span>
+<a href="#14543">3.6 Same types</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20848">1.6.3.7</a></span>
+<a href="#14548">3.7 Equal types</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20849">1.6.3.8</a></span>
+<a href="#14554">3.8 Type inclusion</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20850">1.6.3.9</a></span>
+<a href="#18547">3.9 Type extension (object)</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20851">1.6.3.10</a></span>
+<a href="#18552">3.10 Type extension (pointer)</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20852">1.6.3.11</a></span>
+<a href="#14556">3.11 Assignment compatible</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20853">1.6.3.12</a></span>
+<a href="#14569">3.12 Parameter compatible</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20854">1.6.3.13</a></span>
+<a href="#14579">3.13 Expression compatible</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20855">1.6.3.14</a></span>
+<a href="#14582">3.14 Matching formal parameter lists</a></div>
+<div style="margin-left:63px"><span class="label"><a name="20856">1.6.3.15</a></span>
+<a href="#14588">3.15 Matching result types</a></div>
+<div style="margin-left:45px"><span class="label"><a name="20857">1.6.4</a></span>
 <a href="#14590">4 Complete Micron Syntax</a></div>
-<div style="margin-left:45px"><span class="label"><a name="14770">1.6.5</a></span>
+<div style="margin-left:45px"><span class="label"><a name="20858">1.6.5</a></span>
 <a href="#14650">5 Predeclared Types</a></div>
-<div style="margin-left:45px"><span class="label"><a name="14771">1.6.6</a></span>
+<div style="margin-left:45px"><span class="label"><a name="20859">1.6.6</a></span>
 <a href="#14136">6 Predeclared Procedure Reference</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14783">1.6.6.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20860">1.6.6.1</a></span>
 <a href="#14775">6.1 Predeclared function procedures</a></div>
-<div style="margin-left:63px"><span class="label"><a name="14784">1.6.6.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20861">1.6.6.2</a></span>
 <a href="#14777">6.2 Predeclared proper procedures</a></div>
-<div style="margin-left:45px"><span class="label"><a name="18482">1.6.7</a></span>
+<div style="margin-left:45px"><span class="label"><a name="20862">1.6.7</a></span>
 <a href="#18479">7 Language levels</a></div>
-<div style="margin-left:45px"><span class="label"><a name="14772">1.6.8</a></span>
+<div style="margin-left:45px"><span class="label"><a name="20863">1.6.8</a></span>
 <a href="#14628">8 References</a></div>
 <h4 style="margin-left:9px"><span class="label"><a name="14060">2</a></span>
 <b>Language Specification</b></h4>
@@ -517,7 +551,7 @@ Identifiers denoting record fields (see <a href="#14270">2.6.6 Record types</a>)
 <div style="margin-left:63px"><span class="label"><a name="18545">2.4.2.5</a></span>
 Identifiers denoting object fields (see <a href="#18500">2.6.7 Object types</a>) are valid in object designators only;</div>
 <div style="margin-left:63px"><span class="label"><a name="20771">2.4.2.6</a></span>
-Identifiers denoting interface procedures (see <a href="#20755">2.11.15 Interface types</a>) are valid in interface designators only.</div>
+Identifiers denoting interface procedures (see <a href="#20755">2.6.11 Interface types</a>) are valid in interface designators only.</div>
 <div style="margin-left:45px"><span class="label"><a name="14167">2.4.3</a></span>
 An identifier declared in a module block may be followed by an export mark (&quot; * &quot; or &quot; - &quot;) in its declaration to indicate that it is exported. An identifier <i>x</i> exported by a module <i>M</i> may be used in other modules, if they import <i>M</i> (see <a href="#14498">2.12 Modules</a>). The identifier is then denoted as <i>M.x</i> in these modules and is called a <i>qualified identifier</i>. Identifiers marked with &quot; - &quot; in their declaration are <i>read-only</i> in importing modules. </div>
 <div style="margin-left:45px"><span class="label"><a name="14206">2.4.4</a></span>
@@ -646,18 +680,18 @@ ABS </td>
 <br>SIZE </td>
 <td>
 <br>STRLEN </td>
-<td></td>
 <td>
-<br>UINT16 </td></tr>
+<br>UINT16</td>
+<td>
+<br>UINT32</td></tr>
 <tr>
 <td>
-<br>UINT32 </td>
+<br>UINT64</td>
 <td>
-<br>UINT64 </td>
+<br>UINT8</td>
 <td>
-<br>UINT8 </td>
-<td>
-<br>UNSIGNED </td>
+<br>UNSIGNED</td>
+<td></td>
 <td></td></tr></table></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14210">2.5</a></span>
 Constant declarations</h4>
@@ -925,30 +959,59 @@ Syntax:</div>
 <pre><code>ProcedureType = PROCEDURE [FormalParameters]</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="14287">2.6.9.3</a></span><span class="ident">NOTE</span>
 Traditional Oberon versions don’t support assignment of procedures local to another procedure to a procedure type variable. Oberon+ as well as Micron don’t make this restriction.</div>
-<h4 style="margin-left:45px"><span class="label"><a name="14291">2.6.10</a></span>
-<b>Enumeration types</b></h4>
-<div style="margin-left:63px"><span class="label"><a name="14292">2.6.10.1</a></span>
-An enumeration is a list of identifiers that denote the elements which constitute the type. They, and no other values, belong to this type. These identifiers are constants. </div>
-<div style="margin-left:63px"><span class="label"><a name="14669">2.6.10.2</a></span>
-The export mark of the enumeration type declaration also applies to the elements of the enumeration.</div>
-<div style="margin-left:63px"><span class="label"><a name="14293">2.6.10.3</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="18517">2.6.10</a></span>
+Type-bound procedure types</h4>
+<div style="margin-left:63px"><span class="label"><a name="18531">2.6.10.1</a></span>
+Variables of a type-bound procedure type T have a type-bound procedure (see <a href="#18516">2.11.13 Type-bound procedures</a>) or NIL as value. To assign a type-bound procedure P to a variable of a type-bound procedure type T, the right side of the assignment must be a designator of the form <code>v^.P</code> or <code>v.P</code>, where <code>v</code> is a pointer to record or object, and <code>P</code> is a procedure bound to this record or object. Note, that in case of procedures bound to an object type, the dynamic type of <code>v</code> determines which procedure is assigned; this may be a different procedure than the one bound to the static type of <code>v</code>. The formal parameter lists and result types (see <a href="#14458">2.11.11 Formal parameters</a>) of P and T must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). The same rules apply when passing a type-bound procedure to a formal argument of a type-bound procedure type.</div>
+<div style="margin-left:63px"><span class="label"><a name="18532">2.6.10.2</a></span>
 Syntax:</div>
-<div style="margin-left:81px"><span class="label"><a name="14294">2.6.10.3.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="18533">2.6.10.2.1</a></span>
+<code>ProcedureType = ( PROCEDURE | PROC ) '(' ( POINTER | '^' ) ')' [FormalParameters]</code></div>
+<div style="margin-left:63px"><span class="label"><a name="18535">2.6.10.3</a></span><span class="ident">NOTE</span>
+Type-bound procedure types support both, procedures bound to records and to objects, but the latter are an extended feature of the language and not available in all language levels (see <a href="#18479">7 Language levels</a>).</div>
+<h4 style="margin-left:45px"><span class="label"><a name="20755">2.6.11</a></span>
+Interface types</h4>
+<div style="margin-left:63px"><span class="label"><a name="20756">2.6.11.1</a></span>
+An interface type specifies a set of type-bound procedures (see <a href="#18516">2.11.13 Type-bound procedures</a>) by their signatures (see <a href="#14582">3.14 Matching formal parameter lists</a>). An interface type defines a contract without implementation. </div>
+<div style="margin-left:63px"><span class="label"><a name="20758">2.6.11.2</a></span>
+A variable of interface type may hold NIL or a pointer to any record or object type whose type-bound procedures satisfy the interface. Satisfaction is determined structurally: a pointer type satisfies an interface if it provides type-bound procedures with signatures that are parameter-compatible with all procedures declared in the interface. Both record types and object types may satisfy interfaces through their type-bound procedures. No explicit declaration of intent to implement an interface is required.</div>
+<div style="margin-left:63px"><span class="label"><a name="20770">2.6.11.3</a></span>
+If an interface type is exported, all procedure identifiers of the interface are visible outside the declaring module. Satisfaction determination considers whether the procedures bound to the candidate record or object type are exported (see <a href="#14160">2.4 Declarations and scope rules</a>).</div>
+<div style="margin-left:63px"><span class="label"><a name="20759">2.6.11.4</a></span>
+Assignment of a pointer value to an interface variable is valid if the pointed-to type satisfies the interface. The special value NIL is assignable to any interface variable.</div>
+<div style="margin-left:63px"><span class="label"><a name="20763">2.6.11.5</a></span>
+In case of an object type, the dynamic type of the pointer determines the set of procedures; this may be a different set than the one bound to the static object type of the pointer.</div>
+<div style="margin-left:63px"><span class="label"><a name="20764">2.6.11.6</a></span>
+Syntax:</div>
+<div style="margin-left:81px"><span class="label"><a name="20765">2.6.11.6.1</a></span>
+<code>InterfaceType = INTERFACE {InterfaceProc} END</code>
+<br><code>InterfaceProc = [PROCEDURE | PROC] ident [FormalParameters] [';']</code></div>
+<div style="margin-left:63px"><span class="label"><a name="20760">2.6.11.7</a></span><span class="ident">NOTE</span>
+Micron interfaces are adopted from Go and follow similar semantics. </div>
+<h4 style="margin-left:45px"><span class="label"><a name="14291">2.6.12</a></span>
+<b>Enumeration types</b></h4>
+<div style="margin-left:63px"><span class="label"><a name="14292">2.6.12.1</a></span>
+An enumeration is a list of identifiers that denote the elements which constitute the type. They, and no other values, belong to this type. These identifiers are constants. </div>
+<div style="margin-left:63px"><span class="label"><a name="14669">2.6.12.2</a></span>
+The export mark of the enumeration type declaration also applies to the elements of the enumeration.</div>
+<div style="margin-left:63px"><span class="label"><a name="14293">2.6.12.3</a></span>
+Syntax:</div>
+<div style="margin-left:81px"><span class="label"><a name="14294">2.6.12.3.1</a></span>
 <pre><code>enumeration ::= '(' constEnum ')' <br />constEnum ::= ident [ '=' ConstExpression ] { [','] ident } </code></pre></div>
-<div style="margin-left:63px"><span class="label"><a name="14667">2.6.10.4</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14667">2.6.12.4</a></span>
 The values of an enumeration are ordered, and the ordering relation is defined by their sequence in the enumeration. If T is an enumeration type then <code>MIN(T)</code> returns the first and <code>MAX(T)</code> the last element of the enumeration. </div>
-<div style="margin-left:63px"><span class="label"><a name="14297">2.6.10.5</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14297">2.6.12.5</a></span>
 The ordinal number of a constant enumeration element can be obtained using the <code>ORD</code> predeclared procedure. <code>CAST</code> is the reverse operation. The ordinal number of the first element is determined by the optional constant expression, or 0 by default. <code>INC</code> returns the next and <code>DEC</code> the previous element. <code>INC(MAX(T))</code> and <code>DEC(MIN(T))</code> are undefined and terminate the program.</div>
-<div style="margin-left:63px"><span class="label"><a name="14295">2.6.10.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14295">2.6.12.6</a></span>
 Examples:</div>
-<div style="margin-left:81px"><span class="label"><a name="14296">2.6.10.6.1</a></span>
+<div style="margin-left:81px"><span class="label"><a name="14296">2.6.12.6.1</a></span>
 <pre><code>(red, green, blue)</code></pre>
 <pre><code>(Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)</code></pre></div>
-<h4 style="margin-left:45px"><span class="label"><a name="15364">2.6.11</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="15364">2.6.13</a></span>
 Alias types</h4>
-<div style="margin-left:63px"><span class="label"><a name="15365">2.6.11.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="15365">2.6.13.1</a></span>
 A type can be an alias of another type. The other type is referenced with a qualident. If the other type is in another module, it must be exported. A type is considered the same type as its alias.</div>
-<div style="margin-left:63px"><span class="label"><a name="15366">2.6.11.2</a></span><span class="ident">NOTE</span>
+<div style="margin-left:63px"><span class="label"><a name="15366">2.6.13.2</a></span><span class="ident">NOTE</span>
 If the other type is an enumeration type in another module M, the elements e of this enumeration type still have to be denoted by M.e.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14298">2.7</a></span>
 <a href=""><b>V</b></a><b>ariable declarations</b></h4>
@@ -1585,9 +1648,9 @@ Syntax:</div>
 <div style="margin-left:63px"><span class="label"><a name="14457">2.11.10.1</a></span>
 <pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN ['C' [string]]  ) <br />                       | ForwardDeclaration<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br />ForwardDeclaration   = ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence <br />                       [FINALLY StatementSequence] END ident</code></pre>
 <pre><code>DeclarationSequence  = { CONST { ConstDeclaration [';'] }</code></pre>
-<pre><code>	           | TypeDeclarationSection</code></pre>
-<pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
-<pre><code>	           | ProcedureDeclaration [';'] }<br /><br />TypeDeclarationSection = TYPE { TypeDeclaration [';'] }</code></pre></div>
+<pre><code>	           | TYPE { TypeDeclaration [';'] }</code></pre>
+<pre><code>	           | WHERE { WhereDeclaration [';'] }<br /><br />	           | VAR { VariableDeclaration [';'] }</code></pre>
+<pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
 <h4 style="margin-left:45px"><span class="label"><a name="14458">2.11.11</a></span>
 Formal parameters</h4>
 <div style="margin-left:63px"><span class="label"><a name="14459">2.11.11.1</a></span>
@@ -1646,7 +1709,7 @@ Procedures may be associated with a record or object type declared in the same s
 <div style="margin-left:63px"><span class="label"><a name="18589">2.11.13.2</a></span><span class="ident">NOTE</span>
 Regardless of whether the receiver is an object, record or pointer type, the receiver parameter is always a pointer to record or object type. </div>
 <div style="margin-left:63px"><span class="label"><a name="18536">2.11.13.3</a></span>
-Type-bound procedures cannot be INLINE, nor INVAR.</div>
+Type-bound procedures cannot be INVAR. Procedures bound to object types cannot be INLINE.</div>
 <div style="margin-left:63px"><span class="label"><a name="18521">2.11.13.4</a></span>
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="18522">2.11.13.4.1</a></span>
@@ -1689,40 +1752,11 @@ Examples:</div>
 <pre><code>end Insert</code></pre></div>
 <div style="margin-left:63px"><span class="label"><a name="18529">2.11.13.11</a></span><span class="ident">NOTE</span>
 Object types and type-bound procedures are an extended feature of the language and not available in all language levels (see <a href="#18479">7 Language levels</a>). Record types also support type-bound procedures, but in contrast to object types, these procedures are not virtual (since records don't support inheritance). </div>
-<h4 style="margin-left:45px"><span class="label"><a name="18517">2.11.14</a></span>
-Type-bound procedure types</h4>
-<div style="margin-left:63px"><span class="label"><a name="18531">2.11.14.1</a></span>
-Variables of a type-bound procedure type T have a type-bound procedure or NIL as value. To assign a type-bound procedure P to a variable of a type-bound procedure type T, the right side of the assignment must be a designator of the form <code>v^.P</code> or <code>v.P</code>, where <code>v</code> is a pointer to record or object, and <code>P</code> is a procedure bound to this record or object. Note, that in case of procedures bound to an object type, the dynamic type of <code>v</code> determines which procedure is assigned; this may be a different procedure than the one bound to the static type of <code>v</code>. The formal parameter lists and result types (see <a href="#14458">2.11.11 Formal parameters</a>) of P and T must <i>match</i> (see <a href="#14532">3 Definition of terms</a>). The same rules apply when passing a type-bound procedure to a formal argument of a type-bound procedure type.</div>
-<div style="margin-left:63px"><span class="label"><a name="18532">2.11.14.2</a></span>
-Syntax:</div>
-<div style="margin-left:81px"><span class="label"><a name="18533">2.11.14.2.1</a></span>
-<code>ProcedureType = ( PROCEDURE | PROC ) '(' ( POINTER | '^' ) ')' [FormalParameters]</code></div>
-<div style="margin-left:63px"><span class="label"><a name="18535">2.11.14.3</a></span><span class="ident">NOTE</span>
-Type-bound procedure types support both, procedures bound to records and to objects, but the latter are an extended feature of the language and not available in all language levels (see <a href="#18479">7 Language levels</a>).</div>
-<h4 style="margin-left:45px"><span class="label"><a name="20755">2.11.15</a></span>
-Interface types</h4>
-<div style="margin-left:63px"><span class="label"><a name="20756">2.11.15.1</a></span>
-An interface type specifies a set of type-bound procedures by their signatures (see <a href="#14582">3.14 Matching formal parameter lists</a>). An interface type defines a contract without implementation. </div>
-<div style="margin-left:63px"><span class="label"><a name="20758">2.11.15.2</a></span>
-A variable of interface type may hold NIL or a pointer to any record or object type whose type-bound procedures satisfy the interface. Satisfaction is determined structurally: a pointer type satisfies an interface if it provides type-bound procedures with signatures that are parameter-compatible with all procedures declared in the interface. Both record types and object types may satisfy interfaces through their type-bound procedures. No explicit declaration of intent to implement an interface is required.</div>
-<div style="margin-left:63px"><span class="label"><a name="20770">2.11.15.3</a></span>
-If an interface type is exported, all procedure identifiers of the interface are visible outside the declaring module. Satisfaction determination considers whether the procedures bound to the candidate record or object type are exported (see <a href="#14160">2.4 Declarations and scope rules</a>).</div>
-<div style="margin-left:63px"><span class="label"><a name="20759">2.11.15.4</a></span>
-Assignment of a pointer value to an interface variable is valid if the pointed-to type satisfies the interface. The special value NIL is assignable to any interface variable.</div>
-<div style="margin-left:63px"><span class="label"><a name="20763">2.11.15.5</a></span>
-In case of an object type, the dynamic type of the pointer determines the set of procedures; this may be a different set than the one bound to the static object type of the pointer.</div>
-<div style="margin-left:63px"><span class="label"><a name="20764">2.11.15.6</a></span>
-Syntax:</div>
-<div style="margin-left:81px"><span class="label"><a name="20765">2.11.15.6.1</a></span>
-<code>InterfaceType = INTERFACE {InterfaceProc} END</code>
-<br><code>InterfaceProc = ( PROCEDURE | PROC ) ident [FormalParameters] [';']</code></div>
-<div style="margin-left:63px"><span class="label"><a name="20760">2.11.15.7</a></span><span class="ident">NOTE</span>
-Micron interfaces are adopted from Go and follow similar semantics. </div>
-<h4 style="margin-left:45px"><span class="label"><a name="14493">2.11.16</a></span>
+<h4 style="margin-left:45px"><span class="label"><a name="14493">2.11.14</a></span>
 Predeclared procedures</h4>
-<div style="margin-left:63px"><span class="label"><a name="14495">2.11.16.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14495">2.11.14.1</a></span>
 Predeclared procedures are provided by the compiler and accessible without extra imports. Some are generic procedures, i.e. they apply to several types of operands.</div>
-<div style="margin-left:63px"><span class="label"><a name="14494">2.11.16.2</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14494">2.11.14.2</a></span>
 See <a href="#14136">6 Predeclared Procedure Reference</a> for the list of predeclared procedures each Micron compiler has to provide.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14498">2.12</a></span>
 Modules</h4>
@@ -1752,18 +1786,21 @@ The statement sequence following the symbol BEGIN is executed when the module is
 <h4 style="margin-left:27px"><span class="label"><a name="14508">2.13</a></span>
 Generics</h4>
 <div style="margin-left:45px"><span class="label"><a name="14509">2.13.1</a></span>
-Micron supports generic programming. Modules can be made generic by adding formal meta parameters. Meta parameters represent types or constants; the latter include procedures. Meta parameters default to types, but can be explicitly prefixed with the TYPE reserved word; the CONST prefix designates a constant meta parameter. A CONST meta parameter can be constrained with a named type using a special form of the ConstDeclaration, in which case the actual meta parameter must correspond to this type; the correspondence is established when the generic module is instantiated; the type of the actual meta parameter must be assignment compatible with the constraint type (see <a href="#14532">3 Definition of terms</a>). The special form of the ConstDeclaration may only be used for a CONST meta parameter with the same ident.</div>
-<div style="margin-left:45px"><span class="label"><a name="14510">2.13.2</a></span>
+Micron supports generic programming. Modules can be made generic by adding formal meta parameters. Meta parameters represent types or constants; the latter include procedures. Meta parameters default to types, but can be explicitly prefixed with the TYPE reserved word; the CONST prefix designates a constant meta parameter. </div>
+<div style="margin-left:45px"><span class="label"><a name="20864">2.13.2</a></span>
+Meta parameters can be constrained with a type using a WHERE declaration, in which case the actual meta parameter must correspond to this type. The correspondence between a WHERE declaration and a meta parameter is established by name equivalence; there can only be one WHERE declaration per meta parameter. The type of the actual meta parameter must be assignment compatible with the constraint type (see <a href="#14532">3 Definition of terms</a>), which is checked when the generic module is instantiated. The special form of the ConstDeclaration may only be used for a CONST meta parameter with the same ident.</div>
+<div style="margin-left:45px"><span class="label"><a name="14510">2.13.3</a></span>
 Generic modules can be instantiated with different sets of meta actuals which enables the design of reusable algorithms and data structures. The instantiation of a generic module occurs when importing it. A generic module can be instantiated more than once in the same module with different actual meta parameters. See also <a href="#14498">2.12 Modules</a>.</div>
-<div style="margin-left:45px"><span class="label"><a name="14511">2.13.3</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14511">2.13.4</a></span>
 Syntax:</div>
-<div style="margin-left:63px"><span class="label"><a name="14512">2.13.3.1</a></span>
+<div style="margin-left:63px"><span class="label"><a name="14512">2.13.4.1</a></span>
 <pre><code>MetaParams       = '(' MetaSection { [';'] MetaSection } ')'</code></pre>
-<pre><code>MetaSection      = ['CONST' | 'TYPE'] ident { [','] ident } [ ':' NamedType ]<br />ConstDeclaration = identdef ':' NamedType</code></pre>
-<pre><code>TypeConstraint   = NamedType</code></pre>
+<pre><code>MetaSection      = ['CONST' | 'TYPE'] ident { [','] ident } <br /><br />WhereDeclaration = ident ':' type</code></pre>
 <pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
-<div style="margin-left:45px"><span class="label"><a name="14513">2.13.4</a></span>
+<div style="margin-left:45px"><span class="label"><a name="14513">2.13.5</a></span>
 Meta parameters can be used within the generic module like normal types or constants. If no type constraint is present, the types and constants can be used wherever no information about the actual type is required; otherwise the type constraint determines the permitted operations. The rules for <i>same types</i> and <i>equal types</i> apply analogously to meta parameters, and subsequently also the corresponding assignment, parameter and array compatibility rules.</div>
+<div style="margin-left:45px"><span class="label"><a name="20773">2.13.6</a></span><span class="ident">NOTE</span>
+A type constraint can be an interface type which is a special but legal use of interface types; if an interface type is used as a type constraint, then the type checker has information about what methods the generic type parameter supports which can be assured at compile time; there is no need that the actual type parameter is indeed an interface type, just that the type satisfies (see <a href="#20755">2.6.11 Interface types</a>) the interface.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14514">2.14</a></span>
 Source code directives</h4>
 <div style="margin-left:45px"><span class="label"><a name="14515">2.14.1</a></span>
@@ -1911,7 +1948,7 @@ T<sub>v</sub> is a procedure type and <code>e</code> is the name of a procedure 
 <div style="margin-left:63px"><span class="label"><a name="16003">3.11.1.14</a></span>
 T<sub>v</sub> is a signed integer and <code>e</code> is an unsigned integer constant, and T<sub>v</sub> <i>includes</i> the smallest integer type necessary to represent <code>e</code>;</div>
 <div style="margin-left:63px"><span class="label"><a name="20768">3.11.1.15</a></span>
-T<sub>v</sub> is an interface type and T<sub>e</sub> is a pointer to a record or object type, and their bound procedures <i>satisfy</i> (see <a href="#20755">2.11.15 Interface types</a>) the interface type.</div>
+T<sub>v</sub> is an interface type and T<sub>e</sub> is a pointer to a record or object type, and their bound procedures <i>satisfy</i> (see <a href="#20755">2.6.11 Interface types</a>) the interface type.</div>
 <div style="margin-left:45px"><span class="label"><a name="16053">3.11.2</a></span><span class="ident">NOTE</span>
 Also remember <a href="#16054">2.3.7.2</a>.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14569">3.12</a></span>
@@ -2148,15 +2185,20 @@ The result types of two procedures match if they are either of <i>equal type</i>
 <pre><code>PointerType = ( POINTER TO | '^' ) type</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14603">4.12</a></span><a href="#14289">&#x21B3;</a>
 <pre><code>ProcedureType = PROCEDURE [FormalParameters]</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14604">4.13</a></span><a href="#14294">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="18534">4.13</a></span><a href="#18533">&#x21B3;</a>
+<code>ProcedureType = ( PROCEDURE | PROC ) '(' ( POINTER | '^' ) ')' [FormalParameters]</code></div>
+<div style="margin-left:27px"><span class="label"><a name="20769">4.14</a></span><a href="#20765">&#x21B3;</a>
+<code>InterfaceType = INTERFACE {InterfaceProc} END</code>
+<br><code>InterfaceProc = [PROCEDURE | PROC] ident [FormalParameters] [';']</code></div>
+<div style="margin-left:27px"><span class="label"><a name="14604">4.15</a></span><a href="#14294">&#x21B3;</a>
 <pre><code>enumeration ::= '(' constEnum ')' <br />constEnum ::= ident [ '=' ConstExpression ] { [','] ident } </code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14605">4.14</a></span><a href="#14301">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14605">4.16</a></span><a href="#14301">&#x21B3;</a>
 <pre><code>VariableDeclaration = IdentList ':' type</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14606">4.15</a></span><a href="#14309">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14606">4.17</a></span><a href="#14309">&#x21B3;</a>
 <pre><code>designator = qualident {selector}</code></pre>
 <pre><code>selector   = '.' ident | '[' expression ']' | '^' | '(' qualident ')'</code></pre>
 <pre><code>ExpList    = expression {[','] expression}</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14607">4.16</a></span><a href="#14321">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14607">4.18</a></span><a href="#14321">&#x21B3;</a>
 <pre><code>expression       = SimpleExpression [ relation SimpleExpression ]</code></pre>
 <pre><code>relation         = '=' | '#' | '&lt;' | '&lt;=' | '&gt;' | '&gt;=' | IN</code></pre>
 <pre><code>SimpleExpression = ['+' | '-'] term { AddOperator term }</code></pre>
@@ -2171,75 +2213,70 @@ The result types of two procedures match if they are either of <i>equal type</i>
 <pre><code>ActualParameters = '(' [ ExpList ] ')'</code></pre>
 <pre><code>set              = '{' [ element {[','] element} ] '}'</code></pre>
 <pre><code>element          = expression ['..' expression]</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14608">4.17</a></span><a href="#14352">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14608">4.19</a></span><a href="#14352">&#x21B3;</a>
 <pre><code>FunctionCall           = designator ActualParameters</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="17797">4.18</a></span><a href="#17796">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="17797">4.20</a></span><a href="#17796">&#x21B3;</a>
 <code>constructor = ['@'][NamedType] '{' [ component {[','] component} ] '}' </code>
 <br><code>component = ident ':' expression </code>
 <br><code>	| '[' ConstExpression ']' ':' expression </code>
 <br><code>	| expression ['..' expression] </code></div>
-<div style="margin-left:27px"><span class="label"><a name="16067">4.19</a></span><a href="#16062">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="16067">4.21</a></span><a href="#16062">&#x21B3;</a>
 <pre><code>hexstring = '$' {hexDigit} '$'</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14609">4.20</a></span><a href="#14358">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14609">4.22</a></span><a href="#14358">&#x21B3;</a>
 <pre><code>statement = [ assignment | ProcedureCall | IfStatement</code></pre>
 <pre><code>            | CaseStatement  | WithStatement | LoopStatement</code></pre>
 <pre><code>            | ExitStatement | GotoStatement | gotoLabel </code></pre>
 <pre><code>	| ReturnStatement | RepeatStatement | ForStatement ]</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14610">4.21</a></span><a href="#14362">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14610">4.23</a></span><a href="#14362">&#x21B3;</a>
 <pre><code>StatementSequence = statement { [&quot;;&quot;] statement} </code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14611">4.22</a></span><a href="#14366">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14611">4.24</a></span><a href="#14366">&#x21B3;</a>
 <pre><code>assignment = designator ':=' expression</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14612">4.23</a></span><a href="#14378">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14612">4.25</a></span><a href="#14378">&#x21B3;</a>
 <pre><code>ProcedureCall = designator [ ActualParameters ]</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14613">4.24</a></span><a href="#14384">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14613">4.26</a></span><a href="#14384">&#x21B3;</a>
 <pre><code>IfStatement    = IF expression THEN StatementSequence</code></pre>
 <pre><code>	     {ElsifStatement} [ElseStatement] END</code></pre>
 <pre><code>ElsifStatement = ELSIF expression THEN StatementSequence</code></pre>
 <pre><code>ElseStatement  = ELSE StatementSequence</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14614">4.25</a></span><a href="#14390">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14614">4.27</a></span><a href="#14390">&#x21B3;</a>
 <pre><code>CaseStatement = CASE expression OF ['|'] Case { '|' Case }</code></pre>
 <pre><code>	    [ ELSE StatementSequence ] END</code></pre>
 <pre><code>Case          = [ CaseLabelList ':' StatementSequence ]</code></pre>
 <pre><code>CaseLabelList = LabelRange { [','] LabelRange }</code></pre>
 <pre><code>LabelRange    = label [ '..' label ]</code></pre>
 <pre><code>label         = ConstExpression</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14615">4.26</a></span><a href="#14396">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14615">4.28</a></span><a href="#14396">&#x21B3;</a>
 <pre><code>WhileStatement = WHILE expression DO StatementSequence END</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14616">4.27</a></span><a href="#14403">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14616">4.29</a></span><a href="#14403">&#x21B3;</a>
 <pre><code>RepeatStatement = REPEAT StatementSequence UNTIL expression</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14617">4.28</a></span><a href="#14407">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14617">4.30</a></span><a href="#14407">&#x21B3;</a>
 <pre><code>ForStatement = FOR ident ':=' expression TO expression</code></pre>
 <pre><code>	   [BY ConstExpression]</code></pre>
 <pre><code>	   DO StatementSequence END</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14618">4.29</a></span><a href="#14418">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14618">4.31</a></span><a href="#14418">&#x21B3;</a>
 <pre><code>LoopStatement = LOOP StatementSequence END</code></pre>
 <pre><code>ExitStatement = EXIT</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14619">4.30</a></span><a href="#14428">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14619">4.32</a></span><a href="#14428">&#x21B3;</a>
 <pre><code>ReturnStatement = RETURN [ expression ]</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14620">4.31</a></span><a href="#14430">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14620">4.33</a></span><a href="#14430">&#x21B3;</a>
 <pre><code>ExitStatement   = EXIT</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14621">4.32</a></span><a href="#14433">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14621">4.34</a></span><a href="#14433">&#x21B3;</a>
 <pre><code>GotoStatement = 'GOTO' ident</code></pre>
 <pre><code>gotoLabel = ident ':'</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14622">4.33</a></span><a href="#14457">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="14622">4.35</a></span><a href="#14457">&#x21B3;</a>
 <pre><code>ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody <br />                                        | [';'] EXTERN ['C' [string]]  ) <br />                       | ForwardDeclaration<br /><br />ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]<br />ForwardDeclaration   = ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]<br /><br />ProcedureBody        = DeclarationSequence BEGIN StatementSequence <br />                       [FINALLY StatementSequence] END ident</code></pre>
 <pre><code>DeclarationSequence  = { CONST { ConstDeclaration [';'] }</code></pre>
-<pre><code>	           | TypeDeclarationSection</code></pre>
-<pre><code>	           | VAR { VariableDeclaration [';'] }</code></pre>
-<pre><code>	           | ProcedureDeclaration [';'] }<br /><br />TypeDeclarationSection = TYPE { TypeDeclaration [';'] }</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="14623">4.34</a></span><a href="#14489">&#x21B3;</a>
+<pre><code>	           | TYPE { TypeDeclaration [';'] }</code></pre>
+<pre><code>	           | WHERE { WhereDeclaration [';'] }<br /><br />	           | VAR { VariableDeclaration [';'] }</code></pre>
+<pre><code>	           | ProcedureDeclaration [';'] }</code></pre></div>
+<div style="margin-left:27px"><span class="label"><a name="14623">4.36</a></span><a href="#14489">&#x21B3;</a>
 <pre><code>FormalParameters = '(' [ FPSection { [';'] FPSection } ] ')'</code></pre>
 <pre><code>                   [ ':' ReturnType ]</code></pre>
 <pre><code>ReturnType       = [ POINTER TO | '^' ] NamedType</code></pre>
 <pre><code>FPSection        = [CONST] ident { [','] ident } ':' FormalType</code></pre>
 <pre><code>FormalType       = type</code></pre></div>
-<div style="margin-left:27px"><span class="label"><a name="18530">4.35</a></span><a href="#18522">&#x21B3;</a>
+<div style="margin-left:27px"><span class="label"><a name="18530">4.37</a></span><a href="#18522">&#x21B3;</a>
 <code>ProcedureHeading = ( PROCEDURE | PROC ) [Receiver] identdef [ FormalParameters ] <br />ForwardDeclaration = ( PROCEDURE | PROC ) '^' [Receiver] identdef [ FormalParameters ] <br />Receiver = '(' ReceiverParam ':' ReceiverType ')' | ReceiverType '.'<br />ReceiverParam = ident<br />ReceiverType = ident</code></div>
-<div style="margin-left:27px"><span class="label"><a name="18534">4.36</a></span><a href="#18533">&#x21B3;</a>
-<code>ProcedureType = ( PROCEDURE | PROC ) '(' ( POINTER | '^' ) ')' [FormalParameters]</code></div>
-<div style="margin-left:27px"><span class="label"><a name="20769">4.37</a></span><a href="#20765">&#x21B3;</a>
-<code>InterfaceType = INTERFACE {InterfaceProc} END</code>
-<br><code>InterfaceProc = ( PROCEDURE | PROC ) ident [FormalParameters] [';']</code></div>
 <div style="margin-left:27px"><span class="label"><a name="14624">4.38</a></span><a href="#14501">&#x21B3;</a>
 <pre><code>module     = MODULE ident [ MetaParams ] [';']</code></pre>
 <pre><code>             { ImportList | DeclarationSequence }</code></pre>
@@ -2249,8 +2286,7 @@ The result types of two procedures match if they are either of <i>equal type</i>
 <pre><code>ImportPath = { ident '.' }</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14625">4.39</a></span><a href="#14512">&#x21B3;</a>
 <pre><code>MetaParams       = '(' MetaSection { [';'] MetaSection } ')'</code></pre>
-<pre><code>MetaSection      = ['CONST' | 'TYPE'] ident { [','] ident } [ ':' NamedType ]<br />ConstDeclaration = identdef ':' NamedType</code></pre>
-<pre><code>TypeConstraint   = NamedType</code></pre>
+<pre><code>MetaSection      = ['CONST' | 'TYPE'] ident { [','] ident } <br /><br />WhereDeclaration = ident ':' type</code></pre>
 <pre><code>MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14626">4.40</a></span><a href="#14519">&#x21B3;</a>
 <pre><code>directive = '&lt;*' ident ( '+' | '-' ) '*&gt;'</code></pre></div>
