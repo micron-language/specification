@@ -222,7 +222,6 @@ ProcedureBody ::= DeclarationSequence block END ident
 DeclarationSequence ::= 
 	{ CONST { ConstDeclaration [';'] } 
 	| TYPE { TypeDeclaration [';'] } 
-	| WHERE { WhereDeclaration [';'] }
 	| VAR { VariableDeclaration [';'] } 
 	| ProcedureDeclaration [';'] }
 
@@ -239,10 +238,12 @@ FPSection ::= [CONST] ident { [','] ident } ':' FormalType
 FormalType ::= type
 
 module ::= MODULE ident [ MetaParams ] [';'] 
-	{ ImportList | DeclarationSequence }
+	{ ImportList | WhereDecls | DeclarationSequence }
 	[ block ] END ident ['.'] 
 	
 ImportList ::= IMPORT import { [ ',' ] import } [';']
+
+WhereDecls ::= WHERE { WhereDeclaration [';'] }
 
 import ::= [ \LL:2\ ident ':=' ] ident 
 	{ '.' ident } // NOTE: paths are not case sensitive 
