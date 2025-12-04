@@ -33,6 +33,7 @@ Comment ::=
 
 qualident ::= [\LL:2\ ident '!'] ident    // module : item
 trident ::= [\LL:2\ ident '!' ] ident '.' ident  // qualident '.' ident for field or method reference
+qortrident ::= [\LL:2\ ident '!' ] ident ['.' ident]
 identdef  ::= ident ['*']
 
 Line ::=  'LINE' unsigned
@@ -98,7 +99,7 @@ DeclarationSequence*  ::= {
 	
 Expression ::= { ExpInstr|Line }
 
-ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI'|'CALLVI') qualident 
+ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI') qualident | 'CALLMI' qortrident
                       | ('CALLINST'|'CALLVIRT') trident | 'CASTPTR' qualident
                       | 'CEQ' | 'CGT' | 'CGT_UN' | 'CLT' | 'CLT_UN' 
                       | 'CONV_I1' | 'CONV_I2' | 'CONV_I4' | 'CONV_I8' | 'CONV_R4' | 'CONV_R8'
@@ -114,6 +115,7 @@ ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI'|'CALLVI') qualident
                       | 'LDELEM_I4' | 'LDELEM_I8' | 'LDELEM_U1' | 'LDELEM_U2' 
                       | 'LDELEM_U4' | 'LDELEM_U8' | 'LDELEM_R4' | 'LDELEM_R8' | 'LDELEM_IP' | 'LDELEM_IPP'
                       | ('LDFLD'|'LDFLDA') trident 
+                      | 'LDIFACE' qualident
                       | 'LDIND_I1' | 'LDIND_I2' | 'LDIND_I4' | 'LDIND_I8' | 'LDIND_U1' | 'LDIND_U2'
                       | 'LDIND_U4' | 'LDIND_R4' | 'LDIND_U8' | 'LDIND_R8' | 'LDIND_IP' | 'LDIND_IPP'
                       | ('LDLOC'|'LDLOC_S'|'LDLOCA'|'LDLOCA_S')(unsigned|ident)

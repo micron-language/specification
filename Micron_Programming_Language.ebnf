@@ -188,7 +188,7 @@ ProcedureType ::= procedure
 
 #ifdef LEVEL1
 InterfaceType ::= INTERFACE {InterfaceProc} END
-InterfaceProc ::= [procedure] ident [FormalParameters] [';']
+InterfaceProc ::= [procedure] identdef [FormalParameters] [';']
 #endif
 
 ProcedureDeclaration ::= 

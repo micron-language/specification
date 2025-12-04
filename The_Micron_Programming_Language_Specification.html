@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2025-10-03, work in progress</div>
+2025-12-04, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -985,7 +985,7 @@ In case of an object type, the dynamic type of the pointer determines the set of
 Syntax:</div>
 <div style="margin-left:81px"><span class="label"><a name="20765">2.6.11.6.1</a></span>
 <code>InterfaceType = INTERFACE {InterfaceProc} END</code>
-<br><code>InterfaceProc = [PROCEDURE | PROC] ident [FormalParameters] [';']</code></div>
+<br><code>InterfaceProc = [PROCEDURE | PROC] identdef [FormalParameters] [';']</code></div>
 <div style="margin-left:63px"><span class="label"><a name="20760">2.6.11.7</a></span><span class="ident">NOTE</span>
 Micron interfaces are adopted from Go and follow similar semantics. </div>
 <h4 style="margin-left:45px"><span class="label"><a name="14291">2.6.12</a></span>
@@ -1170,7 +1170,7 @@ This is the same rule as in Modula-2, <i>where both operands must be either of t
 <div style="margin-left:81px"><span class="label"><a name="15974">2.8.3.4.5</a></span>
 As an exception, if one of the operands is an unsigned integer constant and the other operand is of type integer, the unsigned integer constant is converted to the smallest integer type which includes the constant value.</div>
 <div style="margin-left:81px"><span class="label"><a name="14475">2.8.3.4.6</a></span>
-The type of the result is the type of that operand which includes the type of the other operand (see <a href="#14255">2.6.4.5</a>).</div>
+The type of the result of the operation is the type of that operand which includes the type of the other operand (see <a href="#14255">2.6.4.5</a>). In case of overflow, the result of an integer expression is truncated to this type by taking the appropriate number of low-order bits (corresponding to an implicit modulo 2^n operation, where n is the bit width of the integer type). An implementation of the language may decide to also truncate the results of intermediate operations.</div>
 <div style="margin-left:81px"><span class="label"><a name="15820">2.8.3.4.7</a></span>
 The operator '<code>/</code>' applies to real operands only.</div>
 <div style="margin-left:81px"><span class="label"><a name="14473">2.8.3.4.8</a></span>
@@ -1704,7 +1704,7 @@ Note that both, FINALLY sections and also exceptions are an extended feature of 
 <h4 style="margin-left:45px"><span class="label"><a name="18516">2.11.13</a></span>
 Type-bound procedures</h4>
 <div style="margin-left:63px"><span class="label"><a name="18520">2.11.13.1</a></span>
-Procedures may be associated with a record or object type declared in the same scope. The procedures are said to be bound to the type. The binding is expressed by the receiver syntax in the heading of a procedure declaration. The receiver consists of a type name and the optional receiver parameter name. The type name can either reference the record or object type T, or a pointer to T. The procedure is bound to the type T and is considered local to it. If the optional receiver parameter name is left out, the compiler automatically creates a hidden parameter which can be accessed from within the procedure body by the name &quot;SELF&quot; or &quot;self&quot;.</div>
+Procedures may be associated with a record or object type declared in the same scope. The procedures are said to be bound to the type. The binding is expressed by the receiver syntax in the heading of a procedure declaration. The receiver consists of a type name and the optional receiver parameter name. The type name can either reference the record or object type T, or a pointer to T. The procedure is bound to the type T and is considered local to it. If the optional receiver parameter name is left out, the compiler automatically creates a hidden parameter which can be accessed from within the procedure body by the name &quot;self&quot;.</div>
 <div style="margin-left:63px"><span class="label"><a name="18589">2.11.13.2</a></span><span class="ident">NOTE</span>
 Regardless of whether the receiver is an object, record or pointer type, the receiver parameter is always a pointer to record or object type. </div>
 <div style="margin-left:63px"><span class="label"><a name="18536">2.11.13.3</a></span>
@@ -2188,7 +2188,7 @@ The result types of two procedures match if they are either of <i>equal type</i>
 <code>ProcedureType = ( PROCEDURE | PROC ) '(' ( POINTER | '^' ) ')' [FormalParameters]</code></div>
 <div style="margin-left:27px"><span class="label"><a name="20769">4.14</a></span><a href="#20765">&#x21B3;</a>
 <code>InterfaceType = INTERFACE {InterfaceProc} END</code>
-<br><code>InterfaceProc = [PROCEDURE | PROC] ident [FormalParameters] [';']</code></div>
+<br><code>InterfaceProc = [PROCEDURE | PROC] identdef [FormalParameters] [';']</code></div>
 <div style="margin-left:27px"><span class="label"><a name="14604">4.15</a></span><a href="#14294">&#x21B3;</a>
 <pre><code>enumeration ::= '(' constEnum ')' <br />constEnum ::= ident [ '=' ConstExpression ] { [','] ident } </code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14605">4.16</a></span><a href="#14301">&#x21B3;</a>
@@ -2331,471 +2331,459 @@ see <a href="#14224">2.6.4 Basic types</a>.</div>
 <b>Predeclared Procedure Reference</b></h4>
 <h4 style="margin-left:27px"><span class="label"><a name="14775">6.1</a></span>
 Predeclared function procedures</h4>
-<div style="margin-left:45px"><span class="label"><a name="14825">6.1.1</a></span>
+<div style="margin-left:45px"><span class="label"><a name="20973">6.1.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 ><thead>
 <tr>
 <td>
-<b>Name</b></td>
+<b>Name</b> </td>
 <td>
-<br><b>Argument type</b></td>
+<br><b>Argument type</b> </td>
 <td>
-<br><b>Result type</b></td>
+<br><b>Result type</b> </td>
 <td>
-<br><b>Function</b></td></tr></thead>
+<br><b>Function</b> </td></tr></thead>
 <tr>
 <td>
-<br>ABS(x)</td>
+<br>ABS(x) </td>
 <td>
-<br>numeric type</td>
+<br>numeric type </td>
 <td>
-<br>type of x</td>
+<br>type of x </td>
 <td>
-<br>absolute value</td></tr>
+<br>absolute value </td></tr>
 <tr>
 <td>
-<br>CAP(x)</td>
+<br>CAP(x) </td>
 <td>
-<br>CHAR</td>
+<br>CHAR </td>
 <td>
-<br>CHAR</td>
+<br>CHAR </td>
 <td>
-<br>corresponding capital letter (only for the ASCII subset of the CHAR type)</td></tr>
+<br>corresponding capital letter (only for the ASCII subset of the CHAR type) </td></tr>
 <tr>
 <td>
-<br>BITAND(x,y)</td>
+<br>BITAND(x,y) </td>
 <td>
-<br>x, y: UINT32 or UINT64</td>
+<br>x, y: UINT32 or UINT64 </td>
 <td>
-<br>UINT32 or UINT64</td>
+<br>UINT32 or UINT64 </td>
 <td>
-<br>bitwise AND; result is UINT64 if x or y is UINT64, else UINT32</td></tr>
+<br>bitwise AND; result is UINT64 if x or y is UINT64, else UINT32 </td></tr>
 <tr>
 <td>
-<br>BITASR(x,n)</td>
+<br>BITASR(x,n) </td>
 <td>
-<br>x: UINT32 or UINT64, n: UINT32</td>
+<br>x: UINT32 or UINT64, n: UINT32 </td>
 <td>
-<br>UINT32 or UINT64</td>
+<br>UINT32 or UINT64 </td>
 <td>
-<br>arithmetic shift right by n bits, where n &gt;= 0 and n &lt; SIZE(x)*8; result is UINT64 if x is UINT64, else UINT32</td></tr>
+<br>arithmetic shift right by n bits, where n &gt;= 0 and n &lt; SIZE(x)*8; result is UINT64 if x is UINT64, else UINT32 </td></tr>
 <tr>
 <td>
-<br>BITNOT(x)</td>
+<br>BITNOT(x) </td>
 <td>
-<br>x: UINT32 or UINT64</td>
+<br>x: UINT32 or UINT64 </td>
 <td>
-<br>UNT32 or UINT64</td>
+<br>UNT32 or UINT64 </td>
 <td>
-<br>bitwise NOT; result is UINT64 if x or y is UINT64, else UINT32</td></tr>
+<br>bitwise NOT; result is UINT64 if x or y is UINT64, else UINT32 </td></tr>
 <tr>
 <td>
-<br>BITOR(x,y)</td>
+<br>BITOR(x,y) </td>
 <td>
-<br>x, y: UINT32 or UINT64</td>
+<br>x, y: UINT32 or UINT64 </td>
 <td>
-<br>UINT32 or UINT64</td>
+<br>UINT32 or UINT64 </td>
 <td>
-<br>bitwise OR; result is UINT64 if x or y is UINT64, else UINT32</td></tr>
+<br>bitwise OR; result is UINT64 if x or y is UINT64, else UINT32 </td></tr>
 <tr>
 <td>
-<br>BITS(x)</td>
+<br>BITS(x) </td>
 <td>
-<br>x: UINT32</td>
+<br>x: UINT32 </td>
 <td>
-<br>SET</td>
+<br>SET </td>
 <td>
-<br>set corresponding to the integer; the first element corresponds to the least significant digit of the integer and the last element to the most significant digit.</td></tr>
+<br>set corresponding to the integer; the first element corresponds to the least significant digit of the integer and the last element to the most significant digit. </td></tr>
 <tr>
 <td>
-<br>BITSHL(x,n)</td>
+<br>BITSHL(x,n) </td>
 <td>
-<br>x: UINT32 or UINT64, n: UINT32</td>
+<br>x: UINT32 or UINT64, n: UINT32 </td>
 <td>
-<br>UINT32 or UINT64</td>
+<br>UINT32 or UINT64 </td>
 <td>
-<br>logical shift left by n bits, where n &gt;= 0 and n &lt; SIZE(x)*8; result is UINT64 if x is UINT64, else UINT32</td></tr>
+<br>logical shift left by n bits, where n &gt;= 0 and n &lt; SIZE(x)*8; result is UINT64 if x is UINT64, else UINT32 </td></tr>
 <tr>
 <td>
-<br>BITSHR(x,n)</td>
+<br>BITSHR(x,n) </td>
 <td>
-<br>x: UINT32 or UINT64, n: UINT32</td>
+<br>x: UINT32 or UINT64, n: UINT32 </td>
 <td>
-<br>UINT32 or UINT64</td>
+<br>UINT32 or UINT64 </td>
 <td>
-<br>logical shift right by n bits, where n &gt;= 0 and n &lt; SIZE(x)*8; result is UINT64 if x is UINT64, else UINT32</td></tr>
+<br>logical shift right by n bits, where n &gt;= 0 and n &lt; SIZE(x)*8; result is UINT64 if x is UINT64, else UINT32 </td></tr>
 <tr>
 <td>
-<br>BITXOR(x,y)</td>
+<br>BITXOR(x,y) </td>
 <td>
-<br>x, y: UINT32 or UINT64</td>
+<br>x, y: UINT32 or UINT64 </td>
 <td>
-<br>UINT32 or UINT64</td>
+<br>UINT32 or UINT64 </td>
 <td>
-<br>bitwise XOR; result is UINT64 if x or y is UINT64, else UINT32</td></tr>
+<br>bitwise XOR; result is UINT64 if x or y is UINT64, else UINT32 </td></tr>
 <tr>
 <td>
-<br>CAST(T,x)</td>
+<br>CAST(T,x) </td>
 <td>
-<br>T:enumeration type x:ordinal number</td>
+<br>T:enumeration type x:ordinal number </td>
 <td>
-<br>enumeration type</td>
+<br>enumeration type </td>
 <td>
-<br>the enum item with the ordinal number x; halt if no match</td></tr>
-<tr>
-<td></td>
-<td>
-<br>T,x: integer type</td>
-<td>
-<br>T</td>
-<td>
-<br>convert integer types, accept possible loss of information</td></tr>
-<tr>
-<td>
-<br>CHR(x)</td>
-<td>
-<br>integer type</td>
-<td>
-<br>CHAR</td>
-<td>
-<br>Latin-1 character with ordinal number x</td></tr>
-<tr>
-<td>
-<br>DEFAULT(T)</td>
-<td>
-<br>T = basic type</td>
-<td>
-<br>T</td>
-<td>
-<br>zero for numeric and character types, false for boolean, empty set</td></tr>
+<br>the enum item with the ordinal number x; halt if no match </td></tr>
 <tr>
 <td></td>
 <td>
-<br>T = enumeration type</td>
+<br>T,x: integer type </td>
 <td>
-<br>T</td>
+<br>T </td>
 <td>
-<br>same as MIN(T)</td></tr>
+<br>convert integer types; re-interprets the raw bytes as T, with truncation or sign/zero extension as required. </td></tr>
+<tr>
+<td>
+<br>CHR(x) </td>
+<td>
+<br>integer type </td>
+<td>
+<br>CHAR </td>
+<td>
+<br>Latin-1 character with ordinal number x </td></tr>
+<tr>
+<td>
+<br>DEFAULT(T) </td>
+<td>
+<br>T = basic type </td>
+<td>
+<br>T </td>
+<td>
+<br>zero for numeric and character types, false for boolean, empty set </td></tr>
 <tr>
 <td></td>
 <td>
-<br>T = pointer/proc type</td>
+<br>T = enumeration type </td>
 <td>
-<br>T</td>
+<br>T </td>
 <td>
-<br>nil</td></tr>
+<br>same as MIN(T) </td></tr>
 <tr>
 <td></td>
 <td>
-<br>T = record/object/array type</td>
+<br>T = pointer/proc type </td>
 <td>
-<br>T</td>
+<br>T </td>
 <td>
-<br>all fields/elements set to their DEFAULT type</td></tr>
-<tr>
-<td>
-<br>FLOOR(x)</td>
-<td>
-<br>x: REAL or LONGREAL</td>
-<td>
-<br>INT32 or INT64</td>
-<td>
-<br>largest integer not greater than x; result is INT64 if x is LONGREAL, else INT32</td></tr>
-<tr>
-<td>
-<br>FLT(x)</td>
-<td>
-<br>x: INT32 or INT64</td>
-<td>
-<br>REAL or LONGREAL</td>
-<td>
-<br>Convert integer to real type; result is LONGREAL if x was INT64, else REAL, accepting potential loss of information</td></tr>
+<br>nil </td></tr>
 <tr>
 <td></td>
 <td>
-<br>x: UINT32 or UINT64</td>
+<br>T = record/object/array type </td>
 <td>
-<br>REAL or LONGREAL</td>
+<br>T </td>
 <td>
-<br>Convert integer to real type; result is LONGREAL if x was UINT64, else REAL, accepting potential loss of information</td></tr>
+<br>all fields/elements set to their DEFAULT type </td></tr>
 <tr>
 <td>
-<br>GETENV(T,n)</td>
+<br>FLOOR(x) </td>
 <td>
-<br>T: basic, enumeration or char array type</td>
+<br>x: REAL or LONGREAL </td>
 <td>
-<br>T</td>
+<br>INT32 or INT64 </td>
 <td>
-<br>get the value of the environment variable with name n or the default value</td></tr>
-<tr>
-<td></td>
-<td>
-<br>n: name string</td>
-<td></td>
-<td></td></tr>
+<br>largest integer not greater than x; result is INT64 if x is LONGREAL, else INT32 </td></tr>
 <tr>
 <td>
-<br>GETENV(T,n,d)</td>
+<br>FLT(x) </td>
 <td>
-<br>d: default of T</td>
+<br>x: INT32 or INT64 </td>
 <td>
-<br>T</td>
+<br>REAL or LONGREAL </td>
 <td>
-<br>like GETENV(T,n), but with explicit default value if not set</td></tr>
-<tr>
-<td>
-<br>LEN(v)</td>
-<td>
-<br>v: non-open array</td>
-<td>
-<br>UINT32</td>
-<td>
-<br>length of array v</td></tr>
-<tr>
-<td>
-<br>LONG(x)</td>
-<td>
-<br>x: INT8 or UINT8</td>
-<td>
-<br>INT16 or UINT16</td>
-<td>
-<br>identity</td></tr>
+<br>Convert integer to real type; result is LONGREAL if x was INT64, else REAL, accepting potential loss of information </td></tr>
 <tr>
 <td></td>
 <td>
-<br>x: INT16 or UINT16</td>
+<br>x: UINT32 or UINT64 </td>
 <td>
-<br>INT32 or UINT32</td>
-<td></td></tr>
+<br>REAL or LONGREAL </td>
+<td>
+<br>Convert integer to real type; result is LONGREAL if x was UINT64, else REAL, accepting potential loss of information </td></tr>
+<tr>
+<td>
+<br>GETENV(T,n) </td>
+<td>
+<br>T: basic, enumeration or char array type </td>
+<td>
+<br>T </td>
+<td>
+<br>get the value of the environment variable with name n or the default value </td></tr>
 <tr>
 <td></td>
 <td>
-<br>x: INT32 or UINT32</td>
-<td>
-<br>INT64 or UINT64</td>
-<td></td></tr>
-<tr>
-<td></td>
-<td>
-<br>x: REAL</td>
-<td>
-<br>LONGREAL</td>
-<td></td></tr>
-<tr>
-<td>
-<br>MAX(T)</td>
-<td>
-<br>T = basic type</td>
-<td>
-<br>T</td>
-<td>
-<br>maximum value of type T</td></tr>
-<tr>
-<td></td>
-<td>
-<br>T = SET</td>
-<td>
-<br>INT32</td>
-<td>
-<br>maximum element of a set</td></tr>
-<tr>
-<td></td>
-<td>
-<br>T = enumeration type</td>
-<td>
-<br>T</td>
-<td>
-<br>last element of the enumeration</td></tr>
-<tr>
-<td>
-<br>MAX(x,y)</td>
-<td>
-<br>x,y: numeric type</td>
-<td>
-<br>numeric type</td>
-<td>
-<br>greater of x and y, returns smallest numeric type including both arguments</td></tr>
-<tr>
-<td></td>
-<td>
-<br>x,y: character type</td>
-<td>
-<br>character type</td>
-<td>
-<br>greater of x and y, returns smallest character type including both arguments</td></tr>
-<tr>
-<td>
-<br>MIN(T)</td>
-<td>
-<br>T = basic type</td>
-<td>
-<br>T</td>
-<td>
-<br>minimum value of type T</td></tr>
-<tr>
-<td></td>
-<td>
-<br>T = SET</td>
-<td>
-<br>UINT32</td>
-<td>
-<br>0</td></tr>
-<tr>
-<td></td>
-<td>
-<br>T = enumeration type</td>
-<td>
-<br>T</td>
-<td>
-<br>first element of the enumeration</td></tr>
-<tr>
-<td>
-<br>MIN(x,y)</td>
-<td>
-<br>x,y: numeric type</td>
-<td>
-<br>numeric type</td>
-<td>
-<br>smaller of x and y, returns smallest numeric type including both arguments</td></tr>
-<tr>
-<td></td>
-<td>
-<br>x,y: character type</td>
-<td>
-<br>character type</td>
-<td>
-<br>smaller of x and y, returns smallest character type including both arguments</td></tr>
-<tr>
-<td>
-<br>ODD(x)</td>
-<td>
-<br>integer type</td>
-<td>
-<br>BOOLEAN</td>
-<td>
-<br>x MOD 2 = 1</td></tr>
-<tr>
-<td>
-<br>ORD(x)</td>
-<td>
-<br>x: CHAR</td>
-<td>
-<br>BYTE</td>
-<td>
-<br>ordinal number of x</td></tr>
-<tr>
-<td></td>
-<td>
-<br>x: enumeration type</td>
-<td>
-<br>UINT32</td>
-<td>
-<br>ordinal number of the given identifier</td></tr>
-<tr>
-<td></td>
-<td>
-<br>x: BOOLEAN</td>
-<td>
-<br>BYTE</td>
-<td>
-<br>TRUE = 1, FALSE = 0</td></tr>
-<tr>
-<td></td>
-<td>
-<br>x: set type</td>
-<td>
-<br>UINT32</td>
-<td>
-<br>number representing the set; the first element corresponds to the least significant digit of the number and the last element to the most significant digit.</td></tr>
-<tr>
-<td>
-<br>SHORT(x)</td>
-<td>
-<br>x: INT64 or UINT64</td>
-<td>
-<br>INT32 or UINT32</td>
-<td>
-<br>identity</td></tr>
-<tr>
-<td></td>
-<td>
-<br>x: INT32 or UINT32</td>
-<td>
-<br>INT16 or UINT16</td>
-<td>
-<br>identity</td></tr>
-<tr>
-<td></td>
-<td>
-<br>x: INT16 or UINT16</td>
-<td>
-<br>INT8 or UINT8</td>
-<td>
-<br>identity</td></tr>
-<tr>
-<td></td>
-<td>
-<br>x: LONGREAL</td>
-<td>
-<br>REAL</td>
-<td>
-<br>identity (truncation possible)</td></tr>
-<tr>
-<td>
-<br>SIGNED(x)</td>
-<td>
-<br>x: unsigned integer T</td>
-<td>
-<br>signed integer T</td>
-<td>
-<br>interprets the raw bytes of x as signed integer of the same byte width</td></tr>
-<tr>
-<td>
-<br>SIZE(T)</td>
-<td>
-<br>any type</td>
-<td>
-<br>UINT32</td>
-<td>
-<br>number of bytes required by T</td></tr>
-<tr>
-<td>
-<br>STRLEN(s)</td>
-<td>
-<br>s: array of char</td>
-<td>
-<br>UINT32</td>
-<td>
-<br>dynamic length of the string up to and not including the terminating 0X</td></tr>
-<tr>
-<td></td>
-<td>
-<br>s: string literal</td>
+<br>n: name string </td>
 <td></td>
 <td></td></tr>
 <tr>
 <td>
-<br>UNSIGNED(x)</td>
+<br>GETENV(T,n,d) </td>
 <td>
-<br>x: signed integer T</td>
+<br>d: default of T </td>
 <td>
-<br>unsigned integer T</td>
+<br>T </td>
 <td>
-<br>interprets the raw bytes of x as unsigned integer of the same byte width</td></tr>
+<br>like GETENV(T,n), but with explicit default value if not set </td></tr>
+<tr>
+<td>
+<br>LEN(v) </td>
+<td>
+<br>v: non-open array </td>
+<td>
+<br>UINT32 </td>
+<td>
+<br>length of array v </td></tr>
+<tr>
+<td>
+<br>LONG(x) </td>
+<td>
+<br>x: INT8 or UINT8 </td>
+<td>
+<br>INT16 or UINT16 </td>
+<td>
+<br>identity (with sign extension in case of signed types) </td></tr>
 <tr>
 <td></td>
+<td>
+<br>x: INT16 or UINT16 </td>
+<td>
+<br>INT32 or UINT32 </td>
+<td>
+<br>dito </td></tr>
+<tr>
 <td></td>
+<td>
+<br>x: INT32 or UINT32 </td>
+<td>
+<br>INT64 or UINT64 </td>
+<td>
+<br>dito </td></tr>
+<tr>
+<td></td>
+<td>
+<br>x: REAL </td>
+<td>
+<br>LONGREAL </td>
+<td>
+<br>identity </td></tr>
+<tr>
+<td>
+<br>MAX(T) </td>
+<td>
+<br>T = basic type </td>
+<td>
+<br>T </td>
+<td>
+<br>maximum value of type T </td></tr>
+<tr>
+<td></td>
+<td>
+<br>T = SET </td>
+<td>
+<br>INT32 </td>
+<td>
+<br>maximum element of a set </td></tr>
+<tr>
+<td></td>
+<td>
+<br>T = enumeration type </td>
+<td>
+<br>T </td>
+<td>
+<br>last element of the enumeration </td></tr>
+<tr>
+<td>
+<br>MAX(x,y) </td>
+<td>
+<br>x,y: numeric type </td>
+<td>
+<br>numeric type </td>
+<td>
+<br>greater of x and y, returns smallest numeric type including both arguments </td></tr>
+<tr>
+<td></td>
+<td>
+<br>x,y: character type </td>
+<td>
+<br>character type </td>
+<td>
+<br>greater of x and y, returns smallest character type including both arguments </td></tr>
+<tr>
+<td>
+<br>MIN(T) </td>
+<td>
+<br>T = basic type </td>
+<td>
+<br>T </td>
+<td>
+<br>minimum value of type T </td></tr>
+<tr>
+<td></td>
+<td>
+<br>T = SET </td>
+<td>
+<br>UINT32 </td>
+<td>
+<br>0 </td></tr>
+<tr>
+<td></td>
+<td>
+<br>T = enumeration type </td>
+<td>
+<br>T </td>
+<td>
+<br>first element of the enumeration </td></tr>
+<tr>
+<td>
+<br>MIN(x,y) </td>
+<td>
+<br>x,y: numeric type </td>
+<td>
+<br>numeric type </td>
+<td>
+<br>smaller of x and y, returns smallest numeric type including both arguments </td></tr>
+<tr>
+<td></td>
+<td>
+<br>x,y: character type </td>
+<td>
+<br>character type </td>
+<td>
+<br>smaller of x and y, returns smallest character type including both arguments </td></tr>
+<tr>
+<td>
+<br>ODD(x) </td>
+<td>
+<br>integer type </td>
+<td>
+<br>BOOLEAN </td>
+<td>
+<br>x MOD 2 = 1 </td></tr>
+<tr>
+<td>
+<br>ORD(x) </td>
+<td>
+<br>x: CHAR </td>
+<td>
+<br>BYTE </td>
+<td>
+<br>ordinal number of x </td></tr>
+<tr>
+<td></td>
+<td>
+<br>x: enumeration type </td>
+<td>
+<br>UINT32 </td>
+<td>
+<br>ordinal number of the given identifier </td></tr>
+<tr>
+<td></td>
+<td>
+<br>x: BOOLEAN </td>
+<td>
+<br>BYTE </td>
+<td>
+<br>TRUE = 1, FALSE = 0 </td></tr>
+<tr>
+<td></td>
+<td>
+<br>x: set type </td>
+<td>
+<br>UINT32 </td>
+<td>
+<br>number representing the set; the first element corresponds to the least significant digit of the number and the last element to the most significant digit. </td></tr>
+<tr>
+<td>
+<br>SHORT(x) </td>
+<td>
+<br>x: INT64 or UINT64 </td>
+<td>
+<br>INT32 or UINT32 </td>
+<td>
+<br>truncation to modulo 2^n, where n is the bit width of the target type; negative sign is only preserved if the value fits the range of the signed target type. </td></tr>
+<tr>
+<td></td>
+<td>
+<br>x: INT32 or UINT32 </td>
+<td>
+<br>INT16 or UINT16 </td>
+<td>
+<br>dito </td></tr>
+<tr>
+<td></td>
+<td>
+<br>x: INT16 or UINT16 </td>
+<td>
+<br>INT8 or UINT8 </td>
+<td>
+<br>dito </td></tr>
+<tr>
+<td></td>
+<td>
+<br>x: LONGREAL </td>
+<td>
+<br>REAL </td>
+<td>
+<br>identity with loss of precision </td></tr>
+<tr>
+<td>
+<br>SIGNED(x) </td>
+<td>
+<br>x: unsigned integer T </td>
+<td>
+<br>signed integer T </td>
+<td>
+<br>interprets the raw bytes of x as signed integer of the same byte width </td></tr>
+<tr>
+<td>
+<br>SIZE(T) </td>
+<td>
+<br>any type </td>
+<td>
+<br>UINT32 </td>
+<td>
+<br>number of bytes required by T </td></tr>
+<tr>
+<td>
+<br>STRLEN(s) </td>
+<td>
+<br>s: array of char </td>
+<td>
+<br>UINT32 </td>
+<td>
+<br>dynamic length of the string up to and not including the terminating 0X </td></tr>
+<tr>
+<td></td>
+<td>
+<br>s: string literal </td>
 <td></td>
 <td></td></tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td></tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td></tr></table></div>
+<td>
+<br>UNSIGNED(x) </td>
+<td>
+<br>x: signed integer T </td>
+<td>
+<br>unsigned integer T </td>
+<td>
+<br>interprets the raw bytes of x as unsigned integer of the same byte width </td></tr></table></div>
 <h4 style="margin-left:27px"><span class="label"><a name="14777">6.2</a></span>
 Predeclared proper procedures</h4>
 <div style="margin-left:45px"><span class="label"><a name="15971">6.2.1</a></span>
