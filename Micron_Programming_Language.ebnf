@@ -237,10 +237,13 @@ FPSection ::= [CONST] ident { [','] ident } ':' FormalType
 
 FormalType ::= type
 
-module ::= MODULE ident [ MetaParams ] [';'] 
+module ::= MODULE ident [ MetaParams ] [ ModuleAttributes ] [';'] 
 	{ ImportList | WhereDecls | DeclarationSequence }
 	[ block ] END ident ['.'] 
-	
+
+ModuleAttributes ::= '[' Attribute { [','] Attribute } ']'
+Attribute ::= ident [ '=' ConstExpression ]
+
 ImportList ::= IMPORT import { [ ',' ] import } [';']
 
 WhereDecls ::= WHERE { WhereDeclaration [';'] }

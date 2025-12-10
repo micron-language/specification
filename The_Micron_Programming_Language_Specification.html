@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2025-12-04, work in progress</div>
+2025-12-10, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -1764,10 +1764,10 @@ A module is a collection of declarations of constants, types, variables, and pro
 <div style="margin-left:45px"><span class="label"><a name="14500">2.12.2</a></span>
 Syntax:</div>
 <div style="margin-left:63px"><span class="label"><a name="14501">2.12.2.1</a></span>
-<pre><code>module     = MODULE ident [ MetaParams ] [';']</code></pre>
+<pre><code>module     = MODULE ident [ MetaParams ] [ ModuleAttributes ] [';']</code></pre>
 <pre><code>             { ImportList | WhereDecls | DeclarationSequence }</code></pre>
 <pre><code>	 [ BEGIN StatementSequence [FINALLY StatementSequence] ] <br />             END ident ['.']</code></pre>
-<pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
+<pre><code>ModuleAttributes ::= '[' Attribute { [','] Attribute } ']' <br />Attribute ::= ident [ '=' ConstExpression ]<br /><br />ImportList = IMPORT import { [','] import } [';']</code></pre>
 <pre><code>import     = [ ident ':=' ] ImportPath ident [ MetaActuals ]</code></pre>
 <pre><code>ImportPath = { ident '.' }</code></pre></div>
 <div style="margin-left:45px"><span class="label"><a name="14502">2.12.3</a></span>
@@ -1775,13 +1775,23 @@ The import list specifies the names of the imported modules. If a module A is im
 <div style="margin-left:45px"><span class="label"><a name="14503">2.12.4</a></span>
 If A is imported as <code>B := A</code>, the object <code>x</code> must be referenced as <code>B.x</code>. This allows short alias names in qualified identifiers.</div>
 <div style="margin-left:45px"><span class="label"><a name="14504">2.12.5</a></span>
-In Micron, as in Oberon+, the import can refer to a module by means of a module name optionally prefixed with an import path. There is no requirement that the import path actually exists in the file system, or that the source files corresponding to an import path are in the same file system directory. It is up to the compiler how source files are mapped to import paths. An imported module with no import path is first looked up in the import path of the importing module.</div>
+The import can refer to a module by means of a module name optionally prefixed with an import path. There is no requirement that the import path actually exists in the file system, or that the source files corresponding to an import path are in the same file system directory. It is up to the compiler how source files are mapped to import paths. An imported module with no import path is first looked up in the import path of the importing module.</div>
 <div style="margin-left:45px"><span class="label"><a name="14505">2.12.6</a></span>
 A module must not import itself (neither directly nor indirectly).</div>
 <div style="margin-left:45px"><span class="label"><a name="14506">2.12.7</a></span>
 Identifiers that are to be exported (i.e. that are to be visible in client modules) must be marked by an export mark in their declaration (see Chapter <a href="#14160">2.4 Declarations and scope rules</a>).</div>
 <div style="margin-left:45px"><span class="label"><a name="14507">2.12.8</a></span>
 The statement sequence following the symbol BEGIN is executed when the module is loaded, which is done after the imported modules have been loaded. It follows that cyclic import of modules is illegal.</div>
+<h4 style="margin-left:45px"><span class="label"><a name="21135">2.12.9</a></span>
+Module Attributes</h4>
+<div style="margin-left:63px"><span class="label"><a name="21136">2.12.9.1</a></span>
+Optional attributes can be set for a module. Attribute names are case insensitive. Each attribute can optionally be assigned with a constant expression. If no explicit constant expression is assigned, a boolean value of TRUE is assumed.</div>
+<div style="margin-left:63px"><span class="label"><a name="21137">2.12.9.2</a></span>
+The following attributes are defines so far:</div>
+<h4 style="margin-left:81px"><span class="label"><a name="21138">2.12.9.2.1</a></span>
+<b>Standard or Level</b></h4>
+<div style="margin-left:99px"><span class="label"><a name="21139">2.12.9.2.1.1</a></span>
+This attribute is used to set the language level. The expression must be an integer literal between 0 and 4. If the attribute is not set, language level 3 is assumed. Both names - Standard and Level - are equivalent.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14508">2.13</a></span>
 Generics</h4>
 <div style="margin-left:45px"><span class="label"><a name="14509">2.13.1</a></span>
@@ -2276,10 +2286,10 @@ The result types of two procedures match if they are either of <i>equal type</i>
 <div style="margin-left:27px"><span class="label"><a name="18530">4.37</a></span><a href="#18522">&#x21B3;</a>
 <code>ProcedureHeading = ( PROCEDURE | PROC ) [Receiver] identdef [ FormalParameters ] <br />ForwardDeclaration = ( PROCEDURE | PROC ) '^' [Receiver] identdef [ FormalParameters ] <br />Receiver = '(' ReceiverParam ':' ReceiverType ')' | ReceiverType '.'<br />ReceiverParam = ident<br />ReceiverType = ident</code></div>
 <div style="margin-left:27px"><span class="label"><a name="14624">4.38</a></span><a href="#14501">&#x21B3;</a>
-<pre><code>module     = MODULE ident [ MetaParams ] [';']</code></pre>
+<pre><code>module     = MODULE ident [ MetaParams ] [ ModuleAttributes ] [';']</code></pre>
 <pre><code>             { ImportList | WhereDecls | DeclarationSequence }</code></pre>
 <pre><code>	 [ BEGIN StatementSequence [FINALLY StatementSequence] ] <br />             END ident ['.']</code></pre>
-<pre><code>ImportList = IMPORT import { [','] import } [';']</code></pre>
+<pre><code>ModuleAttributes ::= '[' Attribute { [','] Attribute } ']' <br />Attribute ::= ident [ '=' ConstExpression ]<br /><br />ImportList = IMPORT import { [','] import } [';']</code></pre>
 <pre><code>import     = [ ident ':=' ] ImportPath ident [ MetaActuals ]</code></pre>
 <pre><code>ImportPath = { ident '.' }</code></pre></div>
 <div style="margin-left:27px"><span class="label"><a name="14625">4.39</a></span><a href="#14512">&#x21B3;</a>
