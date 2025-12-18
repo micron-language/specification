@@ -20,7 +20,7 @@ The Micron Intermediate Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14948">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14949">1.2.1</a></span>
-2025-12-04, work in progress</div>
+2025-12-18, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14950">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14951">1.3.1</a></span>
@@ -367,9 +367,9 @@ Syntax of textual representation:</div>
 <div style="margin-left:81px"><span class="label"><a name="15441">2.4.7.2.1</a></span>
 <pre><code>ProcedureType = (PROCEDURE|PROC) [FormalParameters]</code></pre></div>
 <h4 style="margin-left:45px"><span class="label"><a name="18469">2.4.8</a></span>
-<b>Method reference</b></h4>
+<b>Method types</b></h4>
 <div style="margin-left:63px"><span class="label"><a name="18471">2.4.8.1</a></span>
-Variables of a method reference type T combine a pointer to an object with a pointer to a type bound procedure (or NIL) as value. If a type-bound procedure P is assigned to a variable of type T, the formal parameter lists and result types of P and T must <i>match. </i>A method reference is represented by a <i>methref</i> value in the runtime.</div>
+Variables of a method type (also called bound procedure type) T combine a pointer to an object with a pointer to a type bound procedure (or NIL) as value. If a type-bound procedure P is assigned to a variable of type T, the formal parameter lists and result types of P and T must <i>match. </i>A method reference is represented by a <i>methref</i> value in the runtime.</div>
 <div style="margin-left:63px"><span class="label"><a name="18472">2.4.8.2</a></span>
 Syntax of textual representation:</div>
 <div style="margin-left:81px"><span class="label"><a name="18473">2.4.8.2.1</a></span>
@@ -766,10 +766,12 @@ The callinst instruction calls a type-bound procedure on an object pointer. The 
 <div style="margin-left:63px"><span class="label"><a name="18661">2.5.13.3</a></span>
 <code>…, arg1, arg2 … argN, methref -&gt; …</code></div>
 <div style="margin-left:63px"><span class="label"><a name="18662">2.5.13.4</a></span>
-The callmi instruction calls methref (a pair of <i>intptr</i> pointing to an object instance and a procedure) with the arguments arg1 … argN. The types of these arguments, and a possible return type, are described by the signature. Such a methref is created using the ldmeth instruction. The arguments are placed on the stack in left-to-right order. That is, the first argument is computed and placed on the stack, then the second argument, and so on. If the method has a return value, it is pushed on the stack upon method completion. </div>
-<div style="margin-left:63px"><span class="label"><a name="20865">2.5.13.5</a></span><span class="ident">NOTE</span>
+The callmi instruction calls methref (a pair of <i>intptr</i> pointing to an object instance and a procedure) with the arguments arg1 … argN. The types of these arguments, and a possible return type, are described by the signature referenced by <i>function</i>. Such a methref is created using the ldmeth instruction. The arguments are placed on the stack in left-to-right order. That is, the first argument is computed and placed on the stack, then the second argument, and so on. If the method has a return value, it is pushed on the stack upon method completion. </div>
+<div style="margin-left:63px"><span class="label"><a name="21140">2.5.13.5</a></span>
+The <i>function</i> reference either point to a bound procedure type, or an interface method.</div>
+<div style="margin-left:63px"><span class="label"><a name="20865">2.5.13.6</a></span><span class="ident">NOTE</span>
 callmi doesn't do method dispatch, but uses exactly the procedure reference provided in the methref.</div>
-<div style="margin-left:63px"><span class="label"><a name="20866">2.5.13.6</a></span>
+<div style="margin-left:63px"><span class="label"><a name="20866">2.5.13.7</a></span>
 TODO: change order, so that methref is pushed on stack first, before the arguments (so that we already have a slot for the object pointer).</div>
 <h4 style="margin-left:45px"><span class="label"><a name="18455">2.5.14</a></span>
 <b>callvirt – call a method associated, at runtime, with an object</b></h4>
@@ -2054,8 +2056,10 @@ The ldloca instruction pushes the address of the local variable number <i>indx</
 <br>Push the the methref of the reference method on the stack.</td></tr></table></div>
 <div style="margin-left:63px"><span class="label"><a name="18462">2.5.40.2</a></span>
 <code>…, obj -&gt; …, methref</code></div>
-<div style="margin-left:63px"><span class="label"><a name="18460">2.5.40.3</a></span>
-The ldmeth instruction pushes a method reference (<i>methref</i>) onto the stack. The <i>method</i> reference either points to a record, object or interface method declaration. Accordingly, <i>obj</i> can be a record or object pointer, or an interface reference (<i>ifaceref</i>). If <i>obj</i> is a pointer to object, the actual method is chosen based on the dynamic type of <i>obj</i> rather than the compile-time type referenced by <i>method</i>.</div>
+<div style="margin-left:63px"><span class="label"><a name="21104">2.5.40.3</a></span>
+<code>…, ifaceref -&gt; …, methref</code></div>
+<div style="margin-left:63px"><span class="label"><a name="18460">2.5.40.4</a></span>
+The ldmeth instruction pushes a method reference (methref) onto the stack. The <i>method</i> descriptor either points to a record, object or interface method declaration. Accordingly, <i>obj</i> can be a record or object pointer, or an interface reference (ifaceref). If <i>obj</i> is a pointer to object, the actual method is chosen based on the dynamic type of <i>obj</i> rather than the compile-time type referenced by <i>method</i>.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="15136">2.5.41</a></span>
 ldnull – load a null pointer</h4>
 <div style="margin-left:63px"><span class="label"><a name="15137">2.5.41.1</a></span>

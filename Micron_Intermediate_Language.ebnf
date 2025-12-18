@@ -41,7 +41,7 @@ Line ::=  'LINE' unsigned
 ConstDeclaration ::= [Line] ident ('=' ConstExpression2 | ':' qualident)
 
 TypeDeclaration ::= [Line] identdef ['=' type]
-type            ::= ArrayType | StructUnionType | ObjectType | PointerType | ProcedureType | NamedType
+type            ::= ArrayType | StructUnionType | ObjectType | PointerType | ProcedureType | NamedType | InterfaceType
 NamedType       ::= qualident
 
 ArrayType  ::= 'ARRAY' [ length ] 'OF' NamedType | '[' [ length ] ']' NamedType
@@ -51,6 +51,8 @@ length     ::= unsigned
 StructUnionType ::= ('STRUCT' | 'UNION') { \LA: 1:!'END'\ FieldList [';'] } 'END'
 FieldList  ::= IdentList ':' NamedType [ ':' unsigned ] | '..' unsigned
 IdentList  ::= [Line] identdef { [','] [Line] identdef }
+
+InterfaceType ::= 'INTERFACE'
 
 ObjectType ::= 'OBJECT' [ '(' NamedType ')' ] { MemberList [';'] } 'END'
 MemberList ::= IdentList ':' NamedType
@@ -62,11 +64,12 @@ ProcedureType ::= ('PROCEDURE'|'PROC')['^'] [FormalParameters]
 VariableDeclaration ::= IdentList ':' NamedType
 
 ProcedureDeclaration ::= ( 'PROCEDURE' | 'PROC' )  [Line] (
-                       \LA: 1:ident & 2:'.'\ Binding identdef [ FormalParameters ] [ ';' ] ProcedureBody
+                       \LA: 1:ident & 2:'.'\ Binding identdef [ FormalParameters ] [ ';' ] ( 'ABSTRACT' | ProcedureBody )
                        | identdef  
                            [ FormalParameters ] (
                                ['INLINE'|'INVAR'|'INIT'] [ ';' ] ProcedureBody  
-                               | \LA: 1:('EXTERN'|'FOREIGN') | (1:';'&2:('EXTERN'|'FOREIGN'))\ [ ';' ] ('EXTERN'|'FOREIGN' [string])   // \LL:2\ produces nonsense!
+                               | \LA: 1:('EXTERN'|'FOREIGN') | (1:';'&2:('EXTERN'|'FOREIGN'))\ [ ';' ] 
+                                   ('EXTERN'|'FOREIGN' [string])   // \LL:2\ produces nonsense!
                                | \LA: 1:'FORWARD' | (1:';'&2:'FORWARD')\ [ ';' ] 'FORWARD' 
                             ) 
                         )

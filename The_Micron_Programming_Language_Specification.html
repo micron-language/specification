@@ -20,7 +20,7 @@ The Micron Programming Language Specification</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14064">1.2</a></span>
 Version</h4>
 <div style="margin-left:45px"><span class="label"><a name="14065">1.2.1</a></span>
-2025-12-10, work in progress</div>
+2025-12-18, work in progress</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14066">1.3</a></span>
 Author</h4>
 <div style="margin-left:45px"><span class="label"><a name="14067">1.3.1</a></span>
@@ -196,9 +196,9 @@ This specification was written in CrossLine (see <a href="https://github.com/roc
 <div style="margin-left:45px"><span class="label"><a name="20859">1.6.6</a></span>
 <a href="#14136">6 Predeclared Procedure Reference</a></div>
 <div style="margin-left:63px"><span class="label"><a name="20860">1.6.6.1</a></span>
-<a href="#14775">6.1 Predeclared function procedures</a></div>
+<a href="#14775">6.2 Predeclared function procedures</a></div>
 <div style="margin-left:63px"><span class="label"><a name="20861">1.6.6.2</a></span>
-<a href="#14777">6.2 Predeclared proper procedures</a></div>
+<a href="#14777">6.3 Predeclared proper procedures</a></div>
 <div style="margin-left:45px"><span class="label"><a name="20862">1.6.7</a></span>
 <a href="#18479">7 Language levels</a></div>
 <div style="margin-left:45px"><span class="label"><a name="20863">1.6.8</a></span>
@@ -1698,7 +1698,7 @@ A FINALLY section cannot include a RETURN statement. </div>
 <div style="margin-left:63px"><span class="label"><a name="20051">2.11.12.4</a></span><span class="ident">NOTE</span>
 The expression of a RETURN statement is evaluated before the FINALLY section is run; it therefore cannot be modified in the FINALLY section.</div>
 <div style="margin-left:63px"><span class="label"><a name="18541">2.11.12.5</a></span>
-The statements in the FINALLY section are also executed if a nested BEGIN section is terminated with RAISE (see <a href="#14777">6.2 Predeclared proper procedures</a>). If a nested BEGIN section is terminated with RAISE, all FINALLY sections on the call chain up to (but not including) PCALL are executed in the reverse order of the call chain.</div>
+The statements in the FINALLY section are also executed if a nested BEGIN section is terminated with RAISE (see <a href="#14777">6.3 Predeclared proper procedures</a>). If a nested BEGIN section is terminated with RAISE, all FINALLY sections on the call chain up to (but not including) PCALL are executed in the reverse order of the call chain.</div>
 <div style="margin-left:63px"><span class="label"><a name="18543">2.11.12.6</a></span><span class="ident">NOTE</span>
 Note that both, FINALLY sections and also exceptions are an extended feature of the language and not available in all language levels (see <a href="#18479">7 Language levels</a>) and compiler configurations.</div>
 <h4 style="margin-left:45px"><span class="label"><a name="18516">2.11.13</a></span>
@@ -1785,13 +1785,13 @@ The statement sequence following the symbol BEGIN is executed when the module is
 <h4 style="margin-left:45px"><span class="label"><a name="21135">2.12.9</a></span>
 Module Attributes</h4>
 <div style="margin-left:63px"><span class="label"><a name="21136">2.12.9.1</a></span>
-Optional attributes can be set for a module. Attribute names are case insensitive. Each attribute can optionally be assigned with a constant expression. If no explicit constant expression is assigned, a boolean value of TRUE is assumed.</div>
+Optional attributes can be set for a module. Attribute names are case insensitive. Each attribute can optionally be assigned with a constant expression. If no explicit constant expression is assigned, a boolean value of TRUE is assumed. An attribute name cannot appear more than once in the list.</div>
 <div style="margin-left:63px"><span class="label"><a name="21137">2.12.9.2</a></span>
 The following attributes are defines so far:</div>
 <h4 style="margin-left:81px"><span class="label"><a name="21138">2.12.9.2.1</a></span>
 <b>Standard or Level</b></h4>
 <div style="margin-left:99px"><span class="label"><a name="21139">2.12.9.2.1.1</a></span>
-This attribute is used to set the language level. The expression must be an integer literal between 0 and 4. If the attribute is not set, language level 3 is assumed. Both names - Standard and Level - are equivalent.</div>
+This attribute is used to set the language level (see <a href="#18479">7 Language levels</a>). The expression must be an integer literal between 0 and 5. Both names - Standard and Level - are equivalent.</div>
 <h4 style="margin-left:27px"><span class="label"><a name="14508">2.13</a></span>
 Generics</h4>
 <div style="margin-left:45px"><span class="label"><a name="14509">2.13.1</a></span>
@@ -2339,9 +2339,11 @@ Floating-point types, see <a href="#14224">2.6.4 Basic types</a>.</div>
 see <a href="#14224">2.6.4 Basic types</a>.</div>
 <h4 style="margin-left:9px"><span class="label"><a name="14136">6</a></span>
 <b>Predeclared Procedure Reference</b></h4>
-<h4 style="margin-left:27px"><span class="label"><a name="14775">6.1</a></span>
+<div style="margin-left:27px"><span class="label"><a name="21168">6.1</a></span>
+TODO: add a language level column to assert which predeclareds are available in which level.</div>
+<h4 style="margin-left:27px"><span class="label"><a name="14775">6.2</a></span>
 Predeclared function procedures</h4>
-<div style="margin-left:45px"><span class="label"><a name="20973">6.1.1</a></span>
+<div style="margin-left:45px"><span class="label"><a name="20973">6.2.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 ><thead>
 <tr>
 <td>
@@ -2794,9 +2796,9 @@ Predeclared function procedures</h4>
 <br>unsigned integer T </td>
 <td>
 <br>interprets the raw bytes of x as unsigned integer of the same byte width </td></tr></table></div>
-<h4 style="margin-left:27px"><span class="label"><a name="14777">6.2</a></span>
+<h4 style="margin-left:27px"><span class="label"><a name="14777">6.3</a></span>
 Predeclared proper procedures</h4>
-<div style="margin-left:45px"><span class="label"><a name="15971">6.2.1</a></span>
+<div style="margin-left:45px"><span class="label"><a name="15971">6.3.1</a></span>
 <table border=1 cellspacing=0 CELLPADDING=3 ><thead>
 <tr>
 <td>
@@ -2970,31 +2972,134 @@ Predeclared proper procedures</h4>
 <br>n: name string, v: basic or const enum type or array of char</td>
 <td>
 <br>set the environment value</td></tr></table></div>
+<div style="margin-left:45px"><span class="label"><a name="21169">6.3.2</a></span>
+TODO: add GETREG, PUTREG, CLI, STI, NOP, GCNEW</div>
 <h4 style="margin-left:9px"><span class="label"><a name="18479">7</a></span>
 Language levels</h4>
-<div style="margin-left:27px"><span class="label"><a name="18480">7.1</a></span>
-TODO WIP</div>
-<div style="margin-left:27px"><span class="label"><a name="18481">7.2</a></span>
+<div style="margin-left:27px"><span class="label"><a name="18481">7.1</a></span>
 The Micron language explicitly defines different language levels, starting at level 0 with a minimal language and adding more features with each level.</div>
-<div style="margin-left:27px"><span class="label"><a name="18483">7.3</a></span>
-Level 0 is the minimal core language supposed to work in an environment where there is no stack and no heap. All procedures are implicitly INLINE and optionally INVAR. EXTERN is not supported. Recursion is not supported. NEW and DISPOSE are not supported. PCALL and RAISE are not supported. VLA not supported.</div>
-<div style="margin-left:27px"><span class="label"><a name="18484">7.4</a></span>
-Level 1 in addition supports normal procedures and recursion, and FINALLY, and VLA, and INTERFACE, bound procedures</div>
-<div style="margin-left:27px"><span class="label"><a name="18485">7.5</a></span>
-Level 2 in addition supports heap allocation and deallocation.</div>
-<div style="margin-left:27px"><span class="label"><a name="18486">7.6</a></span>
-Level 3 in addition supports object types, type case and the IS operation.</div>
-<div style="margin-left:27px"><span class="label"><a name="19755">7.7</a></span>
-Level 4 in addition supports garbage collection of records, objects or arrays allocated with GCNEW().</div>
-<div style="margin-left:45px"><span class="label"><a name="19787">7.7.1</a></span>
-We assume a non-moving GC, i.e. pointers are guaranteed to remain stable even after GC runs</div>
-<div style="margin-left:45px"><span class="label"><a name="19788">7.7.2</a></span>
-We assume that the GC correctly traces interior pointers</div>
-<div style="margin-left:27px"><span class="label"><a name="18496">7.8</a></span>
-TODO: support PCALL and RAISE not below level 2 (?) and only if explicitly enabled</div>
-<div style="margin-left:27px"><span class="label"><a name="18490">7.9</a></span>
-TODO: the inverse approach where we remove the unsafe, low-level features of the language, which ends up as an alternative Oberon+ which we could call &quot;Macron&quot; ;-) or better &quot;Helion&quot; or &quot;Aeon&quot;</div>
-<div style="margin-left:45px"><span class="label"><a name="18491">7.9.1</a></span>
+<div style="margin-left:27px"><span class="label"><a name="21141">7.2</a></span>
+<table border=1 cellspacing=0 CELLPADDING=3 ><thead>
+<tr>
+<td>
+<b>Level</b></td>
+<td>
+<br><b>Name</b></td>
+<td>
+<br><b>Focus</b></td>
+<td>
+<br><b>Key Features</b></td></tr></thead>
+<tr>
+<td>
+<br><b>0</b></td>
+<td>
+<br><b>Bootstrap</b></td>
+<td>
+<br>Hardware Init</td>
+<td>
+<br>Inlined code, <code>P{addr}</code> (Variables), <code>PUTREG</code>/<code>GETREG</code>/<code>CLI</code>/<code>STI</code>. No Stack. <code>P{addr}</code> allowed.</td></tr>
+<tr>
+<td>
+<br><b>1</b></td>
+<td>
+<br><b>Systems</b></td>
+<td>
+<br>Drivers/Kernels</td>
+<td>
+<br>Stack Frames, Recursion, <b>VLA</b>, <b>Static Bound Procedures</b>. EXTERN and <code>P{addr}</code> allowed.</td></tr>
+<tr>
+<td>
+<br><b>2</b></td>
+<td>
+<br><b>Abstract</b></td>
+<td>
+<br>Logic/Safety</td>
+<td>
+<br><b>INTERFACEs</b> (dispatch), <b>FINALLY</b>, optional exceptions. </td></tr>
+<tr>
+<td>
+<br><b>3</b></td>
+<td>
+<br><b>Dynamic</b></td>
+<td>
+<br>App Data</td>
+<td>
+<br><b>Heap</b> (<code>NEW</code>/<code>DISPOSE</code>), Pointers to Heap.</td></tr>
+<tr>
+<td>
+<br><b>4</b></td>
+<td>
+<br><b>Object</b></td>
+<td>
+<br>Hierarchy</td>
+<td>
+<br><b>Type Extension</b> (Inheritance).</td></tr>
+<tr>
+<td>
+<br><b>5</b></td>
+<td>
+<br><b>Managed</b></td>
+<td>
+<br>Auto-Memory</td>
+<td>
+<br><b>Garbage Collection</b>.</td></tr></table></div>
+<div style="margin-left:27px"><span class="label"><a name="21147">7.3</a></span>
+The language level a given module adheres to can be set via a module attribute (see <a href="#21135">2.12.9 Module Attributes</a>) per module. A <b>default language level 3</b> is assumed if no explicit level is set.</div>
+<div style="margin-left:27px"><span class="label"><a name="21154">7.4</a></span>
+TODO: import relations of modules with different language levels, such as lower levels cannot import higher levels.</div>
+<h4 style="margin-left:27px"><span class="label"><a name="21142">7.5</a></span>
+Level 0, Bootstrap</h4>
+<div style="margin-left:45px"><span class="label"><a name="18483">7.5.1</a></span>
+Level 0 is the minimal core language supposed to work in an environment where there is no stack and no heap. All procedures are implicitly INLINE and optionally INVAR. EXTERN is not supported. Recursion is not supported. NEW and DISPOSE are not supported. PCALL and RAISE are not supported. VLA and interfaces not supported.</div>
+<div style="margin-left:45px"><span class="label"><a name="21143">7.5.2</a></span>
+Level 0 exclusively has a couple of low-level predeclared procedures for register access, enable/disable interrupts, etc.</div>
+<div style="margin-left:45px"><span class="label"><a name="21153">7.5.3</a></span><span class="ident">NOTE</span>
+This level is designed for environments where CPU and stack are not yet initialized, traditionally done with assembler programming, such as bootstrapping, operating system kernels, or microcontroller systems. Micron allows to implement all platforms with plattform-independent syntax and intrinsic, standardized methods to access registers and other core processor features, without having to resort to assembler.</div>
+<h4 style="margin-left:27px"><span class="label"><a name="21144">7.6</a></span>
+Level 1, Systems</h4>
+<div style="margin-left:45px"><span class="label"><a name="21145">7.6.1</a></span>
+Level 1 extends level 0 with regular procedures, stack frames, context switches, and recursion. Level 1 has everything expected from a traditional imperative programming language.</div>
+<div style="margin-left:45px"><span class="label"><a name="21146">7.6.2</a></span>
+Level 1 in addition has static bound procedures (i.e. procedures bound to records without virtual dispatch).</div>
+<div style="margin-left:45px"><span class="label"><a name="21166">7.6.3</a></span>
+Level 1 in addition has EXTERN and FOREIGN procedures.</div>
+<div style="margin-left:45px"><span class="label"><a name="21148">7.6.4</a></span>
+Level 1 in addition supports variable length arrays (VLA).</div>
+<div style="margin-left:45px"><span class="label"><a name="21149">7.6.5</a></span>
+Levels 0 and 1 exclusively can set pointer variables to explicit values using constructor syntax (see <a href="#14347">2.8.4 Constructors</a>).</div>
+<div style="margin-left:45px"><span class="label"><a name="21155">7.6.6</a></span><span class="ident">NOTE</span>
+This level represents a fully functional system programming language (like C99), but without the hidden costs of v-tables or exception unwinding. It is designed for real-time drivers where VLA can be used for buffers, but with predictable control flow. The typical design patterns of level 1 are strictly static and stack-based, such as those used for writing an UART, network card, or frame buffer driver. Buffers are statically allocated (e.g. using generic modules). DMA descriptors can be records living at fixed addresses (using constructor syntax) or in static arrays.</div>
+<h4 style="margin-left:27px"><span class="label"><a name="21150">7.7</a></span>
+Level 2, Abstract</h4>
+<div style="margin-left:45px"><span class="label"><a name="21151">7.7.1</a></span>
+Level 2 extends level 1 with interfaces (static dispatch), FINALLY sections and optional exceptions (PCALL, RAISE).</div>
+<div style="margin-left:45px"><span class="label"><a name="21152">7.7.2</a></span><span class="ident">NOTE</span>
+interfaces are not already in level 1 because the compiler has to generate meta data (such as interface tables for potentially each interface/record type pair).</div>
+<div style="margin-left:45px"><span class="label"><a name="21165">7.7.3</a></span>
+TODO: module attribute to enable exceptions.</div>
+<h4 style="margin-left:27px"><span class="label"><a name="21156">7.8</a></span>
+Level 3, Dynamic</h4>
+<div style="margin-left:45px"><span class="label"><a name="21157">7.8.1</a></span>
+Level 3 extends level 2 with dynamic memory allocation and deallocation (NEW, DISPOSE).</div>
+<h4 style="margin-left:27px"><span class="label"><a name="21158">7.9</a></span>
+Level 4, Object</h4>
+<div style="margin-left:45px"><span class="label"><a name="21159">7.9.1</a></span>
+Level 4 extends level 3 with OBJECT types which support type extension and dynamic dispatch of its bound procedures.</div>
+<div style="margin-left:45px"><span class="label"><a name="21160">7.9.2</a></span>
+Level 4 in addition supports IS operations and type CASE statements.</div>
+<h4 style="margin-left:27px"><span class="label"><a name="21161">7.10</a></span>
+Level 5, Managed</h4>
+<div style="margin-left:45px"><span class="label"><a name="21162">7.10.1</a></span>
+Level 5 extends level 4 with a garbage collector (GC), which applies to all dynamic records, objects or arrays allocated with GCNEW.</div>
+<div style="margin-left:45px"><span class="label"><a name="21164">7.10.2</a></span>
+In level 5, all pointer values are automatically initialized with NIL.</div>
+<div style="margin-left:45px"><span class="label"><a name="21163">7.10.3</a></span><span class="ident">NOTE</span>
+Micron assumes a non-moving GC, i.e. pointers are guaranteed to remain stable even after GC runs. Micron also assumes that the GC correctly traces interior pointers. </div>
+<div style="margin-left:27px"><span class="label"><a name="18490">7.11</a></span>
+TODO: the inverse approach where we remove the unsafe, low-level features of the language, which ends up as an alternative Oberon+</div>
+<div style="margin-left:45px"><span class="label"><a name="21167">7.11.1</a></span>
+We could call this language &quot;Macron&quot; ;-) or better &quot;Helion&quot; or &quot;Aeon&quot;</div>
+<div style="margin-left:45px"><span class="label"><a name="18491">7.11.2</a></span>
 There is no Helion programming language so far, but Aeon and Macron are in use.</div>
 <h4 style="margin-left:9px"><span class="label"><a name="14628">8</a></span>
 References</h4>
