@@ -1,6 +1,8 @@
-This repository harbors the specifications of the Micron programming and intermediate language. The specifications are edited and the HTML generated using [CrossLine](https://github.com/rochus-keller/crossline/).
+This repository harbors the specifications of the Micron programming and intermediate language. 
 
-The programming language specification can be viewed using [this link](https://htmlpreview.github.io/?https://github.com/micron-language/specification/blob/master/The_Micron_Programming_Language_Specification.html).
+The specifications are edited and the HTML generated using [CrossLine](https://github.com/rochus-keller/crossline/) or [LeanDoc](https://github.com/rochus-keller/leandoc)
+
+The programming language specification can be viewed using [this link](./The_Micron_Programming_Language_Specification.adoc).
 
 The intermediate language specification can be viewed using [this link](https://htmlpreview.github.io/?https://github.com/micron-language/specification/blob/master/The_Micron_Intermediate_Language_Specification.html).
 
