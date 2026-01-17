@@ -4,7 +4,7 @@ The specifications are edited and the HTML generated using [CrossLine](https://g
 
 The programming language specification can be viewed using [this link](./The_Micron_Programming_Language_Specification.adoc).
 
-The intermediate language specification can be viewed using [this link](https://htmlpreview.github.io/?https://github.com/micron-language/specification/blob/master/The_Micron_Intermediate_Language_Specification.html).
+The intermediate language specification can be viewed using [this link](./The_Micron_Intermediate_Language_Specification.adoc).
 
 The grammars are developed and the parser generated using [EbnfStudio](https://github.com/rochus-keller/EbnfStudio).
 

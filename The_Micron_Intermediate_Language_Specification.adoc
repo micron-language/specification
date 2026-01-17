@@ -1,0 +1,3468 @@
+= Micron Intermediate Language
+:toc:
+:numbered:
+
+== Front Matter
+
+=== Title
+
+The Micron Intermediate Language Specification
+
+=== Version
+
+2025-12-18, work in progress
+
+=== Author
+
+me@rochus-keller.ch
+
+=== Additional Credits
+
+Parts of this specification were originally
+derived from the ECMA-335 standard (3rd edition 2005).
+
+=== License
+
+_Permission under Ecma’s and Rochus Keller's
+copyright to copy, modify, prepare derivative works of, and distribute
+this work, with or without modification, for any purpose and without fee
+or royalty is hereby granted, provided that you include the following on
+ALL copies of the work or portions thereof, including modifications:_ +
+_(i) The full text of this COPYRIGHT NOTICE AND COPYRIGHT LICENSE in a
+location viewable to users of the redistributed or derivative work._ +
+_(ii) Any pre-existing intellectual property disclaimers, notices, or
+terms and conditions. If none exist, the Ecma alternative copyright
+notice should be included._ +
+_(iii) Notice of any changes or modifications, through a copyright
+statement on the document such as “This document includes material
+copied from or derived from ECMA-335, 3rd Edition._ +
+_Copyright © Ecma International.”_
+
+*_Disclaimers_* +
+_THIS WORK IS PROVIDED “AS IS,” AND COPYRIGHT HOLDERS MAKE NO
+REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+LIMITED TO, WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR
+PURPOSE OR THAT THE USE OF THE DOCUMENT WILL NOT INFRINGE ANY THIRD
+PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS._ +
+_COPYRIGHT HOLDERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL
+OR CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE DOCUMENT._
+
+== Language Specification
+
+=== Overview
+
+The Micron Intermediate Languae (MIL) uses a
+subset of the ECMA-335 Common Intermediate Language (CIL) without
+managed types, and with manual memory management, and extended by
+explicit control-flow syntax. Because of the latter no explicit branch
+instructions are required, and different types of analyses, as well as
+translations to high-level languages like C or lower-level
+representations like CIL or LLVM IR are straight-forward.
+
+In contrast to CIL, MIL targets the feature
+set of languages like Micron or C. The OO features of CIL are not
+supported, but could be implemented on top of MIL if required. MIL is
+designed for direct compatibility with the C ABI of all supported
+architectures.
+
+=== Representations
+
+MIL exists in two equivalent representations:
+a human-readable textual representation, and an efficient binary
+representation. Both map to a common structure.
+
+==== Textual Representation
+
+The MIL textual representation is a string
+of characters encoded using the UTF-8 variable-width encoding as defined
+in ISO/IEC 10646. Identifiers, numbers, operators, and delimiters are
+represented using the ASCII character set; strings and comments can be
+either represented in the ASCII or Latin-1 (as defined in ISO/IEC
+8859-1) character set.
+
+==== Syntax
+
+An extended Backus-Naur Formalism (EBNF)
+is used to describe the textual syntax of MIL:
+
+Alternatives are separated by *|*.
+
+Brackets *[* and *]* denote optionality
+of the enclosed expression.
+
+Braces *{* and *}* denote its
+repetition (possibly 0 times).
+
+Syntactic entities (non-terminal
+symbols) are denoted by English words expressing their intuitive
+meaning.
+
+Symbols of the language vocabulary
+(terminal symbols) are denoted by strings formatted in bold face.
+
+==== Identifiers
+
+Identifiers are sequences of letters,
+digits and dollar signs. The first character cannot be a digit.
+
+.Syntax:
+....
+ident  = ( letter | '_' ) { letter | digit | '_' | '$' }
+letter = 'A' ... 'Z' | 'a' ... 'z'
+digit  = '0' ... '9'
+....
+
+==== Numbers
+
+Number literals are optionaly signed
+integer or real constants.
+
+If the literal is specified with the
+suffix 'H', the representation is hexadecimal, if it is specified with
+suffix 'O', the representation is ocal, or if it is specified with
+suffic 'B', the representation is binary, otherwise the representation
+is decimal.
+
+A real number always contains a decimal
+point and at least one digit before the point. Optionally it may also
+contain a decimal scale factor. The letter 'E' means _times ten to the
+power of_.
+
+.Syntax:
+....
+integer = ['+' | '-'] unsigned
+unsigned  = (digit {digit} ['O'|'B' | digit {hexDigit} 'H')
+float    = digit {digit} '.' {digit} [Exponent]
+number = ['+' | '-'] (float | unsigned)
+Exponent = 'E' ['+' | '-'] digit {digit}
+hexDigit = digit | 'A' ... 'F'
+digit    = '0' ... '9'
+....
+
+Even though only the upper-case version is
+shown here, also the lower-case versions of the suffices and scale
+factor letters are supported.
+
+==== Characters
+
+Character constants are denoted by the
+ordinal number of the character in hexadecimal notation followed by the
+letter `X` (or `x`).
+
+.Syntax:
+....
+character = digit {hexDigit} ('X' | 'x')
+....
+
+A character is encoded as a 8-bit code
+value using the ISO/IEC 8859-1 Latin-1 encoding scheme.
+
+==== Strings
+
+Strings are sequences of printable
+characters enclosed in single (') or double (") quote marks. The opening
+quote must be the same as the closing quote and must not occur within
+the string. A string must not extend over the end of a line. The number
+of characters in a string is called its length. A string of length 1 can
+be used wherever a character constant is allowed and vice versa.
+
+.Syntax:
+....
+string = ''' {character} ''' | '"' {character} '"'
+....
+
+===== Hex Strings
+
+Hex strings are sequences of bytes
+encoded in hexadecimal format and enclosed in hash signs. The number of
+hex digits in the string must be even, two hex digits per byte. The
+number of bytes encoded in a hex string is called its length. Line
+breaks and other white space between the hash signs is ignored. Both
+upper and lower-case hex digits are supported.
+
+When a hex string is used in place of a
+string literal, the terminating zero has to be explicit.
+
+.Syntax:
+....
+hexstring = '#' {hexDigit} '#'
+....
+
+==== Reserved Words
+
+The MIL textual representation has no
+reserved words.
+
+Some identifiers have dedicated meanings
+in a specific context of the source code, which usually doesn't
+interfere with field, parameter and variable naming.
+
+==== Comments
+
+Comments are arbitrary character sequences
+opened by the bracket `(*` and closed by `*)`. Comments may be nested.
+They do not affect the meaning of a program. Oberon+ also supports line
+comments; text starting with `//` up to a line break is considered a
+comment.
+
+==== Line Information
+
+Optional information of source line
+positions can be included. LINE informations are only allowed if the
+module includes a SOURCE clause. The unsigned integer following the LINE
+clause has no specific meaning in the intermediate language.
+
+.Syntax
+....
+Line = 'LINE' unsigned
+....
+
+=== Binary Representation
+
+TODO
+
+== Declarations and scope rules
+
+Every identifier occurring in a program must
+be introduced by a declaration, unless it is a predeclared identifier.
+Declarations also specify certain permanent properties of an object,
+such as whether it is a constant, a type, a variable, or a procedure.
+The identifier is then used to refer to the associated object.
+
+The _scope_ of an object _x_ extends textually
+from the point of its declaration to the end of the block (module,
+procedure, struct, or union) to which the declaration belongs and hence
+to which the object is _local_.
+
+No identifier may denote more than one
+object within a given scope;
+
+A type__T__ of the form POINTER TO _T1_ can
+be declared at a point where _T1_ is still unknown. The declaration of
+_T1_ must follow in the same block to which _T_ is local;
+
+An identifier declared in a module block may
+be followed by an export mark ("*") in its declaration to indicate that
+it is exported. An identifier _x_ exported by a module _M_ may be used
+in other modules, if they import _M_. The identifier is then denoted as
+_M.x_ in these modules and is called a _qualified identifier_.
+
+.Syntax of textual representation:
+....
+qualident = [ident '!'] ident
+trident = qualident '.' ident
+qortrident= qualident ['.' ident]
+identdef = ident ['*']
+....
+
+
+NOTE: Qualidents in MIL only consist
+of two parts, an (optional) module name and a name of an element within
+this module. If the module name is omitted, the current module is
+assumed. The programming language the compiler of which generates MIL
+may specify namespaces, but the compiler has to combine these namespaces
+with the module name to a single name used as the MIL module name.
+
+== Types
+
+A data type determines the set of values which
+variables of that type may assume, and the operators that are
+applicable. A type declaration associates an identifier with a type. In
+the case of structured types (arrays, structs and unions) it also
+defines the structure of variables of this type. A structured type
+cannot contain itself.
+
+.Syntax of textual representation:
+....
+TypeDeclaration = [Line] identdef '=' type
+type            = NamedType | ArrayType | StructUnionType | PointerType 
+                  | ProcedureType | MethodType
+....
+
+=== Basic types
+
+The basic types are denoted by predeclared
+identifiers. Either all capital or all lower case identifiers are
+supported (only lower case versions shown). For some basic types,
+abbreviations are available.
+
+
+[width="100%",cols="50%,50%",]
+|===
+|*Name* 
+|*Description*
+
+|bool 
+|true (1) / false (0) value (equals uint8)
+
+|char 
+|Latin-1 8-bit char (equals uint8)
+
+|float32, r4 
+|IEC 60559:1989 32-bit float
+
+|float64, r8 
+|IEC 60559:1989 64-bit float
+
+|int8, i1 
+|Signed 8-bit integer
+
+|int16, i2 
+|Signed 16-bit integer
+
+|int32, i4 
+|Signed 32-bit integer
+
+|int64, i8 
+|Signed 64-bit integer
+
+|intptr 
+|Signed integer address, native size
+
+|uint8, u1 
+|Unsigned 8-bit integer
+
+|uint16, u2 
+|Unsigned 16-bit integer
+
+|uint32, u4 
+|Unsigned 32-bit integer
+
+|uint64, u8 
+|Unsigned 64-bit integer
+|===
+
+=== Alias types
+
+A type can be an alias of another type. The
+other type is referenced with a qualident. If the other type is in
+another module, it must be exported. A type is considered the same type
+as its alias.
+
+.Syntax of textual representation:
+
+....
+NamedType = qualident
+....
+
+=== Structured types
+
+==== Array types
+
+An array is a structure consisting of a
+number of elements which are all of the same type, called the element
+type. The number of elements of an array is called its length. The
+length is a positive integer (uint32). The elements of the array are
+designated by indices, which are integers between 0 and the length minus one.
+
+.Syntax of textual representation:
+....
+ArrayType = ARRAY [ length ] OF NamedType | '[' [ length ] ']' NamedType
+length = unsigned`
+....
+
+Arrays declared without length are called
+_open arrays_. They are restricted to pointer base types.
+
+==== Struct and union types
+
+MIL struct and union types correspond to
+the ones of the C programming language, including alignment and layout
+rules.
+
+A struct type is a structure consisting of
+a fixed number of elements, called fields, with possibly different
+types. The struct type declaration specifies the name and type of each
+field. The scope of the field identifiers extends from the point of
+their declaration to the end of the struct type, but they are also
+visible within designators referring to elements of struct variables. If
+a struct type is exported, field identifiers that are to be visible
+outside the declaring module must be marked. They are called public
+fields; unmarked elements are called private fields.
+
+A union type is declared like a struct
+type, but in contrast to the latter all fields reside at the same memory
+position. A union can be pictured as a chunk of memory that is used to
+store variables of different data types. Once a new value is assigned to
+a field, the existing data is overwritten with the new data.
+
+Fields of boolean or integer type of a
+_struct_ can be packed at the bit level for memory
+optimization. This is achieved by explicitly specifying the number of
+bits each field occupies. Use another ':' after the type specifier
+followed by an integer to declare the bit width of a field. Sequences of
+fields with bit specifications are grouped into packing units. Each unit
+is sized to the nearest integer type that can contain the specified
+bits. Explicit padding can be inserted using '..' followed by the number
+of bits. This allows for precise control over field alignment within a
+unit. A new packing unit begins when either the sum of bits in the
+current sequence exceeds the maximum supported integer size, or padding
+of 0 bits is encountered. The type of a field with BITS specification
+determines how the field value is interpreted (e.g., signed vs unsigned
+overflow behavior); the number of bits of a signed integer type includes
+the sign bit.
+
+.Syntax of textual representation:
+....
+StructUnionType = (STRUCT | UNION) { FieldList [';'] } END
+FieldList = IdentList ':' NamedType [':' unsigned] | '..' unsigned
+IdentList = [Line] identdef { [','] [Line] identdef }
+....
+
+==== Object types
+
+Object types are similar to struct types,
+but support inheritance and bound procedures (i.e. virtual methods).
+
+Object types are extensible, i.e. an
+object type can be declared as an extension of another object type. In
+the example
+
+....
+T0 = OBJECT x: integer end
+T1 = OBJECT (T0) y: real end
+....
+
+T1 is a (direct) extension of T0 and T0 is
+the (direct) base type of T1. An extended type T1 consists of the fields
+of its base type and of the fields which are declared in T1. Fields
+declared in the extended record shadow equally named fields declared in
+a base type.
+
+.Syntax of textual representation:
+....
+ObjectType = OBJECT [ '(' NamedType ')' ] { MemberList [';'] } END
+MemberList = IdentList ':' NamedType
+....
+
+=== Pointer types
+
+Variables of a pointer type P assume as
+values pointers to variables of some type T. T is called the pointer
+base type of P and can be of any type. A pointer is represented by an
+_intptr_ in the runtime.
+
+T can be of the special type ANY, which
+means that the type the pointer is referencing is not specified.
+
+.Syntax of textual representation:
+....
+PointerType = ( POINTER TO | '^' ) NamedType
+....
+
+A pointer variable or parameter may assume
+the value NIL, which points to no variable at all.
+
+=== Procedure types
+
+Variables of a procedure type T have a
+pointer to a procedure (or NIL) as value. If a procedure P is assigned
+to a variable of type T, the formal parameter lists and result types of
+P and T must _match._ Procedure types don't support the ellipsis syntax.
+A procedure type is represented by an _intptr_ in the runtime.
+
+.Syntax of textual representation:
+....
+ProcedureType = (PROCEDURE|PROC) [FormalParameters]
+....
+
+=== Method types
+
+Variables of a method type (also called
+bound procedure type) T combine a pointer to an object with a pointer to
+a type bound procedure (or NIL) as value. If a type-bound procedure P is
+assigned to a variable of type T, the formal parameter lists and result
+types of P and T must _match._ A method reference is represented by a
+_methref_ value in the runtime.
+
+.Syntax of textual representation:
+....
+MethodType = (PROCEDURE|PROC)^ [FormalParameters]
+....
+
+== Expressions
+
+Expressions are calculated using a conceptual
+evaluation stack. The actual implementation is not supposed to be stack
+based. The conceptual evaluation stack is made ulp of conceptual slots
+that can hold any data type.
+
+An expression consists of a sequence of
+instructions which push or pop values of a specified type to and from
+the evaluation stack.
+
+The evaluation stack is empty upon procedure
+entry. Its contents are entirely local to a procedure and are preserved
+across _call_ instructions. Arguments to other procedures and their
+return values are also placed on the evaluation stack. The evaluation
+stack is not addressable. At all times it is possible to deduce which
+one of a reduced set of types is stored in any stack location at a
+specific point in the instruction stream.
+
+While MIL, in general, supports the full set
+of types described in <<Types>>, the MIL evaluation stack
+only requires that values be one of:
+
+- int64 , an 8-byte signed integer
+
+- int32 , a 4-byte signed integer
+
+- intptr, a signed integer of either 4 or 8 bytes, whichever is more convenient for the target architecture
+
+- methref, an opaque compound of two intptr,
+  one representing an object or record instance and the other a procedure pointer
+
+- ifaceref, an opaque compound of two intptr, one representing an object or record instance and the other an internal
+  interface procedure table
+
+- float64 , a 8-byte IEEE 754 floating point value
+
+- float32, a 4-byte IEEE 754 floating point value
+
+- a user-defined value type
+
+.Syntax of textual representation:
+....
+Expression = { ExpInstr | Line }
+ExpInstr = 'add' | 'and' | ('call' | 'calli') qualident | 'callmi' qortrident
+| ('callinst' | 'callvirt') trident | 'castptr' qualident
+| 'ceq' | 'cgt' | 'cgt_un' | 'clt' | 'clt_un' 
+| 'conv_i1' | 'conv_i2' | 'conv_i4' | 'conv_i8' | 'conv_r4' | 'conv_r8'
+| 'conv_u1' | 'conv_u2' | 'conv_u4' | 'conv_u8' 
+| 'div' | 'div_un' | 'dup' | 'initobj' qualident | 'isinst' qualident
+| ('ldarg'|'ldarg_s') (unsigned|ident) 
+| 'ldarg_0' | 'ldarg_1' | 'ldarg_2' | 'ldarg_3'
+| ('ldarga'|'ldarga_s') (unsigned|ident)
+| ('ldc_i4'|'ldc_i8'|'ldc_i4_s') integer | ('ldc_r4'|'ldc_r8') number | 'ldc_ip' unsigned
+| 'ldc_i4_0' | 'ldc_i4_1' | 'ldc_i4_2' | 'ldc_i4_3' | 'ldc_i4_4' | 'ldc_i4_5'
+| 'ldc_i4_6' | 'ldc_i4_7' | 'ldc_i4_8' | 'ldc_i4_m1' | 'ldc_obj' constructor
+| ('ldelem'|'ldelema') qualident | 'ldelem_i1' | 'ldelem_i2'
+| 'ldelem_i4' | 'ldelem_i8' | 'ldelem_u1' | 'ldelem_u2' 
+| 'ldelem_u4' | 'ldelem_u8' | 'ldelem_r4' | 'ldelem_r8' | 'ldelem_ip' | 'ldelem_ipp'
+| ('ldfld'|'ldflda') trident | 'ldind' qualident
+| 'ldind_i1' | 'ldind_i2' | 'ldind_i4' | 'ldind_i8' | 'ldind_u1' | 'ldind_u2'
+| 'ldind_u4' | 'ldind_r4' | 'ldind_u8' | 'ldind_r8' | 'ldind_ip'
+| ('ldloc'|'ldloc_s'|'ldloca'|'ldloca_s')(unsigned|ident)
+| 'ldloc_0' | 'ldloc_1' | 'ldloc_2' | 'ldloc_3' | 'ldnull' 
+| 'ldproc' qualident |'ldmeth' trident
+| 'ldstr' (string|hexstring)
+| ('ldvar'|'ldvara') qualident | 'mul' | 'neg' 
+| ('newarr'|'newvla'|'newobj') qualident 
+| 'not' | 'or' | 'rem' | 'rem_un' | 'shl' | 'shr' | 'shr_un'
+ +
+| 'sizeof' qualident | 'sub' | 'xor' | 'ptroff' qualident | 'nop' | CondOp
+
+ConstExpression = qualident | number | string | hexstring 
+....
+
+=== Constructors
+
+With constructors, struct, union, array and
+pointer literals can be declared.
+
+.Syntax of textual representation:
+....
+constructor = NamedType component_list
+component_list = '{' [ component {[','] component} ] '}'
+component = [ident '='] ( ConstExpression | component_list )
+....
+
+A constructor consists of an explicit type
+and a list of either named or anonymous components. Named and anonymous
+components cannot be mixed in the list.
+
+If NamedType is a struct type, then there is
+either an anonymous component for each field of the struct in the order
+of declaration, or there is a named component for each field in
+arbitrary order. For union types, only named components can be used, and
+only one option of the union can be initialized in the constructor.
+
+If NamedType is an array type, then there is
+an anonymous componend for each element of the array. The array type may
+be an open array in which case the number of elements is determined by
+the number of components.
+
+If NamedType is a pointer type, then there
+is exactly one anonymous component which is an unsigned integer type
+constant representing the address.
+
+For each field or element which is of
+struct, union, array or pointer type, an embedded constructor is
+required. Since the exact type of the field or element is known, the
+NamedType prefix is not required.
+
+=== *add*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|58 
+|add 
+|Add two values, returning a new value.
+|===
+
+`…, value1, value2 -> …, result`
+
+The add instruction adds _value2_ to
+_value1_ and pushes the result on the stack. Overflow is not detected
+for integral operations; floating-point overflow returns +inf or -inf.
+
+The acceptable operand types and their
+corresponding result data type are encapsulated as follows:
+
+.Arithmetic operands compatibility
+[#addops]
+[width="99%",cols="20%,16%,16%,16%,16%",options="header",]
+|===
+|*A's Type*|*B's Type* | | |
+|          |*int32* |*int64* |*intptr* |*F* 
+|*int32*   |int32   |x        |x       |x 
+|*int64*   |x       |int64    |x       |x 
+|*intptr*  |x       |x        |x       |x 
+|*F*       |x       |x        |x       |F 
+|===
+
+=== *abs – absolute value*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 17 
+|abs 
+|Absolute _value_.
+|===
+
+`…, value -> …, result`
+
+The abs instruction negates _value_ if
+negative and pushes the result on top of the stack. The return type is
+the same as the operand type.
+
+The acceptable operand types and their
+corresponding result data types are encapsulated as follows:
+
+.Unary operator input and output types
+[#unops]
+[width="100%",cols="20%,20%,20%,20%,20%",]
+|===
+|*Operand Type* |int32  |int64 |x |F
+|*Result Type*  |int32  |int64 |x |F
+|===
+
+=== *and – bitwise AND*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|5F 
+|and 
+|Bitwise and of two integral values, returns an integral value.
+|===
+
+`…, value1, value2 -> …, result`
+
+The and instruction computes the bitwise and
+of _value1_ and _value2_ and pushes the result on the stack. The
+acceptable operand types and their corresponding result data type are
+encapsulated as follows:
+
+.Boolean operands compatibility
+[#boolops]
+[width="100%",cols="20%,20%,20%,20%,20%",options="header",]
+|===
+|        |*int32* |*int64* |*intptr* |*F*
+|*int32* |int32   |x       |x        |x
+|*int64* |x       |int64   |x        |x
+|*intptr*|x       |x       |x        |x
+|*F*     |x       |x       |x        |x
+|===
+
+=== *call – call a function*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text* *Format* 
+|*Description*
+
+|28 <__T__> 
+|call _function_ 
+|Call function described by _function._
+|===
+
+`…, arg1, arg2 … argN -> …, retVal`
+
+`…, arg1, arg2 … argN -> …`
+
+The call instruction calls the function
+indicated by the descriptor. The latter indicates the function to call,
+and the number, type, and order of the arguments that have been placed
+on the stack to be passed to that function, or possibly returned from
+the function. The arguments are placed on the stack in left-to-right
+order. That is, the first argument is computed and placed on the stack,
+then the second argument, and so on. If the method has a return value,
+it is pushed on the stack upon method completion.
+
+TODO: tail calls
+
+=== *calli – indirect function call*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|29 <__T__> 
+|calli _function_ 
+|Call function indicated on the stack with arguments described by
+_function_.
+|===
+
+`…, arg1, arg2 … argN, ftn -> …, retVal`
+
+`…, arg1, arg2 … argN, ftn -> …`
+
+The calli instruction calls _ftn_ (a
+pointer to a procedure entry point) with the arguments arg1 … argN. The
+types of these arguments, and a possible return type, are described by
+the signature. The _ftn_ argument is assumed to be a pointer to native
+code (of the target machine) that can be legitimately called with the
+arguments described by the signature. Such a pointer can be created
+using the ldproc instruction. The arguments are placed on the stack in
+left-to-right order. That is, the first argument is computed and placed
+on the stack, then the second argument, and so on. If the method has a
+return value, it is pushed on the stack upon method completion.
+
+TODO: tail calls
+
+=== *callinst – call an explicit method on an object*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|TODO <__T__> 
+|callinst _method_ 
+|Call an explicit method.
+|===
+
+`…, obj, arg1, arg2 … argN -> …, retVal`
+
+`…, obj, arg1, arg2 … argN -> …`
+
+The callinst instruction calls a type-bound
+procedure on an object pointer. The method is chosen based on the
+compile-time class given by _method_.
+
+=== *callmi – indirect method call*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 14 <__T__> 
+|callmi _function_ 
+|Call instance method indicated on the stack with arguments described by
+_function_.
+|===
+
+`…, arg1, arg2 … argN, methref -> …, retVal`
+
+`…, arg1, arg2 … argN, methref -> …`
+
+The callmi instruction calls methref (a
+pair of _intptr_ pointing to an object instance and a procedure) with
+the arguments arg1 … argN. The types of these arguments, and a possible
+return type, are described by the signature referenced by _function_.
+Such a methref is created using the ldmeth instruction. The arguments
+are placed on the stack in left-to-right order. That is, the first
+argument is computed and placed on the stack, then the second argument,
+and so on. If the method has a return value, it is pushed on the stack
+upon method completion.
+
+The _function_ reference either point to a
+bound procedure type, or an interface method.
+
+NOTE: callmi doesn't do method
+dispatch, but uses exactly the procedure reference provided in the
+methref.
+
+TODO: change order, so that methref is
+pushed on stack first, before the arguments (so that we already have a
+slot for the object pointer).
+
+=== *callvirt – call a method associated, at runtime, with an object*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|6F <__T__> 
+|callvirt _method_ 
+|Call a method associated with an object.
+|===
+
+`…, obj, arg1, arg2 … argN -> …, retVal`
+
+`…, obj, arg1, arg2 … argN -> …`
+
+The callvirt instruction calls a type-bound
+procedure on an object pointer. That is, the method is chosen based on
+the dynamic type of _obj_ rather than the compile-time class given by
+_method_.
+
+=== *castptr – cast a pointer to a type*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|74 <__T__> 
+|castptr _type_ 
+|Cast pointer _ptr_ to _type_
+|===
+
+`…, ptr -> …, ptr2`
+
+The castptr instruction reinterprets the
+pointer to type1 on the stack as a pointer to type2.
+
+If _ptr_ is null, castptr succeeds and
+returns null.
+
+=== *ceq – compare equal*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 01 
+|ceq 
+|Push 1 (of type int32) if _value1_ equals _value2_, else push 0.
+|===
+
+`…, value1, value2 -> …, result`
+
+The ceq instruction compares ___value__1_ and
+__value__2_. If __value__1_ is equal to __value__2_, then 1 (of type int32)
+is pushed on the stack. Otherwise, 0 (of type int32) is pushed on the
+stack. For floating-point numbers, ceq will return 0 if the numbers are
+unordered (either or both are NaN). The infinite values are equal to
+themselves.
+
+The acceptable operand types are
+encapsulated as follows:
+
+.Comparison operands compatibility
+[#compops]
+[width="100%",cols="20%,20%,20%,20%,20%",]
+|===
+|        |*int32* |*int64* |*intptr* |*F*
+|*int32* |ok      |x       |x        |x
+|*int64* |x       |ok      |x        |x
+|*intptr*|x       |x       |ok       |x
+|*F*     |x       |x       |x        |ok
+|===
+
+In addition, ceq can be applied to methref
+and ifaceref, in which case _value1_ is equal to _value2_, if both
+intptr of _value1_ are equal to the corresponding intptr of _value2_.
+
+=== *cgt – compare greater than*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 02 
+|cgt 
+|Push 1 (of type int32) if _value1_ > _value2_, else push 0.
+|===
+
+`…, value1, value2 -> …, result`
+
+The cgt instruction compares _value1_ and
+_value2_. If _value1_ is strictly greater than _value2_, then 1 (of type
+int32) is pushed on the stack. Otherwise, 0 (of type int32) is pushed on
+the stack. For floating-point numbers, cgt returns 0 if the numbers are
+unordered (that is, if one or both of the arguments are NaN). As with
+IEC 60559:1989, infinite values are ordered with respect to normal
+numbers (e.g., +infinity > 5.0 > -infinity).
+
+The acceptable operand types are
+encapsulated in the <<compops, compatibility table>>.
+
+=== *cgt_un – compare greater than, unsigned or unordered*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 03 
+|cgt_un 
+|Push 1 (of type int32) if _value1_ > _value2_, unsigned or unordered,
+else push 0.
+|===
+
+`…, value1, value2 -> …, result`
+
+The cgt.un instruction compares _value1_
+and _value2_. A value of 1 (of type int32) is pushed on the stack if
+
+for floating-point numbers, either value1
+is strictly greater than value2, or value1 is not ordered with respect
+to value2.
+
+for integer values, value1 is strictly
+greater than value2 when considered as unsigned numbers. Otherwise, 0
+(of type int32) is pushed on the stack.
+
+As per IEC 60559:1989, infinite values are
+ordered with respect to normal numbers (e.g., +infinity > 5.0 >
+-infinity).
+
+The acceptable operand types are
+encapsulated in the <<compops, compatibility table>>.
+
+=== *clt – compare less than*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 04 
+|clt 
+|Push 1 (of type int32) if _value1_ < _value2_, else push 0.
+|===
+
+`…, value1, value2 -> …, result`
+
+The clt instruction compares _value1_ and
+_value2_. If _value1_ is strictly less than _value2_, then 1 (of type
+int32) is pushed on the stack. Otherwise, 0 (of type int32) is pushed on
+the stack. For floating-point numbers, clt will return 0 if the numbers
+are unordered (that is, one or both of the arguments are NaN). As per
+IEC 60559:1989, infinite values are ordered with respect to normal
+numbers (e.g., +infinity > 5.0 > -infinity).
+
+The acceptable operand types are
+encapsulated in the <<compops, compatibility table>>.
+
+=== *clt_un – compare less than, unsigned or unordered*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 05 
+|clt_un 
+|Push 1 (of type int32) if _value1_ < _value2_, unsigned or unordered,
+else push 0.
+|===
+
+`…, value1, value2 -> …, result`
+
+The clt.un instruction compares _value1_
+and _value2_. A value of 1 (of type int32) is pushed on the stack if
+
+for floating-point numbers, either value1
+is strictly less than value2, or value1 is not ordered with respect to
+value2.
+
+for integer values, value1 is strictly
+less than value2 when considered as unsigned numbers. Otherwise, 0 (of
+type int32) is pushed on the stack.
+
+As per IEC 60559:1989, infinite values are
+ordered with respect to normal numbers (e.g., +infinity > 5.0 >
+-infinity).
+
+The acceptable operand types are
+encapsulated in the <<compops, compatibility table>>.
+
+=== *conv – data conversion*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|67 
+|conv_i1 
+|Convert to int8, pushing int32 on stack.
+
+|68 
+|conv_i2 
+|Convert to int16, pushing int32 on stack.
+
+|69 
+|conv_i4 
+|Convert to int32, pushing int32 on stack.
+
+|6A 
+|conv_i8 
+|Convert to int64, pushing int64 on stack.
+
+|6B 
+|conv_r4 
+|Convert to float32, pushing float32 on stack.
+
+|6C 
+|conv_r8 
+|Convert to float64, pushing float64 on stack.
+
+|D2 
+|conv_u1 
+|Convert to unsigned int8, pushing int32 on stack.
+
+|D1 
+|conv_u2 
+|Convert to unsigned int16, pushing int32 on stack.
+
+|6D 
+|conv_u4 
+|Convert to unsigned int32, pushing int32 on stack.
+
+|6E 
+|conv_u8 
+|Convert to unsigned int64, pushing int64 on stack.
+|===
+
+`…, value -> …, result`
+
+Convert the value on top of the stack to
+the type specified in the opcode, and leave that converted value on the
+top of the stack. Note that integer values of less than 4 bytes are
+extended to int32 (not intptr) when they are loaded onto the evaluation
+stack.
+
+Conversion from floating-point numbers to
+integral values truncate the number toward zero. When converting from a
+float64 to a float32, precision might be lost. If _value_ is too large
+to fit in a float32, the IEC 60559:1989 positive infinity (if _value_ is
+positive) or IEC 60559:1989 negative infinity (if _value_ is negative)
+is returned. If overflow occurs when converting one integer type to
+another, the high-order bits are silently truncated. If the result is
+smaller than an int32, then the value is sign-extended to fill the slot.
+
+If overflow occurs converting a
+floating-point type to an integer, or if the floating-point value being
+converted to an integer is a NaN, the value returned is unspecified.
+
+The acceptable operand types and their
+corresponding result data type is encapsulated as follows:
+
+.Conversion operands compatibility
+[width="99%",cols="20%,16%,16%,16%,16%",options="header",]
+|===
+|*Convert-To* |*Input* |        |         | 
+|             |*int32* |*int64* |*intptr* |*F* 
+|*int8, uint8, int16, uint16* |Truncate^1^ |Truncate^1^ |Truncate^1^ |Truncate to zero^2^ 
+|*int32, uint32* |Nop |Truncate^1^ |Truncate^1^ |Truncate to zero^2^
+|*int64*  |Sign extend |Nop |Sign extend |Truncate to zero^2^
+|*uint64* |Zero extend |Nop |Zero extend |Truncate to zero^2^ 
+|*intptr* |Nop |Nop |Nop |Nop 
+|*All Float Types* |To Float |To Float |To Float |Change precision^3^ 
+|===
+
+1) “Truncate” means that the number is
+truncated to the desired size (i.e., the most significant bytes of the
+input value are simply ignored). If the result is narrower than the
+minimum stack width of 4 bytes, then this result is zero extended (if
+the target type is unsigned) or sign-extended (if the target type is
+signed). Thus, converting the value 0x1234 ABCD from the evaluation
+stack to an 8-bit datum yields the result 0xCD; if the target type were
+int8, this is sign-extended to give 0xFFFF FFCD; if, instead, the target
+type were unsigned int8, this is zero-extended to give 0x0000 00CD.
+
+2) “Truncate to zero” means that the
+floating-point number will be converted to an integer by truncation
+toward zero. Thus 1.1 is converted to 1, and –1.1 is converted to –1.
+
+3) Converts from the current precision
+available on the evaluation stack to the precision specified by the
+instruction. If the stack has more precision than the output size the
+conversion is performed using the IEC 60559:1989 “round-to-nearest” mode
+to compute the low order bit of the result.
+
+=== *div – divide values*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|5B 
+|div 
+|Divide two values to return a quotient or floating-point result.
+|===
+
+`…, value1, value2 -> …, result`
+
+_result = value1_ div _value2_ satisfies
+the following conditions:
+
+_|result| = |value1|_ */* _|value2|_, and
+
+_sign(result) = +
++, if sign(value1) = sign(value2),_ or +
+–, _if sign(value1) ~= sign(value2)_
+
+The div instruction computes _result_ and
+pushes it on the stack.
+
+Integer division truncates towards zero.
+
+Floating-point division is per IEC
+60559:1989. In particular, division of a finite number by 0 produces the
+correctly signed infinite value and
+
+0 / 0 = NaN
+
+infinity / infinity = *NaN*
+
+X / infinity = 0
+
+The acceptable operand types and their
+corresponding result data type are encapsulated in
+<<addops, the compatibility table>>.
+
+=== *div_un – divide integer values, unsigned*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|5C 
+|div_un 
+|Divide two values, unsigned, returning a quotient.
+|===
+
+`…, value1, value2 -> …, result`
+
+The div_un instruction computes value1
+divided by value2, both taken as unsigned integers, and pushes the
+result on the stack.
+
+The acceptable operand types and their
+corresponding result data type are encapsulated in
+<<addops, the compatibility table>>.
+
+=== *dup – duplicate the top value of the stack*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|25 
+|dup 
+|Duplicate the value on the top of the stack.
+|===
+
+`…, value -> …, value, value`
+
+The dup instruction duplicates the top
+element of the stack.
+
+=== *iif – immediate if*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 0B 
+|iif 
+|Begin of the immediate if operation and the condition expression
+
+|EE 02 
+|then 
+|End of the IIF condition expression and begin of the TRUE case
+expression
+
+|EE 03 
+|else 
+|End of the TRUE case expression and begin of the FALSE case expression.
+
+|EE 04 
+|end 
+|End of the immediate if operation.
+|===
+
+`…,-> …,value`
+
+.Syntax of textual representation:
+....
+CondOp = 'IIF' Expression 'THEN' Expression 'ELSE' Expression 'END'
+....
+
+A compound expression which evaluates the
+condition and then either executes the `then` or `else` expression. The
+condition expression is expected to leave an int32 on the evaluation
+stack.
+
+=== *initobj – initialize the value at an address*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 15 <__T__> 
+|initobj _type_ 
+|Initialize the value at address _dest_.
+|===
+
+`…, dest -> …,`
+
+The initobj instruction initializes a
+record, union, object or fixed length array with a default value. _type_
+is a reference to the declaration. _dest_ is a pointer to the record,
+union, object or array. The initobj instruction initializes each
+field/element of _dest_ to null or a zero of the appropriate built-in
+type.
+
+TODO: do we really need this?
+
+=== *isinst – test if an object is an instance of a class or interface*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|75 <__T__> 
+|isinst _type_ 
+|Test if _obj_ is an instance of _type_, pushing 1 (of type int32) if so,
+0 otherwise.
+|===
+
+`…, obj -> …, result`
+
+The isinst instruction tests whether obj (a
+pointer to object type) is an instance of _type_. If _obj_ is null,
+isinst fails and pushes 0.
+
+=== *ldarg – load argument onto the stack*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 09 _<uint16>_ 
+|ldarg _num_ 
+|Load argument numbered _num_ onto the stack.
+
+|0E _<uint8>_ 
+|ldarg_s _num_ 
+|Load argument numbered _num_ onto the stack, short form.
+
+|02 
+|ldarg_0 
+|Load argument 0 onto the stack.
+
+|03 
+|ldarg_1 
+|Load argument 1 onto the stack.
+
+|04 
+|ldarg_2 
+|Load argument 2 onto the stack.
+
+|05 
+|ldarg_3 
+|Load argument 3 onto the stack.
+|===
+
+`… -> …, value`
+
+The ldarg _num_ instruction pushes onto the
+evaluation stack, the _num_ ’th incoming argument, where arguments are
+numbered 0 onwards. The ldarg instruction can be used to load a value
+type or a built-in value onto the stack by copying it from an incoming
+argument. The type of the value is the same as the type of the argument,
+as specified by the current method’s signature.
+
+The ldarg.0, ldarg.1, ldarg.2, and ldarg.3
+instructions are efficient encodings for loading any one of the first
+4 arguments. The ldarg.s instruction is an efficient encoding for
+loading argument numbers 4–255.
+
+For procedures that take a variable-length
+argument list, the ldarg instructions can be used only for the initial
+fixed arguments, not those in the variable part of the signature.
+
+Arguments that hold an integer value
+smaller than 4 bytes long are expanded to type int32 when they are
+loaded onto the stack. Floating-point values are expanded to their
+native size (type F).
+
+=== *ldarga – load an argument address*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 0A _<uint16>_ 
+|ldarga _argNum_ 
+|Fetch the address of argument _argNum_.
+
+|0F _<uint8>_ 
+|ldarga_s _argNum_ 
+|Fetch the address of argument _argNum_, short form.
+|===
+
+`…, -> …, address of argument number `_`argNum`_
+
+The ldarga instruction fetches the address
+(of type intptr) of the _argNum_ ’th argument, where arguments are
+numbered 0 onwards. The address will always be aligned to a natural
+boundary on the target machine. The short form (ldarga.s) should be used
+for argument numbers 0–255.
+
+For procedures that take a variable-length
+argument list, the ldarga instructions can be used only for the initial
+fixed arguments, not those in the variable part of the signature.
+
+=== *ldc – load numeric constant*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|20 <__int32__> 
+|ldc_i4 _num_ 
+|Push _num_ of type int32 onto the stack as int32.
+
+|21 <__int64__> 
+|ldc_i8 _num_ 
+|Push _num_ of type int64 onto the stack as int64.
+
+|22 <__float32__> 
+|ldc_r4 _num_ 
+|Push _num_ of type float32 onto the stack as F.
+
+|23 <__float64__> 
+|ldc_r8 _num_ 
+|Push _num_ of type float64 onto the stack as F.
+
+|16 
+|ldc_i4_0 
+|Push 0 onto the stack as int32.
+
+|17 
+|ldc_i4_1 
+|Push 1 onto the stack as int32.
+
+|18 
+|ldc_i4_2 
+|Push 2 onto the stack as int32.
+
+|19 
+|ldc_i4_3 
+|Push 3 onto the stack as int32.
+
+|1A 
+|ldc_i4_4 
+|Push 4 onto the stack as int32.
+
+|1B 
+|ldc_i4_5 
+|Push 5 onto the stack as int32.
+
+|1C 
+|ldc_i4_6 
+|Push 6 onto the stack as int32.
+
+|1D 
+|ldc_i4_7 
+|Push 7 onto the stack as int32.
+
+|1E 
+|ldc_i4_8 
+|Push 8 onto the stack as int32.
+
+|15 
+|ldc_i4_m1 
+|Push -1 onto the stack as int32.
+
+|1F <__int8__> 
+|ldc_i4_s _num_ 
+|Push _num_ onto the stack as int32, short form.
+|===
+
+`… -> …, num`
+
+The ldc _num_ instruction pushes number
+_num_ or some constant onto the stack. There are special short encodings
+for the integers –128 through 127 (with especially short encodings for
+–1 through 8). All short encodings push 4-byte integers on the stack.
+Longer encodings are used for 8-byte integers and 4- and 8-byte
+floating-point numbers, as well as 4-byte values that do not fit in the
+short forms.
+
+There are three ways to push an 8-byte integer constant onto the stack
+
+- For constants that shall be expressed in more than 32 bits, use the ldc.i8 instruction.
+
+- For constants that require 9–32 bits, use the ldc.i4 instruction followed by a conv.i8.
+
+- For constants that can be expressed in 8 or fewer bits, use a short form instruction followed by a conv.i8.
+
+There is no way to express a floating-point
+constant that has a larger range or greater precision than a 64-bit IEC
+60559:1989 number, since these representations are not portable across
+architectures.
+
+=== *ldc_obj – load a literal object to the stack*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 12 <__T__> 
+|ldc_obj _constructor_ 
+|Load the constructed literal object to the stack.
+|===
+
+`… -> …, val`
+
+The ldobj instruction pushes the object
+literal constructed by _constructor_ onto the stack.
+
+TODO: should this - like ldstr - be the
+address of the literal bytes in read-only memory?
+
+=== *ldelem – load element from array*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|A3 <__T__> 
+|ldelem _type_ 
+|Load the element at _index_ onto the top of the stack.
+
+|90 
+|ldelem_i1 
+|Load the element with type int8 at _index_ onto the top of the stack as
+an int32.
+
+|92 
+|ldelem_i2 
+|Load the element with type int16 at _index_ onto the top of the stack as
+an int32.
+
+|94 
+|ldelem_i4 
+|Load the element with type int32 at _index_ onto the top of the stack as
+an int32.
+
+|96 
+|ldelem_i8 
+|Load the element with type int64 at _index_ onto the top of the stack as
+an int64.
+
+|91 
+|ldelem_u1 
+|Load the element with type unsigned int8 at _index_ onto the top of the
+stack as an int32.
+
+|93 
+|ldelem_u2 
+|Load the element with type unsigned int16 at _index_ onto the top of the
+stack as an int32.
+
+|95 
+|ldelem_u4 
+|Load the element with type unsigned int32 at _index_ onto the top of the
+stack as an int32.
+
+|96 
+|ldelem_u8 
+|Load the element with type unsigned int64 at _index_ onto the top of the
+stack as an int64.
+
+|98 
+|ldelem_r4 
+|Load the element with type float32 at _index_ onto the top of the stack
+as an float32.
+
+|99 
+|ldelem_r8 
+|Load the element with type float64 at _index_ onto the top of the stack
+as an float64.
+
+|97 
+|ldelem_ip 
+|Load the element with type intptr at _index_ onto the top of the stack
+as a intptr.
+
+|TODO 
+|ldelem_ipp 
+|Load the element with type methref at _index_ onto the top of the stack
+as a methref.
+|===
+
+`…, pointer to array, index -> …, value`
+
+The ldelem instruction loads the value of
+the element with index _index_ (of type unsigned int32) in the
+zero-based one-dimensional array (pointed to by the intptr on the
+stack), and places it on the top of the stack. The type of the return
+value is indicated by the type __ in the instruction.
+
+=== *ldelema – load address of an element of an array*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|8F <__T__> 
+|ldelema _type_ 
+|Load the address of element at _index_ of type onto the top of the
+stack.
+|===
+
+`…, pointer to array, index -> …, address`
+
+The ldelema instruction loads the address
+of the element with index _index_ (of type int32 or intptr) in the
+zero-based one-dimensional array _array_ (pointed to by the intptr on
+the stack, of element type _type)_ and places it on the top of the
+stack.
+
+=== *ldfld – load field of a struct or union*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|7B <__T__> 
+|ldfld _field_ 
+|Push the value of _field_ of struct, union or object _ptr,_ onto the
+stack.
+|===
+
+`…, ptr -> …, value`
+
+The ldfld instruction pushes onto the stack
+the value of a field of _ptr_. _ptr_ shall be an of type intptr. _field_
+is a reference to an element of a structured type. The return type is
+that associated with _field_. ldfld pops the pointer off the stack and
+pushes the value for the field in its place.
+
+=== *ldflda – load field address*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|7C <__T__> 
+|ldflda _field_ 
+|Push the address of _field_ of struct, union or object _ptr_ on the
+stack.
+|===
+
+`…, ptr -> …, address`
+
+The ldflda instruction pushes the address
+of a field of _ptr. ptr_ is of type intptr. The value returned by ldflda
+is an intptr. _field_ is a reference to an element of a structured type
+
+=== *ldiface – load interface*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|TODO 
+|ldiface _interface_ 
+|Push an ifaceref.
+|===
+
+`…, obj -> …, ifaceref`
+
+The ldiface instruction pushes an interface
+reference (_ifaveref_) onto the stack. The _interface_ reference points
+to an interface declaration. _obj_ can be a record or object pointer.
+The method table is chosen based on the static type of _obj_.
+
+TODO: in future we should support method
+table creation at runtime based on the dynamic type of obj.
+
+=== *ldind – load value indirect onto the stack*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|71 <T> 
+|ldind _type_ 
+|Indirect load value of type on the stack.
+
+|46 
+|ldind_i1 
+|Indirect load value of type int8 as int32 on the stack.
+
+|48 
+|ldind_i2 
+|Indirect load value of type int16 as int32 on the stack.
+
+|4A 
+|ldind_i4 
+|Indirect load value of type int32 as int32 on the stack.
+
+|4C 
+|ldind_i8 
+|Indirect load value of type int64 as int64 on the stack.
+
+|47 
+|ldind_u1 
+|Indirect load value of type unsigned int8 as int32 on the stack.
+
+|49 
+|ldind_u2 
+|Indirect load value of type unsigned int16 as int32 on the stack.
+
+|4B 
+|ldind_u4 
+|Indirect load value of type unsigned int32 as int32 on the stack.
+
+|4E 
+|ldind_r4 
+|Indirect load value of type float32 on the stack.
+
+|4C 
+|ldind_u8 
+|Indirect load value of type unsigned int64 as int64 on the stack (alias
+for ldind.i8).
+
+|4F 
+|ldind_r8 
+|Indirect load value of type float64 on the stack.
+
+|4D 
+|ldind_ip 
+|Indirect load value of type intptr on the stack
+
+|EE 15 
+|ldind_ipp 
+|Indirect load value of type intptr pair (methref) on the stack
+|===
+
+`…, addr -> …, value`
+
+The ldind instruction indirectly loads a
+value from address _addr_ (an intptr) onto the stack. The source value
+is indicated by _type_ or by the instruction suffix. The _type_ can be a
+struct, union, object, or a non-open array, or any basic or generic
+type.
+
+Note that integer values of less than
+4 bytes are extended to int32 when they are loaded onto the evaluation
+stack.
+
+If _type_ is a non-open char array, and
+_addr_ points to an open char array, the instruction copies the
+characters of the char array pointed to by _addr_ to the char array on
+the stack, up to the minimum of the length of either _addr_ or _type_.
+After the operation, the char array on the stack is always zero
+terminated.
+
+The address specified by _addr_ shall be to
+a location with the natural alignment of <__type__>.
+
+NOTE: ldind can be used to pass
+records, object and arrays to procedures by value, but also for the
+right side of assignments or return values. In the latter case, there is
+usually a stind to copy the value to a variable, field or element
+(represented by their address). The backend in that case is free to
+avoid copying and instead just pass a pointer to the stack instead of a
+value copy.
+
+=== *ldloc – load local variable onto the stack*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 0C__<uint16>__ 
+|ldloc _indx_ 
+|Load local variable of index _indx_ onto stack.
+
+|11 _<uint8>_ 
+|ldloc_s _indx_ 
+|Load local variable of index _indx_ onto stack, short form.
+
+|06 
+|ldloc_0 
+|Load local variable 0 onto stack.
+
+|07 
+|ldloc_1 
+|Load local variable 1 onto stack.
+
+|08 
+|ldloc_2 
+|Load local variable 2 onto stack.
+
+|09 
+|ldloc_3 
+|Load local variable 3 onto stack.
+|===
+
+`… -> …, value`
+
+The ldloc _indx_ instruction pushes the
+contents of the local variable number _indx_ onto the evaluation stack,
+where local variables are numbered 0 onwards. The ldloc.0, ldloc.1,
+ldloc.2, and ldloc.3 instructions provide an efficient encoding for
+accessing the first 4 local variables. The ldloc.s instruction provides
+an efficient encoding for accessing local variables 4–255.
+
+The type of the value is the same as the
+type of the local variable, which is specified in the method header.
+
+Local variables that are smaller than
+4 bytes are expanded to type int32 when they are loaded onto the stack.
+Floating-point values are expanded to their native size (type F).
+
+=== *ldloca – load local variable address*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 0D _<unsigned int16>_ 
+|ldloca _indx_ 
+|Load address of local variable with index _indx._
+
+|12 _<unsigned int8>_ 
+|ldloca_s _indx_ 
+|Load address of local variable with index _indx, short form._
+|===
+
+`… -> …, address`
+
+The ldloca instruction pushes the address
+of the local variable number _indx_ onto the stack, where local
+variables are numbered 0 onwards. The value pushed on the stack is
+already aligned correctly for use with instructions like ldind and
+stind. The result is a pointer (type intptr). The ldloca.s instruction
+provides an efficient encoding for use with the local variables 0–255.
+(Local variables that are the subject of ldloca shall be aligned as
+described in the ldind instruction, since the address obtained by ldloca
+can be used as an argument to ldind.)
+
+=== *ldmeth – load a virtual method pointer*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 07 <__T>__ 
+|ldmeth _method_ 
+|Push the the methref of the reference method on the stack.
+|===
+
+`…, obj -> …, methref`
+
+`…, ifaceref -> …, methref`
+
+The ldmeth instruction pushes a method
+reference (methref) onto the stack. The _method_ descriptor either
+points to a record, object or interface method declaration. Accordingly,
+_obj_ can be a record or object pointer, or an interface reference
+(ifaceref). If _obj_ is a pointer to object, the actual method is chosen
+based on the dynamic type of _obj_ rather than the compile-time type
+referenced by _method_.
+
+=== *ldnull – load a null pointer*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|14 
+|ldnull 
+|Push a null reference on the stack.
+|===
+
+`… -> …, null value`
+
+The ldnull __ pushes a null pointer (type
+intptr) on the stack.
+
+=== *ldproc – load procedure pointer*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 06 <__T>__ 
+|ldproc _proc_ 
+|Push a procedure pointer on the stack.
+|===
+
+`… -> …, ftn`
+
+The ldproc instruction pushes a pointer
+(type intptr) to the native code implementing the procedure described by
+_proc_ (a descriptor) onto the stack. The value pushed can be called
+using the calli instruction.
+
+A method pointer can be passed to external
+code (e.g., as a callback routine).
+
+=== *ldstr – load a literal string*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|72 <__T__> 
+|ldstr _string_ 
+|Push the address of the literal _string_.
+|===
+
+`…, -> …, address`
+
+The ldstr instruction pushes the address
+(intptr) of a zero-terminatded sequence of chars, usually residing in
+read-only memory. The address is compatible with a pointer to an open
+array of char.
+
+The result of two ldstr instructions
+referring to the same string literal return precisely the same address.
+
+NOTE: The address generally points
+to a read-only memory section. The effect of writing to memory pointed
+to by address is undefined in this specification.
+
+=== *ldvar – load module variable*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|7E <__T__> 
+|ldvar _var_ 
+|Push the value of _var_ on the stack.
+|===
+
+`…, -> …, value`
+
+The ldvar instruction pushes the value of a
+module variable on the stack. _var_ is a reference to the variable. The
+return type is that associated with _var_.
+
+=== *ldvara – load module variable address*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|7F <__T__> 
+|ldvara _var_ 
+|Push the address of the module variable, _var,_ on the stack.
+|===
+
+`…, -> …, address`
+
+The ldvara instruction pushes the address
+(a intptr) referring to a module variable.
+
+=== *mul – multiply values*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|5A 
+|mul 
+|Multiply values.
+|===
+
+`…, value1, value2 -> …, result`
+
+The mul instruction multiplies _value1_ by
+_value2_ and pushes the result on the stack. Integral operations
+silently truncate the upper bits on overflow. For floating-point types,
+0 × infinity = NaN.
+
+The acceptable operand types and their
+corresponding result data type are encapsulated in
+<<addops, the compatibility table>>.
+
+=== *neg – negate*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|65 
+|neg 
+|Negate _value_.
+|===
+
+`…, value -> …, result`
+
+The neg instruction negates _value_ and
+pushes the result on top of the stack. The return type is the same as
+the operand type. Negation of integral values is standard
+twos-complement negation. In particular, negating the most negative
+number (which does not have a positive counterpart) yields the most
+negative number. Negating a floating-point number cannot overflow;
+negating NaN returns NaN.
+
+The acceptable operand types and their
+corresponding result data types are specified in <<unops, the compatibility table>>.
+
+=== *newarr – create an open array*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|8D <__T__> 
+|newarr _etype_ 
+|Create a new array with elements of type _etype._
+|===
+
+`…, numElems`_` `_`-> …, pointer to array`
+
+The newarr instruction pushes a pointer to
+a new zero-based, one-dimensional, open array whose elements are of type
+_etype. numElems_ (of type unsigned int32) specifies the number of
+elements in the array. Valid array indexes are 0 ≤ index < _numElems_.
+The elements of an array can be any type. The elements are not
+initialized.
+
+NOTE: This operation is only for
+open array types. Array types with fixes size are created with newobj
+instead.
+
+=== *newvla – create a variable-length array on stack*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 0F <__T__> 
+|newvla _etype_ 
+|Create a new VLA with elements of type _etype._
+|===
+
+`…, numElems`_` `_`-> …, pointer to array`
+
+The newvla instruction pushes a pointer to
+a new zero-based, one-dimensional array whose elements are of type
+_etype. numElems_ (of type unsigned int32) specifies the number of
+elements in the array. In contrast to newarr, newvla tries to allocated
+the array on the stack, and the memory is automatically disposed when
+the function finishes. Valid array indexes are 0 ≤ index < _numElems_.
+The elements of an array can be any type. Elements of the array are not
+initialized.
+
+=== *newobj – create a new object*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|73 <__T__> 
+|newobj _type_ 
+|Allocate an instance of type (struct, union, or object)_._
+|===
+
+`…,`_` `_`-> …, pointer to instance`
+
+The newobj instruction creates a new
+instance of _type_. The fields are not initialized.
+
+NOTE: This operation applies to all
+structured types of fixed size, including non-open arrays.
+
+=== *nop – no operation*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|00 
+|nop 
+|Do nothing.
+|===
+
+`…,-> …,`
+
+The nop instruction does nothing. It is
+intended to fill in space if bytecodes are patched.
+
+=== *not – bitwise complement*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|66 
+|not 
+|Bitwise complement.
+|===
+
+`…, value -> …, result`
+
+The _not_ instruction computes the bitwise
+complement of the integer value on top of the stack and leaves the
+result on top of the stack. The return type is the same as the operand
+type.
+
+The acceptable operand types and their
+corresponding result data type are as follows:
+
+
+[width="100%",cols="20%,20%,20%,20%,20%",]
+|===
+|*Operand Type* 
+|int32 
+|int64 
+|x 
+|x
+
+|*Result Type* 
+|int32 
+|int64 
+|x 
+|x
+|===
+
+=== *or – bitwise OR*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|60 
+|or 
+|Bitwise or of two integer values, returns an integer.
+|===
+
+`…, value1, value2 -> …, result`
+
+The or instruction computes the bitwise or
+of the top two values on the stack and leaves the result on the stack.
+
+The acceptable operand types and their
+corresponding result data type are encapsulated in
+<<boolops, the compatibility table>>.
+
+=== *ptroff - pointer offset*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 13 <__T__> 
+|ptroff _basetype_ 
+|Moves the pointer by `offset * size of basetype`
+|===
+
+`…, pointer, offset -> …, pointer`
+
+Add offset to the pointer considering the
+size and alignment of the _basetype_. The byte offset is calculated by
+`_offset_ * sizeof(_basetype_)`. Offset can be of int32, int64 or intptr
+type.
+
+=== *rem – compute remainder*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|5D 
+|rem 
+|Remainder when dividing one value by another.
+|===
+
+`…, value1, value2 -> …, result`
+
+The rem instruction divides _value1_ by
+_value2_ and pushes the remainder _result_ on the stack.
+
+The acceptable operand types and their
+corresponding result data type are encapsulated in
+<<boolops, the compatibility table>>.
+
+*For integer operands:*
+
+`result = value1 rem value2` satisfies the
+following conditions:
+
+`result = value1 – value2×(value1 div value2)`, and
+
+`0 ≤ |result| < |value2|`, and
+
+`sign(result) = sign(value1)`,
+
+where div is the division instruction, which truncates towards zero.
+
+=== *rem_un – compute integer remainder, unsigned*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|5E 
+|rem_un 
+|Remainder when dividing one unsigned value by another.
+|===
+
+`…, value1, value2 -> …, result`
+
+The rem_un instruction divides value1 by
+value2 and pushes the remainder result on the stack. (rem_un treats its
+arguments as unsigned integers, while rem treats them as signed
+integers.)
+
+`result = value1 rem_un value2` satisfies the following conditions:
+
+`result = value1 – value2×(value1 div_un value2)`, and
+
+`0 ≤ result < value2`,
+
+where div_un is the unsigned division
+instruction. rem_un is unspecified for floating-point numbers.
+
+The acceptable operand types and their
+corresponding result data type are encapsulated in
+<<boolops, the compatibility table>>.
+
+=== *shl – shift integer left*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|62 
+|shl 
+|Shift an integer left (shifting in zeros), return an integer.
+|===
+
+`…, value, shiftAmount -> …, result`
+
+The shl instruction shifts _value_ (int32,
+int64 or intptr) left by the number of bits specified by _shiftAmount_.
+_shiftAmount_ is of type int32 or intptr. The return value is
+unspecified if _shiftAmount_ is greater than or equal to the width of
+_value_.
+
+See the following table for details of
+which operand types are allowed, and their corresponding result type.
+
+.Shift operands compatibility
+[#shiftops]
+[width="99%",cols="16%,14%,14%,14%,14%",options="header",]
+|===
+|                |*Shift-By* |       |        | 
+|*To Be Shifted* |*int32*    |*int64*|*intptr*|*F* 
+|*int32*         |int32      |x      |x       |x 
+|*int64*         |int64      |x      |x       |x 
+|*intptr*        |x          |x      |x       |x 
+|*F*             |x          |x      |x       |x 
+|===
+
+=== *shr – shift integer right*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|63 
+|shr 
+|Shift an integer right (shift in sign), return an integer.
+|===
+
+`…, value, shiftAmount -> …, result`
+
+The shr instruction shifts _value_ (int32,
+int64 or intptr) right by the number of bits specified by _shiftAmount_.
+_shiftAmount_ is of type int32 or intptr. The return value is
+unspecified if _shiftAmount_ is greater than or equal to the width of
+_value_. shr replicates the high order bit on each shift, preserving the
+sign of the original value in _result_.
+
+See <<shiftops,the compatibility table>> for
+details of which operand types are allowed, and their corresponding
+result type.
+
+=== *shr_un – shift integer right, unsigned*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|64 
+|shr_un 
+|Shift an integer right (shift in zero), return an integer.
+|===
+
+`…, value, shiftAmount -> …, result`
+
+The shr.un instruction shifts _value_
+(int32, int 64 or intptr) right by the number of bits specified by
+_shiftAmount_. _shiftAmount_ is of type int32 or intptr. The return
+value is unspecified if _shiftAmount_ is greater than or equal to the
+width of _value_. shr.un inserts a zero bit on each shift.
+
+See <<shiftops,the compatibility table>> for
+details of which operand types are allowed, and their corresponding
+result type.
+
+=== *sizeof – load the size, in bytes,of a type*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 1C <T> 
+|sizeof type 
+|Push the size, in bytes, of a type as an uint32.
+|===
+
+`…, -> …, size `
+
+Returns the size, in bytes, of a given type
+as uint32. sizeof returns the total size that would be occupied by each
+element in an array of this type – including any padding the
+implementation chooses to add. Specifically, array elements lie sizeof
+bytes apart
+
+TODO: maybe we don't need this; ptr inc/dec
+and new don't need it, and it exposes implementation details of later
+steps.
+
+=== *sub – subtract numeric values*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|59 
+|sub 
+|Subtract value2 from value1, returning a new value.
+|===
+
+`…, value1, value2 -> …, result`
+
+The sub instruction subtracts _value2_ from
+_value1_ (value1 - value2, i.e. right side was pushed last) and pushes
+the result on the stack. Overflow is not detected for the integral
+operations; for floating-point operands, sub returns +inf on positive
+overflow, -inf on negative overflow, and zero on floating-point
+underflow.
+
+The acceptable operand types and their
+corresponding result data type are encapsulated in
+<<addops, the compatibility table>>.
+
+=== *xor – bitwise XOR*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|61 
+|xor 
+|Bitwise xor of integer values, returns an integer.
+|===
+
+`..., value1, value2 -> ..., result`
+
+The xor instruction computes the bitwise
+xor of _value1_ and __value2__and leaves the result on the stack.
+
+The acceptable operand types and their
+corresponding result data type are encapsulated in
+<<boolops, the compatibility table>>.
+
+== Constants
+
+Named constant literals in the public
+interface of a module.
+
+.Syntax of textual representation:
+....
+ConstDeclaration = [Line] ident '=' ConstExpression2
+
+ConstExpression2 = qualident [component_list] | number | string | hexstring 
+....
+
+== Variables
+
+Variable declarations introduce module
+variables by defining an identifier and a data type for them.
+
+.Syntax of textual representation:
+....
+VariableDeclaration = IdentList ':' NamedType
+....
+
+== Procedures
+
+A procedure declaration consists of a
+procedure heading and a procedure body. The heading specifies the
+procedure identifier and the formal parameters. The body contains local
+variable declarations and statements. The procedure identifier must be
+repeated at the end of the procedure declaration.
+
+There are two kinds of procedures: proper
+procedures and function procedures. The latter are activated as a
+constituent of an expression and yield a result that is an operand of
+the expression. Proper procedures are activated by a procedure call. A
+procedure is a function procedure if its formal parameters specify a
+result type. Each control path of a function procedure must return a
+value.
+
+All variables declared within a procedure body
+are local to the procedure. The variable names are optional. If present,
+they must be unique within the local variable list. Local variables are
+numbered from left to right, starting from zero. Local variables can be
+referenced by their name or by their number.
+
+The call of a procedure within its declaration
+implies recursive activation.
+
+A procedure can be declared EXTERN or FOREIGN
+to indicate that it is implemented elsewhere. An EXTERN procedure has
+the same calling convention as a normal procedure and is assumed to have
+been compiled earier by the same compiler. A FOREIGN procedure has C
+calling convention. FOREIGN can be followed by an explicit name of the
+procedure implementation, otherwise the (implementation dependent)
+naming scheme of the backend is assumed.
+
+A procedure declared INLINE is expanded by the
+backend at the call site. A procedure declared INVAR doesn't depend on
+runtime information and can be called at compile time. At most one
+procedure can be declared INIT, in which case it is automatically called
+at module load time.
+
+A procedure can be an alias of another
+procedure. The other procedure is referenced with a qualident. If the
+other procedure is in another module, it must be exported.
+
+Procedures may be associated with an object
+type declared in the same module. The procedures are said to be bound to
+the object type. The binding is expressed by prefixing the procedure
+name with the name of the local object type T the procedure is bound to.
+The receiver parameter is explicit and the first parameter in the
+parameter list. The receiver parameter must be of type POINTER TO T. If
+a procedure P is bound to an object type T0, it is implicitly also bound
+to any object type T1 which is an extension of T0. However, a procedure
+P' (with the same name as P) may be explicitly bound to T1 in which case
+it overrides the binding of P. P' is considered a redefinition of P for
+T1. The formal parameters of P and P' must match (see Definition of
+terms). If P and T1 are exported (see Declarations and scope rules), P'
+must be exported too. Note The name of a type-bound procedure must be
+unique within the object type to which it is bound, not within the
+module in which it is declared. Type-bound procedures cannot be INLINE,
+INVAR, nor INIT.
+
+.Syntax of textual representation:
+....
+ProcedureDeclaration = ProcedureHeading 
+                         (['INLINE'|'INVAR'|'INIT'] [';'] ProcedureBody 
+                          | [';'] EXTERN
+                          | [';'] FOREIGN [string]
+                          | [';'] FORWARD ) 
+
+ProcedureHeading     = (PROCEDURE | PROC) [Line]
+                       [Binding]
+                       identdef [FormalParameters]
+Binding              = ident '.'
+
+ProcedureBody        = [VAR { LocalDeclaration [';'] }]
+                       BEGIN StatementSequence END ident
+
+LocalDeclaration     = [IdentList ':'] NamedType
+....
+
+TODO: explicit EXTERN calling conventions
+
+=== Formal parameters
+
+Formal parameters are identifiers declared
+in the formal parameter list of a procedure. They correspond to actual
+parameters specified in the procedure call. The correspondence between
+formal and actual parameters is established when the procedure is
+called.
+
+The scope of a formal parameter extends
+from its declaration to the end of the procedure block in which it is
+declared. A function procedure without parameters must have an empty
+parameter list. The result type of a procedure cannot be an open array.
+
+The formal parameter names are optional. If
+present, they must be unique within the formal parameter list.
+
+Formal parameters are numbered from left to
+right, starting from zero. In case of a bound procedure, the hidden
+receiver parameter is assumed to be at position zero.
+
+Formal parameters can be referenced by
+their name or by their number.
+
+The return type is optional. The named type
+can reference all types defined in <<Types>> besides open
+arrays.
+
+.Syntax of textual representation:
+....
+FormalParameters = '(' [ FPSection { ';' FPSection } ] ')'
+                   [ ':' ReturnType ]
+
+ReturnType       = NamedType
+
+FPSection        = [ [Line] ident { [','] [Line] ident } ':'] NamedType
+....
+
+=== *line*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 05 _<uint32>_ 
+|line _unsigned_ 
+|The line number _num_ in the source file of the module.
+|===
+
+`…,-> …,`
+
+This is a special operation representing
+line information (see <<Line Information>>) when
+embedded in a statement sequence or expression. The line operation is
+neither a statement nor an expintr and shall be ignored besides updating
+the line information.
+
+== Statements
+
+Two kinds of statements are defined - simple
+and compound statements.
+
+A simple statement is an instruction which
+pops zero or more values of a specified type from the evaluation stack.
+
+A compound statement starts with the `if`,
+`loop`, `repeat`, `switch`, or `while` instruction, and ends with the
+`end` instruction.
+
+Before each compound, and before the following
+simple statements, the evaluation stack must be empty:
+
+`exit`, `goto`, `label`, `line`, and `ret`
+(for procedures without return value)
+
+After each simple or compound statement, the
+evaluation stack must be empty.
+
+.Syntax of textual representation:
+....
+StatementSequence = { Statement | ExpInstr | Line }
+Statement = SimpleStatement | CompoundStatement
+SimpleStatement = 'free'| 'exit' | 'goto' ident
+| 'label' ident | 'pop' | 'ret'
+| ('starg'|'starg_s') (unsigned|ident)
+| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8'
+| 'stelem_r4' | 'stelem_r8' | 'stelem_ip' | 'stelem_ipp'
+| 'stfld' trident | 'stind' qualident
+| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'
+| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'
+| 'stind' qualident | 'strcpy' | 'stvar' qualident
+CompoundStatement = IfThenElse | Loop | RepeatUntil | Switch | WhileDo
+....
+
+TODO: pcall and raise
+
+=== *exit*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 09 
+|exit 
+|Breaks the enclosing Loop statement.
+|===
+
+`…,-> …,`
+
+The `exit` statement terminates the closest
+surrounding `loop` statement. It is an error to call the `exit`
+statement without a surrounding `loop` statement.
+
+=== *free*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 0C 
+|free 
+|Free memory previously allocated by Newarr or Newobj.
+|===
+
+`…,addr-> …,`
+
+The `free` statement deallocates memory
+allocated with `newobj` or `newarr` expressions.
+
+[#goto]
+=== *goto*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|38 
+|goto _name_ 
+|Jump to a label declared in the same scope.
+|===
+
+`…,-> …,`
+
+The `goto` statement is an unconditional
+jump to the given label.
+
+The label must be declared within the same
+procedural scope as the `goto` statement, with one of the following
+placements:
+
+- In the same statement sequence
+
+- In an outer statement sequence that encloses the `goto` statement.
+
+It is explicitly illegal to jump into a nested compound statement.
+
+=== *if then else*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 01 
+|if 
+|Begin of an IF statement and the condition expression.
+
+|EE 02 
+|then 
+|End of the If condition expression and begin of the If statement
+sequence
+
+|EE 03 
+|else 
+|End of the If statement sequence and begin of the Else statement
+sequence.
+
+|EE 04 
+|end 
+|End of the If or Else statement sequence.
+|===
+
+`…,-> …,`
+
+.Syntax of textual representation:
+....
+IfThenElse = 'IF' Expression 'THEN' StatementSequence
+[ 'ELSE' StatementSequence ] 'END'
+....
+
+A compound statement which evaluates the
+condition and then either executes the `then` or `else` statement
+sequence. The condition expression is expected to leave an int32 on the
+evaluation stack.
+
+=== *label*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 0A 
+|label _name_ 
+|Specifies a label which can be referenced in Goto statements.
+|===
+
+`…,-> …,`
+
+The `label` together with the `goto`
+statement enables unconditional jumps. The position of a `label`
+relative to the `goto` statement is subject to restrictions, see
+<<goto>>. The _name_ must be unique within the
+procedure.
+
+=== *loop*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 08 
+|loop 
+|Begin of Loop statement sequence.
+
+|EE 04 
+|end 
+|End of the Loop statement sequence.
+|===
+
+`…,-> …,`
+
+.Syntax of textual representation:
+....
+Loop = 'LOOP' StatementSequence 'END'
+....
+
+A compound statement which represents an
+unconditional loop which can be quit by an `exit` statement.
+
+=== *pop – remove the top element of the stack*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|26 
+|pop 
+|Pop _value_ from the stack.
+|===
+
+`…, value -> …`
+
+The pop instruction removes the top element
+from the stack.
+
+=== *repeat until*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 10 
+|repeat 
+|Begin of Repeat statement and begin of the statement sequence.
+
+|EE 11 
+|until 
+|End of the statement sequence and begin of the Until condition
+expression.
+
+|EE 04 
+|end 
+|End of the Until condition expression.
+|===
+
+`…,-> …,`
+
+.Syntax of textual representation:
+....
+RepeatUntil = 'REPEAT' StatementSequence 'UNTIL' Expression 'END'
+....
+
+A compound statement which repeats the
+statement sequence until the condition becomes true. The condition
+expression is expected to leave an int32 on the evaluation stack.
+
+=== *ret – return from procedure*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|2A 
+|ret 
+|Return from procedure, possibly with a value.
+|===
+
+`…, value -> …`
+
+`…,-> …,`
+
+Return from the current procedure. If (and
+only if) the current procedure has a return type, a value of this type
+is fetched from the top of the stack and copied onto the stack of the
+procedure that called the current procedure. The evaluation stack for
+the current procedure shall be empty after execution of the ret
+statement.
+
+=== *starg – store a value in an argument slot*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 0B _<uint16>_ 
+|starg _num_ 
+|Store _value_ to the argument numbered _num._
+
+|10 _<uint8>_ 
+|starg_s _num_ 
+|Store _value_ to the argument numbered _num_, short form.
+|===
+
+`…, value -> …`
+
+The starg _num_ instruction pops a value
+from the stack and places it in argument slot _num_. The type of the
+value shall match the type of the argument, as specified in the current
+method’s signature. The starg.s instruction provides an efficient
+encoding for use with the first 256 arguments.
+
+For procedures that take a variable
+argument list, the starg instructions can be used only for the initial
+fixed arguments, not those in the variable part of the signature.
+
+Storing into arguments that hold an integer
+value smaller than 4 bytes long truncates the value as it moves from the
+stack to the argument. Floating-point values are rounded from their
+native size (type F) to the size associated with the argument.
+
+=== *stelem – store element to array*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|A4 _<T>_ 
+|stelem _etype_ 
+|Replace array element at _index_ with the _value_ on the stack
+
+|9C 
+|stelem_i1 
+|Replace _array_ element at _index_ with the int8 _value_ on the stack.
+
+|9D 
+|stelem_i2 
+|Replace _array_ element at _index_ with the int16 _value_ on the stack.
+
+|9E 
+|stelem_i4 
+|Replace _array_ element at _index_ with the int32 _value_ on the stack.
+
+|9F 
+|stelem_i8 
+|Replace _array_ element at _index_ with the int64 _value_ on the stack.
+
+|A0 
+|stelem_r4 
+|Replace _array_ element at _index_ with the float32 _value_ on the
+stack.
+
+|A1 
+|stelem_r8 
+|Replace _array_ element at _index_ with the float64 _value_ on the
+stack.
+
+|9B 
+|stelem_ip 
+|Replace _array_ element at _index_ with the intptr _value_ on the stack.
+
+|TBD 
+|stelem_ipp 
+|Replace _array_ element at _index_ with the methref _value_ on the
+stack.
+|===
+
+`…, pointer to array, index, value, -> …`
+
+The stelem instruction replaces the value
+of the element with zero-based index _index_ (of type unsigned int32) in
+the one-dimensional array _array_ (pointed to by a pointer), with
+_value_. The value has the type specified by _etype_ or the instruction
+suffix.
+
+=== *stfld – store into a field of an object*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|7D <__T__> 
+|stfld _field_ 
+|Replace the _value_ of _field_ of the record or object with _value._
+|===
+
+`…, ptr, value`_` `_`-> …,`
+
+The stfld instruction replaces the value of
+a field of a record or object pointed to by _ptr_ (type intptr) with
+_value_. _field_ is a field member reference. stfld pops the value and
+the pointer off the stack and updates the record or object.
+
+=== *stind – store value indirect from stack*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|81 <T> 
+|stind _type_ 
+|Store a value of type _type_ at an address.
+
+|52 
+|stind_i1 
+|Store value of type int8 into memory at address
+
+|53 
+|stind_i2 
+|Store value of type int16 into memory at address
+
+|54 
+|stind_i4 
+|Store value of type int32 into memory at address
+
+|55 
+|stind_i8 
+|Store value of type int64 into memory at address
+
+|56 
+|stind_r4 
+|Store value of type float32 into memory at address
+
+|57 
+|stind_r8 
+|Store value of type float64 into memory at address
+
+|DF 
+|stind_ip 
+|Store value of type intptr into memory at address
+
+|EE 16 
+|stind_ipp 
+|Store value of type intptr pair (methref) into memory at address
+|===
+
+`…, addr, val -> …`
+
+The stind instruction stores value _val_ at
+address _addr_ (an intptr type). The address specified by _addr_ shall
+be aligned to the natural size of _val_. The results of all instructions
+that return addresses (e.g., ldloca and ldarga) are safely aligned. For
+data types larger than 1 byte, the byte ordering is dependent on the
+target CPU. Code that depends on byte ordering might not run on all
+platforms.
+
+The _type_ can be a struct, union, object,
+or a non-open array.
+
+=== *stloc – pop value from stack to local variable*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|FE 0E _<uint16>_ 
+|stloc _indx_ 
+|Pop a value from stack into local variable _indx._
+
+|13 _<uint8>_ 
+|stloc_s _indx_ 
+|Pop a value from stack into local variable _indx_, short form.
+
+|0A 
+|stloc_0 
+|Pop a value from stack into local variable 0.
+
+|0B 
+|stloc_1 
+|Pop a value from stack into local variable 1.
+
+|0C 
+|stloc_2 
+|Pop a value from stack into local variable 2.
+
+|0D 
+|stloc_3 
+|Pop a value from stack into local variable 3.
+|===
+
+`…, value -> …`
+
+The stloc _indx_ instruction pops the top
+value off the evaluation stack and moves it into local variable number
+_indx_, where local variables are numbered 0 onwards. The type of
+_value_ shall match the type of the local variable as specified in the
+current function’s locals signature. The stloc.0, stloc.1, stloc.2, and
+stloc.3 instructions provide an efficient encoding for the first 4 local
+variables; the stloc.s instruction provides an efficient encoding for
+local variables 4–255.
+
+Storing into locals that hold an integer
+value smaller than 4 bytes long truncates the value as it moves from the
+stack to the local variable. Floating-point values are rounded from
+their native size (type F) to the size associated with the argument.
+
+=== *strcpy – string copy*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 18 
+|strcpy 
+|Copy the characters of rhs to lhs__.__
+|===
+
+`…, lhs, rhs`_` `_`-> …,`
+
+The strcpy instruction copies the
+characters of the character array pointed to by _rhs_ to the character
+array pointed to by _lhs_, up to the minimum of the length of either
+_lhs_ or _rhs_. _lhs_ shall point to a non-open char array. After the
+operation, _lhs_ is always zero terminated.
+
+=== *stvar – store a module variable*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Format* 
+|*Assembly Format* 
+|*Description*
+
+|80 <__T__> 
+|stvar _var_ 
+|Replace the value of _var_ with _val._
+|===
+
+`…, val`_` `_`-> …,`
+
+The stvar instruction replaces the value of
+a module variable with a value from the stack.
+
+=== *switch*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 0D 
+|switch 
+|Begin of a Switch statement and switch expression.
+
+|EE 0E 
+|case 
+|Begin of a Case integer list and end of switch expression.
+
+|EE 02 
+|then 
+|End of the Case integer list and begin of a Then statement sequence.
+
+|EE 03 
+|else 
+|End of a Then statement sequence an begin of the Else statement
+sequence.
+
+|EE 04 
+|end 
+|End of a Then or the Else statement sequence.
+|===
+
+`…,-> …,`
+
+.Syntax of textual representation:
+....
+`Switch = 'SWITCH' Expression { 'CASE' integer { [','] integer }
+`'THEN' StatementSequence }
+`[ 'ELSE' StatementSequence ] 'END'
+....
+
+A compound statement which evaluates an
+integer expression and then runs the statement sequence the case section
+of which includes the integer. The integers of all case sections are
+required to be disjoint. If no case section includes the evaluated
+integer, the statement sequence of the else section is run if present.
+The integer expression is expected to leave an int32 or int64 on the
+evaluation stack.
+
+=== *while do*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 06 
+|while 
+|Begin of While Do statement and begin of the condition expression.
+
+|EE 07 
+|do 
+|End of the While condition expression and begin of the Do statement
+sequence
+
+|EE 04 
+|end 
+|End of the Do statement sequence.
+|===
+
+`…,-> …,`
+
+.Syntax of textual representation:
+....
+WhileDo = 'WHILE' Expression 'DO' StatementSequence 'END'
+....
+
+A compound statement which repeats the
+statement sequence as long as the condition is true. The condition
+expression is expected to leave an int32 on the evaluation stack.
+
+== Modules
+
+A module is a collection of declarations of
+constants, types, variables, and procedures, together with a sequence of
+statements for the purpose of assigning initial values to the variables.
+A module is a compilation unit.
+
+.Syntax of textual representation:
+....
+module     = MODULE [Line] ident [ MetaParams ] [';'] 
+             [ SOURCE string [';'] ]
+             { ImportList | ImporterList | DeclarationSequence }
+  END [Line] ident ['.']
+
+ImportList = IMPORT import { [','] import } [';']
+
+import     = [Line] ident [MetaActuals]
+
+ImporterList = IMPORTER ident { [','] ident }
+
+DeclarationSequence  = { TYPE { TypeDeclaration [';'] }
+            | VAR { VariableDeclaration [';'] }
+            | ProcedureDeclaration [';'] }
+....
+
+The import list specifies the names of the
+imported modules. If a module A is imported by a module M and A exports
+an identifier `x`, then `x` is referred to as `A.x` within M.
+
+If A is imported as `B := A`, the object `x`
+must be referenced as `B.x`. This allows short alias names in qualified
+identifiers.
+
+The import can refer to a module by means of
+a module name optionally prefixed with an import path. There is no
+requirement that the import path actually exists in the file system, or
+that the source files corresponding to an import path are in the same
+file system directory. It is up to the compiler or linker how source
+files are mapped to import paths. An imported module with no import path
+is first looked up in the import path of the importing module.
+
+A module must not import itself (neither
+directly nor indirectly).
+
+Identifiers that are to be exported (i.e.
+that are to be visible in client modules) must be marked by an export
+mark in their declaration.
+
+The optional SOURCE clause is used to specify
+the source file from which the present intermediate language module was
+derived. If there is a SOURCE clause, LINE clauses have to be specified
+as well.
+
+The optional importer list can be used to
+explicitly specify the modules importing the present module.
+
+NOTE: The importer list is used to
+relax the acyclic module import relations; when e.g. implementing
+generic module instantiations in the host language can result in a
+mutual dependency between the instantiating and instantiated module, if
+the instantiated module depends on types or constants declared in the
+instantiating module; this dependency can be represented using the
+importer list.
+
+The statement sequence following the symbol
+BEGIN is executed when the module is loaded, which is done after the
+imported modules have been loaded. It follows that cyclic import of
+modules is illegal.
+
+== Generic Modules
+
+Modules can be made generic by adding
+formal meta parameters. Meta parameters are a list of names which
+represent types or constants; the latter include procedure names. For
+each meta parameter there must be either a TYPE or a CONST declaration,
+of which there is a dedicated version for this purpose. A CONST meta
+parameter can be constrained with a named type, in which case the actual
+meta parameter must correspond to this type; the correspondence is
+established when the generic module is instantiated; the type of the
+actual meta parameter must be compatible with the constraint type.
+
+Generic modules can be instantiated with
+different sets of meta actuals which enables the design of reusable
+algorithms and data structures. The instantiation of a generic module
+occurs when importing it. A generic module can be instantiated more than
+once in the same module with different actual meta parameters.
+
+.Syntax of textual representation:
+....
+MetaParams       = '(' ident { [','] ident } ')'
+TypeDeclaration = ident
+ConstDeclaration = ident ':' NamedType
+MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'
+....
+
+Meta parameters can be used within the
+generic module like normal types or constants. If no type constraint is
+present, the types and constants can be used wherever no information
+about the actual type is required; otherwise the type constraint
+determines the permitted operations.
+
+NOTE: Generics in MIL are useful
+to transport generic implementations in symbol files for later
+instantiations (instead of the source code).
+
+TODO: reconsider MetaParams
+
+TODO: type checking rules, structral
+compatibility, packing
+
+= Complete syntax of the textual representation
+
+....
+ident  = ( letter | '_' ) { letter | digit | '_' | '$' }
+letter = 'A' ... 'Z' | 'a' ... 'z'
+digit  = '0' ... '9'
+integer = ['+' | '-'] unsigned
+unsigned  = (digit {digit} ['O'|'B' | digit {hexDigit} 'H')
+float    = digit {digit} '.' {digit} [Exponent]
+number = ['+' | '-'] (float | unsigned)
+Exponent = 'E' ['+' | '-'] digit {digit}
+hexDigit = digit | 'A' ... 'F'
+digit    = '0' ... '9'
+character = digit {hexDigit} ('X' | 'x')
+string = ''' {character} ''' | '"' {character} '"'
+hexstring = '#' {hexDigit} '#'
+qualident = [ident '!'] ident
+trident = qualident '.' ident
+qortrident= qualident ['.' ident]
+identdef = ident ['*']
+TypeDeclaration = [Line] identdef '=' type
+type            = NamedType | ArrayType | StructUnionType | PointerType 
+                  | ProcedureType | MethodType
+NamedType = qualident
+ArrayType = ARRAY [ length ] OF NamedType | '[' [ length ] ']' NamedType
+length = unsigned
+StructUnionType = (STRUCT | UNION) { FieldList [';'] } END
+FieldList = IdentList ':' NamedType [':' unsigned] | '..' unsigned
+IdentList = [Line] identdef { [','] [Line] identdef }
+PointerType = ( POINTER TO | '^' ) NamedType
+ProcedureType = (PROCEDURE|PROC) [FormalParameters]
+MethodType = (PROCEDURE|PROC)^ [FormalParameters]
+Expression = { ExpInstr | Line }
+ExpInstr = 'add' | 'and' | ('call' | 'calli') qualident | 'callmi' qortrident
+	| ('callinst' | 'callvirt') trident | 'castptr' qualident
+	| 'ceq' | 'cgt' | 'cgt_un' | 'clt' | 'clt_un' 
+	| 'conv_i1' | 'conv_i2' | 'conv_i4' | 'conv_i8' | 'conv_r4' | 'conv_r8'
+	| 'conv_u1' | 'conv_u2' | 'conv_u4' | 'conv_u8' 
+	| 'div' | 'div_un' | 'dup' | 'initobj' qualident | 'isinst' qualident
+	| ('ldarg'|'ldarg_s') (unsigned|ident) 
+	| 'ldarg_0' | 'ldarg_1' | 'ldarg_2' | 'ldarg_3'
+	| ('ldarga'|'ldarga_s') (unsigned|ident)
+	| ('ldc_i4'|'ldc_i8'|'ldc_i4_s') integer | ('ldc_r4'|'ldc_r8') number | 'ldc_ip' unsigned
+	| 'ldc_i4_0' | 'ldc_i4_1' | 'ldc_i4_2' | 'ldc_i4_3' | 'ldc_i4_4' | 'ldc_i4_5'
+	| 'ldc_i4_6' | 'ldc_i4_7' | 'ldc_i4_8' | 'ldc_i4_m1' | 'ldc_obj' constructor
+	| ('ldelem'|'ldelema') qualident | 'ldelem_i1' | 'ldelem_i2'
+	| 'ldelem_i4' | 'ldelem_i8' | 'ldelem_u1' | 'ldelem_u2' 
+	| 'ldelem_u4' | 'ldelem_u8' | 'ldelem_r4' | 'ldelem_r8' | 'ldelem_ip' | 'ldelem_ipp'
+	| ('ldfld'|'ldflda') trident | 'ldind' qualident
+	| 'ldind_i1' | 'ldind_i2' | 'ldind_i4' | 'ldind_i8' | 'ldind_u1' | 'ldind_u2'
+	| 'ldind_u4' | 'ldind_r4' | 'ldind_u8' | 'ldind_r8' | 'ldind_ip'
+	| ('ldloc'|'ldloc_s'|'ldloca'|'ldloca_s')(unsigned|ident)
+	| 'ldloc_0' | 'ldloc_1' | 'ldloc_2' | 'ldloc_3' | 'ldnull' 
+	| 'ldproc' qualident |'ldmeth' trident
+	| 'ldstr' (string|hexstring)
+	| ('ldvar'|'ldvara') qualident | 'mul' | 'neg' 
+	| ('newarr'|'newvla'|'newobj') qualident 
+	| 'not' | 'or' | 'rem' | 'rem_un' | 'shl' | 'shr' | 'shr_un'
+	| 'sizeof' qualident | 'sub' | 'xor' | 'ptroff' qualident | 'nop' | CondOp
+ConstExpression = qualident | number | string | hexstring
+ConstExpression2 = qualident [component_list] | number | string | hexstring
+constructor = NamedType component_list
+component_list = '{' [ component {[','] component} ] '}'
+component = [ident '='] ( ConstExpression | component_list )
+CondOp = 'IIF' Expression 'THEN' Expression 'ELSE' Expression 'END' 
+ConstDeclaration = [Line] ident '=' ConstExpression2
+VariableDeclaration = IdentList ':' NamedType
+ProcedureDeclaration = ProcedureHeading 
+                         (['INLINE'|'INVAR'|'INIT'] [';'] ProcedureBody 
+                          | [';'] EXTERN
+                          | [';'] FOREIGN [string]
+                          | [';'] FORWARD ) 
+ProcedureHeading     = (PROCEDURE | PROC) [Line]
+                       [Binding]
+                       identdef [FormalParameters]
+Binding              = ident '.'
+
+ProcedureBody        = [VAR { LocalDeclaration [';'] }]
+                       BEGIN StatementSequence END ident
+LocalDeclaration     = [IdentList ':'] NamedType
+FormalParameters = '(' [ FPSection { ';' FPSection } ] ')'
+                   [ ':' ReturnType ]
+ReturnType       = NamedType
+FPSection        = [ [Line] ident { [','] [Line] ident } ':'] NamedType
+StatementSequence = { Statement | ExpInstr | Line }
+Statement = SimpleStatement | CompoundStatement
+SimpleStatement = 'free'| 'exit' | 'goto' ident
+| 'label' ident | 'pop' | 'ret'
+| ('starg'|'starg_s') (unsigned|ident)
+| 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8'
+| 'stelem_r4' | 'stelem_r8' | 'stelem_ip' | 'stelem_ipp'
+| 'stfld' trident | 'stind' qualident
+| 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'
+| ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'
+| 'stind' qualident | 'strcpy' | 'stvar' qualident
+CompoundStatement = IfThenElse | Loop | RepeatUntil | Switch | WhileDo
+module     = MODULE [Line] ident [ MetaParams ] [';'] 
+             [ SOURCE string [';'] ]
+             { ImportList | ImporterList | DeclarationSequence }
+  			END [Line] ident ['.']
+ImportList = IMPORT import { [','] import } [';']
+import     = [Line] ident [MetaActuals]
+ImporterList = IMPORTER ident { [','] ident }
+DeclarationSequence  = { TYPE { TypeDeclaration [';'] }
+            | VAR { VariableDeclaration [';'] }
+            | ProcedureDeclaration [';'] }
+MetaParams       = '(' ident { [','] ident } ')'
+TypeDeclaration = ident
+ConstDeclaration = ident ':' NamedType
+MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'
+IfThenElse = 'IF' Expression 'THEN' StatementSequence
+			[ 'ELSE' StatementSequence ] 'END'
+Loop = 'LOOP' StatementSequence 'END'
+RepeatUntil = 'REPEAT' StatementSequence 'UNTIL' Expression 'END'
+Switch = 'SWITCH' Expression { 'CASE' integer { [','] integer }
+		'THEN' StatementSequence }
+		[ 'ELSE' StatementSequence ] 'END'
+WhileDo = 'WHILE' Expression 'DO' StatementSequence 'END'
+
+= References
+
+TODO
