@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2025-12-18, work in progress
+2026-01-18, work in progress
 
 === Author
 
@@ -609,8 +609,10 @@ consisting of several variants. This means that different variables,
 although said to be of the same type, may assume structures which differ
 in a certain manner. The differences may consist of a different number
 and different types of components. Each variant is characterised by a
-field of record type, according to which the variants are discriminated.
-No case of a variant part can be of object type (see <<Object types>>).
+field, according to which the variants are discriminated.
+No field of a variant part can be of object type (see <<Object types>>).
+Fields in different cases of a variant part share the same memory storage. 
+The size of the variant part is the size of the largest case.
 
 .Syntax:
 ....
@@ -812,8 +814,7 @@ language levels (see <<Language levels>>).
 
 ==== Interface types
 
-An interface type specifies a set of
-type-bound procedures (see <<Type-bound procedures>>)
+An interface type specifies a set of type-bound procedures (see <<Type-bound procedures>>)
 by their signatures (see <<Matching formal parameter lists>>). 
 An interface type defines a contract without implementation.
 
@@ -955,8 +956,8 @@ expression `e`. The type of `e` must be an _integer type_.
 If `r` designates a record or object, then
 `r.f` denotes the field `f` of `r`. If `p` designates a pointer, `p^`
 denotes the variable which is referenced by `p`. The designators `p^.f`
-and `p^[e]` may be abbreviated as `p.f` and `p[e]`, i.e. record, object
-and array selectors imply dereferencing.
+(pointer to record) and `p^[e]` (pointer to array) may be abbreviated as `p.f` and `p[e]`, 
+i.e. record, object and array selectors imply dereferencing.
 
 Dereferencing is also implied if a pointer
 is assigned to a variable of a record, object or array type, if a
@@ -1778,8 +1779,13 @@ A procedure can be declared INLINE in which
 case the code of the procedure is embedded at the call site, and no call
 actually happens. Procedures declared INLINE don't support recursion,
 neither directly nor indirectly. INLINE procedures neither support
-variable length array local variables. Nested procedures of an INLINE
-procedure must also be INLINE.
+variable length array local variables. 
+If the INLINE procedure uses local variable names that clash with the caller's variables, 
+the compiler automatically renames the internal variables.
+A RETURN statement in an INLINE procedure provides the expression result and doens't affect
+the caller otherwise.
+
+Nested procedures of an INLINE procedure must also be INLINE.
 
 A procedure can be declared INVAR
 (invariable) in which case it can be used in CONST declarations to
@@ -2114,8 +2120,9 @@ Generic modules can be instantiated with
 different sets of meta actuals which enables the design of reusable
 algorithms and data structures. The instantiation of a generic module
 occurs when importing it. A generic module can be instantiated more than
-once in the same module with different actual meta parameters. See also
-<<Modules>>.
+once in the same module with different actual meta parameters. 
+Every generic module instantiation creates a distinct new module identity.
+See also <<Modules>>.
 
 .Syntax:
 ....
@@ -2592,12 +2599,12 @@ which predeclareds are available in which level.
 |Name |Argument type |Result type |Function
 
 |ABS(x) 
-|numeric type 
+|x: numeric type 
 |type of x 
 |absolute value
 
 |CAP(x) 
-|CHAR 
+|x: CHAR 
 |CHAR 
 |corresponding capital letter (only for the ASCII subset of the CHAR type)
 
@@ -2623,9 +2630,9 @@ which predeclareds are available in which level.
 |bitwise OR; result is UINT64 if x or y is UINT64, else UINT32
 
 |BITS(x) 
-|x: UINT32 
+|x: integer type 
 |SET 
-|set corresponding to the integer; the first element corresponds to the least significant digit of the integer and the last element to the most significant digit.
+|set corresponding to the integer; the first element corresponds to the least significant digit of the integer; no overflow checks (may halt program)
 
 |BITSHL(x,n) 
 |x: UINT32 or UINT64, n: UINT32 
@@ -2642,20 +2649,15 @@ which predeclareds are available in which level.
 |UINT32 or UINT64 
 |bitwise XOR; result is UINT64 if x or y is UINT64, else UINT32
 
-|CAST(T,x) 
-|T:enumeration type x:ordinal number 
-|enumeration type 
-|the enum item with the ordinal number x; halt if no match
-
-| 
-|T,x: integer type 
+|CAST(T,x)
+|T,x: numeric types
 |T 
-|convert integer types; re-interprets the raw bytes as T, with truncation or sign/zero extension as required.
+|convert x to T; bitwise reinterpretation of x; SIZE(T) must equal SIZE(x)
 
 |CHR(x) 
-|integer type 
+|x: integer type 
 |CHAR 
-|Latin-1 character with ordinal number x
+|Latin-1 character with ordinal number x; no overflow check (may halt program)
 
 |DEFAULT(T) 
 |T = basic type 
@@ -2670,7 +2672,7 @@ which predeclareds are available in which level.
 | 
 |T = pointer/proc type 
 |T 
-|nil
+|NIL
 
 | 
 |T = record/object/array type 
@@ -2678,19 +2680,14 @@ which predeclareds are available in which level.
 |all fields/elements set to their DEFAULT type
 
 |FLOOR(x) 
-|x: REAL or LONGREAL 
-|INT32 or INT64 
-|largest integer not greater than x; result is INT64 if x is LONGREAL, else INT32
+|x: floating point type
+|signed integer type 
+|same as VAL(INT64,x) for LONGREAL x, or VAL(INT32,x)
 
 |FLT(x) 
-|x: INT32 or INT64 
+|x: integer type
 |REAL or LONGREAL 
-|Convert integer to real type; result is LONGREAL if x was INT64, else REAL, accepting potential loss of information
-
-| 
-|x: UINT32 or UINT64 
-|REAL or LONGREAL 
-|Convert integer to real type; result is LONGREAL if x was UINT64, else REAL, accepting potential loss of information
+|same as VAL(LONGREAL,x) for INT64 or UINT64 x, or VAL(REAL,x)
 
 |GETENV(T,n) 
 |T: basic, enumeration or char array type 
@@ -2712,38 +2709,18 @@ which predeclareds are available in which level.
 |UINT32 
 |length of array v
 
-|LONG(x) 
-|x: INT8 or UINT8 
-|INT16 or UINT16 
-|identity (with sign extension in case of signed types)
-
-| 
-|x: INT16 or UINT16 
-|INT32 or UINT32 
-|dito
-
-| 
-|x: INT32 or UINT32 
-|INT64 or UINT64 
-|dito
-
-| 
-|x: REAL 
-|LONGREAL 
-|identity
-
 |MAX(T) 
-|T = basic type 
+|T: basic type 
 |T 
 |maximum value of type T
 
 | 
-|T = SET 
+|T: SET 
 |INT32 
 |maximum element of a set
 
 | 
-|T = enumeration type 
+|T: enumeration type 
 |T 
 |last element of the enumeration
 
@@ -2758,17 +2735,17 @@ which predeclareds are available in which level.
 |greater of x and y, returns smallest character type including both arguments
 
 |MIN(T) 
-|T = basic type 
+|T: basic type 
 |T 
 |minimum value of type T
 
 | 
-|T = SET 
+|T: SET 
 |UINT32 
 |0
 
 | 
-|T = enumeration type 
+|T: enumeration type 
 |T 
 |first element of the enumeration
 
@@ -2794,8 +2771,8 @@ which predeclareds are available in which level.
 
 | 
 |x: enumeration type 
-|UINT32 
-|ordinal number of the given identifier
+|T 
+|ordinal number of the given identifier; T is the smallest unsigned (or signed if negative initializer) integer type required to represent all ordinals of the enumeration
 
 | 
 |x: BOOLEAN 
@@ -2807,50 +2784,25 @@ which predeclareds are available in which level.
 |UINT32 
 |number representing the set; the first element corresponds to the least significant digit of the number and the last element to the most significant digit.
 
-|SHORT(x) 
-|x: INT64 or UINT64 
-|INT32 or UINT32 
-|truncation to modulo 2^n, where n is the bit width of the target type; negative sign is only preserved if the value fits the range of the signed target type.
-
-| 
-|x: INT32 or UINT32 
-|INT16 or UINT16 
-|dito
-
-| 
-|x: INT16 or UINT16 
-|INT8 or UINT8 
-|dito
-
-| 
-|x: LONGREAL 
-|REAL 
-|identity with loss of precision
-
-|SIGNED(x) 
-|x: unsigned integer T 
-|signed integer T 
-|interprets the raw bytes of x as signed integer of the same byte width
-
 |SIZE(T) 
 |any type 
 |UINT32 
 |number of bytes required by T
 
 |STRLEN(s) 
-|s: array of char 
+|s: array of char or string literal 
 |UINT32 
 |dynamic length of the string up to and not including the terminating 0X
 
-| 
-|s: string literal 
-| 
-|
+|VAL(T,x) 
+|T: enumeration type, x: ordinal number 
+|enumeration type 
+|the enum item with the ordinal number x; undefined behavior if int is out of enum range (may halt program)
 
-|UNSIGNED(x) 
-|x: signed integer T 
-|unsigned integer T 
-|interprets the raw bytes of x as unsigned integer of the same byte width
+| 
+|T, x: numeric types
+|T 
+|converts the value of `x` to `T`; this is a semantic conversion, not a bitwise reinterpretation; overflows for integers or loss of precision for floats are accepted; for x: floating-point type and T: integer type: the largest integer not greater than x
 
 |===
 
@@ -2865,20 +2817,16 @@ which predeclareds are available in which level.
 |terminate program execution if not x
 
 |ASSERT(x, n) 
-|x: Boolean expression 
+|x: Boolean expression, n: integer constant 
 |terminate program execution if not x
 
-| 
-|n: integer constant 
-|
-
 |DEC(v) 
-|integer type 
-|v := v - 1
+|v: integer type 
+|v := v - 1; no overflow check (may halt program)
 
 | 
 |const enumeration type 
-|previous ident in enumeration
+|previous ident in enumeration; no overflow check (may halt program)
 
 | 
 |pointer to T 
@@ -2886,7 +2834,7 @@ which predeclareds are available in which level.
 
 |DEC(v, n) 
 |v, n: integer type 
-|v := v - n
+|v := v - n; no overflow check (may halt program)
 
 | 
 |v: pointer to T 
@@ -2906,11 +2854,11 @@ which predeclareds are available in which level.
 
 |INC(v) 
 |integer type 
-|v := v + 1
+|v := v \+ 1; no overflow check (may halt program)
 
 | 
 |const enumeration type 
-|next ident in enumeration
+|next ident in enumeration; no overflow check (may halt program)
 
 | 
 |pointer to T 
@@ -2918,7 +2866,7 @@ which predeclareds are available in which level.
 
 |INC(v, n) 
 |v, n: integer type 
-|v := v + n
+|v := v \+ n; no overflow check (may halt program)
 
 | 
 |v: pointer to T 
@@ -2933,12 +2881,8 @@ which predeclareds are available in which level.
 |allocate p^ of type T, uninitialized.
 
 |NEW(p,n) 
-|p: pointer to open array 
+|p: pointer to open array, n: integer type
 |allocate p^ with length n, uninitialized.
-
-| 
-|n: integer type 
-|
 
 |PCALL(e,p,a~0~,…​,a~n~) 
 |e: POINTER TO ANY; p: proper procedure type; a~i~: actual parameters 
