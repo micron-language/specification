@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-01-18, work in progress
+2026-01-19, work in progress
 
 === Author
 
@@ -104,7 +104,7 @@ assumed.
 - No WCHAR type.
 
 - Predeclared signed and unsigned types,
-  INT8, UINT8, etc.; SIGNED() and UNSIGNED() cast built-in procedures.
+  INT8, UINT8, etc.; VAL() and CAST() built-in procedures.
 
 - Integer literals are unsigned, and there
   are different suffix types.
@@ -192,46 +192,47 @@ firstLetter
 
 ==== Numbers
 
-Number literals are integer or real
-constants.
+Micron supports integer or real literals.
 
-The type of an integer constant is the
-minimal unsigned integer type to which the constant value belongs (see
-<<Basic types>>).
+If the integer literal is specified with the suffix
 
-If the literal is specified with the suffix
-'H', the representation is hexadecimal, if it is specified with suffix
-'O', the representation is ocal, or if it is specified with suffic 'B',
-the representation is binary, otherwise the representation is decimal.
+- 'H', the representation is hexadecimal, if it is specified with suffix
+- 'O', the representation is ocal, 
+- or if it is specified with suffic 'B', the representation is binary, 
 
-The type of an integer constant can be
-explicitly set with a suffix. The U1, U2, U4 or U8 suffices correspond
-to the UINT8, UINT16, UINT32 or UINT64 unsigned integer types. The I1,
-I2, I4 or I8 suffices correspond to the INT8, INT16, INT32 or INT64
-signed integer types. If the given constant value cannot be represented
-by the explicit type, the compiler reports an error. Alternatively, the
-suffix U or I can be used without explicit byte width, in which case the
-compiler assigns the minimal unsigned or signed integer type to which
-the value belongs.
+otherwise the representation is decimal.
+
+Integer literals can optionally include a type suffix that explicitly specifies their type. 
+Without a suffix, the type of the integer literal is _universal integer_, and the exact type 
+is determined when it is used.
+
+.Explicit type suffixes:
+
+- U1, U2, U4, U8 — correspond to UINT8, UINT16, UINT32, UINT64 (unsigned types)
+
+- I1, I2, I4, I8 — correspond to INT8, INT16, INT32, INT64 (signed types)
+
+- U or I (without width) — compiler selects the minimal unsigned (U) or signed (I) type that can represent the value
+
+The compiler reports an error if an explicitly suffixed literal cannot be represented by the specified type (see <<Basic types>>). 
+For width-omitted suffixes (U or I), the compiler guarantees the value fits by selecting an appropriately sized type.
+
 
 NOTE: Number literals can be
-prefixed with a sign. But the sign is not part of the literal, but of a
+prefixed with a sign. The sign is not part of the literal, but of a
 simple expression including the literal, see
-<<Operators>>. Use the SIGNED() predeclared function for a signed integer
-reinterpretation of the unsigned integer (e.g. SIGNED(0FFH) is an INT8
-with value -1). Otherwise the term -0FFH becomes an INT16 with value
--255.
+<<Operators>>. Use the VAL() or CAST() predeclared functions for a signed integer
+conversion or reinterpretation of the unsigned integer.
 
-Signed integer types are represented in
-two’s complement form.
+Signed integer types are represented in two’s complement form.
 
 A real number always contains a decimal
 point and at least one digit before the point. Optionally it may also
 contain a decimal scale factor. The letter 'E' means _times ten to the
 power of_.
 
-The type of a floating-point constant is the
-minimal <<[Floating-point types>> to which the constant value
+The type of a floating-point literal is the
+minimal <<Floating-point types>> to which the literal value
 belongs.
 
 A real number is of type `LONGREAL`, if it
@@ -240,9 +241,8 @@ has a scale factor containing the letter 'F'. If the scale factor
 contains the letter 'D', the type is `LONGREAL` if the mantissa or
 exponent are too large to be represented by `REAL`.
 
-Numbers can be interspersed with
-underscores for better readability, but the first character is always a
-digit.
+Numbers can be interspersed with underscores for better readability, 
+but the first character is always a digit.
 
 .Syntax:
 ....
@@ -354,7 +354,7 @@ comment.
 Every identifier occurring in a program must
 be introduced by a declaration, unless it is a predeclared identifier.
 Declarations also specify certain permanent properties of an object,
-such as whether it is a constant, a type, a variable, or a procedure.
+such as whether it is a literal, a type, a variable, or a procedure.
 The identifier is then used to refer to the associated object.
 
 The _scope_ of an object _x_ extends textually
@@ -424,8 +424,7 @@ shown).
 
 === Constant declarations
 
-A constant declaration associates an
-identifier with a constant value.
+A constant declaration associates an identifier with a constant expression.
 
 .Syntax:
 ....
@@ -435,10 +434,16 @@ ConstExpression  = expression
 
 A constant expression is an expression that
 can be evaluated by a mere textual scan without actually executing the
-program. Its operands are constants (see <<Operands>>) or
-predeclared functions (see <<Predeclared Procedure Reference>>) 
-that can be evaluated at compile time. Examples of constant
-declarations are:
+program. Its operands are literals (see <<Operands>>),
+predeclared or INVAR functions (see <<Predeclared Procedure Reference>>, <<Procedures>>) or
+other constant expressions that can be evaluated at compile time. 
+If all operands are unsuffixed integer literals, the type of the
+constant expression (and thus the constant declaration) is 
+_universal integer_. 
+The constant expression for a constant is evaluated once at the 
+constant declaration and then all uses of the constant declaration
+are substituted by the resulting value. 
+Examples of constant declarations are:
 
 .Examples:
 ....
@@ -448,9 +453,7 @@ fullSet = {min(set) .. max(set)}
 ....
 
 NOTE:  For compile time calculations of
-values the same rules as for runtime calculation apply. The
-ConstExpression of ConstDeclaration behaves as if each use of the
-constant identifier was replaced by the ConstExpression. An expression
+values the same rules as for runtime calculation apply. An expression
 like `MAX(INT32)+1` thus causes an overflow of the INT32 range. To avoid
 this either `LONG(MAX(INT32))+1` or `MAX(INT32)+1I8` has to be used.
 
@@ -538,9 +541,8 @@ NOTE: Oberon and Oberon+ both
 support implicit type casts from integer to floating point and vice
 versa. Micron requres an explicit cast. To convert an integer to a
 floating point type, the FLT() built-in function must be used. To
-convert a numeric type to a signed integer, the SIGNED() function must
-be used. To convert a numeric type to an unsigned integer, the
-UNSIGNED() function must be used.
+convert a numeric type to a signed or unsigned integer, the VAL() 
+or CAST() function must be used. 
 
 ==== Array types
 
@@ -587,7 +589,7 @@ options), which makes them attractive to low-resource embedded
 applications where dynamic memory allocation is not feasible.
 
 Array lengths of at least MAX(UINT32) shall
-be accepted by a compiler, for constant, dynamic and variable lengths.
+be accepted by a compiler, for fixed, dynamic and variable lengths.
 
 ==== Record types
 
@@ -934,7 +936,7 @@ and operands.
 ==== Operands
 
 With the exception of constructors and
-literal constants (numbers, character constants, or strings), operands
+literals (numbers, characters, or strings), operands
 are denoted by designators. A designator consists of an identifier
 referring to a constant, variable, or procedure. This identifier may
 possibly be qualified by a module identifier 
@@ -1069,10 +1071,9 @@ https://wiki.sei.cmu.edu/confluence/display/c/INT02-C.+Understand+integer+conver
 but it is always possible to add explicit conversions when migrating C
 to Micron.
 
-As an exception, if one of the operands is
-an unsigned integer constant and the other operand is of type integer,
-the unsigned integer constant is converted to the smallest integer type
-which includes the constant value.
+As an exception, if one operand is a signed or unsigned integer and the other is a _universal integer_ type, 
+the latter is treated as the smallest signed or unsigned integer type that can represent its value. If the value is 
+too large for the largest supported signed integer type, an error is reported.
 
 The type of the result of the operation is
 the type of that operand which includes the type of the other operand
@@ -1095,12 +1096,13 @@ x = (x DIV y) * y + (x MOD y)
 0 <= (x MOD y) < y
 ....
 
-When used as monadic (unary) operators,
-'-' denotes sign inversion and '+' denotes the identity operation. If
-the unary '-' or '+' is applied to an operand of unsigned integer type,
-the result is the next larger signed integer type, or an error if the
-operand is of type UIN64. Otherwise the type of the result is the same
-as the type of the operand.
+When used as unary operators, '-' denotes sign inversion and '\+' denotes the identity operation. 
+If the unary '-' or '\+' is applied to 
+
+- an _universal integer_ type, it is treated as the smallest signed integer type that can represent its value;
+- all other operands of unsigned integer type, the result is the next larger signed integer type, or an error if the operand is of type UIN64;
+- all other operands, the type of the result is the same as the type of the operand.
+
 
 .Examples:
 ....
@@ -1153,7 +1155,7 @@ in the interval [a, b].
 Relations yield a BOOLEAN result.
 
 The relations `=`, `#`, `<`, `<=`, `>`,
-and `>=` apply to the numeric types, as well as constant enumerations,
+and `>=` apply to the numeric types, as well as enumerations,
 pointer types, CHAR, string literals, and CHAR arrays containing `0x` as
 a terminator.
 
@@ -1166,13 +1168,13 @@ alternative '#' syntax for compatibility with Pascal.
 The IN relation applies to SET.
 
 In general, both operands must be of the
-same type. If the operand are of numeric type, both must be either of
-signed integer, unsigned integer or floating point type.
+same type. If the operands are of numeric type, both must be either of
+signed integer, unsigned integer, _universal integer_ or floating point type.
 
-If one of the operands is an unsigned
-integer constant and the other operand is of type integer, the unsigned
-integer constant is converted to the smallest integer type which
-includes the constant value.
+If one operand is a signed or unsigned integer and the other is a _universal integer_ type, 
+the latter is treated as the smallest signed or unsigned integer type that can represent the value 
+of the former. If the value is too large for the largest supported signed integer type, 
+an error is reported.
 
 String literals, CHAR and CHAR array
 operands can be mixed.
@@ -1865,7 +1867,7 @@ procedure body. The read-only feature is transitive, i.e. also the
 variables, elements or fields designated from a CONST parameter are
 read-only.
 
-NOTE. In contrast to C, Micron
+NOTE: In contrast to C, Micron
 doesn't support variable (variadic) parameters, because there are viable
 alternatives, and the impact on compilers and runtime systems is much
 greater than the potential benefits. When passing a variable number of
@@ -2231,7 +2233,7 @@ directives.
 === Numeric types
 
 Integer types::
-	Signed integer types, Unsigned integer types
+	Signed integer types, Unsigned integer types, _universal integer_ type
 
 Signed integer types:: 
 	INT8, INT16, INT32, INT64, SHORTINT, INTEGER, LONGINT, I8, I16, I32, I64
@@ -2351,8 +2353,8 @@ conditions hold:
 - T~v~ is a procedure type and `e` is the
   name of a procedure whose formal parameters _match_ those of T~v~;
 
-- T~v~ is a signed integer and `e` is an
-  unsigned integer constant, and T~v~ _includes_ the smallest integer type
+- T~v~ is a signed or unsigned integer and `e` is a
+  _universal integer_, and T~v~ _includes_ the smallest integer type
   necessary to represent `e`;
 
 - T~v~ is an interface type and T~e~ is a
