@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-01-19, work in progress
+2026-01-22, work in progress
 
 === Author
 
@@ -1626,7 +1626,7 @@ ExitStatement = EXIT
 loop
   ReadInt(i)
   if i < 0 then exit end
-  WriteInt(i)
+  println(i)
 end
 ....
 
@@ -2611,43 +2611,43 @@ which predeclareds are available in which level.
 |corresponding capital letter (only for the ASCII subset of the CHAR type)
 
 |BITAND(x,y) 
-|x, y: UINT32 or UINT64 
+|x, y: unsigned integer 
 |UINT32 or UINT64 
 |bitwise AND; result is UINT64 if x or y is UINT64, else UINT32
 
 |BITASR(x,n) 
-|x: UINT32 or UINT64, n: UINT32 
-|UINT32 or UINT64 
-|arithmetic shift right by n bits, where n >= 0 and n < SIZE(x)*8; result is UINT64 if x is UINT64, else UINT32
+|x: signed integer n: unsigned integer 
+|INT32 or INT64 
+|arithmetic shift right by n bits; result is INT64 if x is INT64, else INT32; the operation is defined for n >= 0 and n < SIZE(x)*8; no overflow checks (may halt program)
 
 |BITNOT(x) 
-|x: UINT32 or UINT64 
-|UNT32 or UINT64 
+|x: unsigned integer 
+|UINT32 or UINT64 
 |bitwise NOT; result is UINT64 if x or y is UINT64, else UINT32
 
 
 |BITOR(x,y) 
-|x, y: UINT32 or UINT64 
+|x, y: unsigned integer 
 |UINT32 or UINT64 
 |bitwise OR; result is UINT64 if x or y is UINT64, else UINT32
 
 |BITS(x) 
-|x: integer type 
+|x: unsigned integer 
 |SET 
 |set corresponding to the integer; the first element corresponds to the least significant digit of the integer; no overflow checks (may halt program)
 
 |BITSHL(x,n) 
-|x: UINT32 or UINT64, n: UINT32 
+|x, n: unsigned integer 
 |UINT32 or UINT64 
 |logical shift left by n bits, where n >= 0 and n < SIZE(x)*8; result is UINT64 if x is UINT64, else UINT32
 
 |BITSHR(x,n) 
-|x: UINT32 or UINT64, n: UINT32 
+|x, n: unsigned integer 
 |UINT32 or UINT64 
-|logical shift right by n bits, where n >= 0 and n < SIZE(x)*8; result is UINT64 if x is UINT64, else UINT32
+|logical shift right by n bits; result is UINT64 if x is UINT64, else UINT32; the operation is defined for n >= 0 and n < SIZE(x)*8; no overflow checks (may halt program)
 
 |BITXOR(x,y) 
-|x, y: UINT32 or UINT64 
+|x, y: unsigned integer 
 |UINT32 or UINT64 
 |bitwise XOR; result is UINT64 if x or y is UINT64, else UINT32
 
@@ -2786,6 +2786,11 @@ which predeclareds are available in which level.
 |UINT32 
 |number representing the set; the first element corresponds to the least significant digit of the number and the last element to the most significant digit.
 
+| 
+|x: pointer or procedure type 
+|unsigned integer 
+|a numeric representation of the pointer, the exact type of it being target dependent
+
 |SIZE(T) 
 |any type 
 |UINT32 
@@ -2844,7 +2849,7 @@ which predeclareds are available in which level.
 
 |DISPOSE(p) 
 |p: pointer 
-|free the memory allocated before using NEW()
+|free the memory allocated by NEW().
 
 |EXCL(v, x) 
 |v: SET; x: integer type 
@@ -2958,8 +2963,25 @@ be set via a module attribute (see <<Module Attributes>>)
 per module. A *default language level 3* is assumed if no
 explicit level is set.
 
-TODO: import relations of modules with different
-language levels, such as lower levels cannot import higher levels.
+A module of a given language level can only import modules of the same or lower language levels.
+
+[NOTE]
+====
+In Micron (as in Oberon), when Module A imports Module B:
+
+- Module B's body (BEGIN ... END) is executed first.
+- Module A's body is executed second.
+- The initialization order corresponds to the import order.
+
+This assures that lower-level modules are effectively initialized before the higher-level modules.
+A module defined at a specific safety or abstraction level cannot depend on a module that requires 
+a more complex runtime environment. For example, a Systems module (Level 1) cannot import a Managed 
+module (Level 5) because the Systems module does not guarantee the presence of a garbage collector.
+Sometimes the Low Level needs to call the High Level (e.g. an interrupt handler in Level 1 needs 
+to wake up a thread in Level 5). Since Level 1 cannot import Level 5, we define procedure types
+and let higher-level modules register their procedures for callback by lower-level modules. 
+====
+
 
 === Level 0, Bootstrap
 

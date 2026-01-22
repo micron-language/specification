@@ -105,6 +105,7 @@ Expression ::= { ExpInstr|Line }
 ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI') qualident | 'CALLMI' qortrident
                       | ('CALLINST'|'CALLVIRT') trident | 'CASTPTR' qualident
                       | 'CEQ' | 'CGT' | 'CGT_UN' | 'CLT' | 'CLT_UN' 
+                      | 'CAST_I4' | 'CAST_I8' | 'CAST_R4' | 'CAST_R8'
                       | 'CONV_I1' | 'CONV_I2' | 'CONV_I4' | 'CONV_I8' | 'CONV_R4' | 'CONV_R8'
                       | 'CONV_U1' | 'CONV_U2' | 'CONV_U4' | 'CONV_U8' 
                       | 'DIV' | 'DIV_UN' | 'DUP' | 'INITOBJ' qualident | 'ISINST' qualident

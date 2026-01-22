@@ -10,7 +10,7 @@ The Micron Intermediate Language Specification
 
 === Version
 
-2025-12-18, work in progress
+2026-01-22, work in progress
 
 === Author
 
@@ -527,6 +527,7 @@ Expression = { ExpInstr | Line }
 ExpInstr = 'add' | 'and' | ('call' | 'calli') qualident | 'callmi' qortrident
 | ('callinst' | 'callvirt') trident | 'castptr' qualident
 | 'ceq' | 'cgt' | 'cgt_un' | 'clt' | 'clt_un' 
+| 'cast_i4' | 'cast_i8'	| 'cast_r4' | 'cast_r8'
 | 'conv_i1' | 'conv_i2' | 'conv_i4' | 'conv_i8' | 'conv_r4' | 'conv_r8'
 | 'conv_u1' | 'conv_u2' | 'conv_u4' | 'conv_u8' 
 | 'div' | 'div_un' | 'dup' | 'initobj' qualident | 'isinst' qualident
@@ -834,6 +835,40 @@ The callvirt instruction calls a type-bound
 procedure on an object pointer. That is, the method is chosen based on
 the dynamic type of _obj_ rather than the compile-time class given by
 _method_.
+
+=== *cast – data conversion*
+
+
+[width="100%",cols="1,1,3",]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|TODO 
+|cast_i4 
+|Bitwise reinterpretation of float32 _value_, pushing int32 on stack.
+
+|TODO 
+|cast_i8 
+|Bitwise reinterpretation of float64 _value_, pushing int64 on stack.
+
+|TODO 
+|cast_r4 
+|Bitwise reinterpretation of int32 or uint32 _value_, pushing float32 on stack.
+
+|TODO 
+|cast_r8 
+|Bitwise reinterpretation of int64 or uint64 _value_, pushing float64 on stack.
+
+|===
+
+`…, value -> …, result`
+
+Bitwise reinterpretation of the value on the stack as a new type. Both
+the the value on top of the stack and the type specified in the opcode
+must have the same byte width.
+
 
 === *castptr – cast a pointer to a type*
 
@@ -1253,7 +1288,9 @@ CondOp = 'IIF' Expression 'THEN' Expression 'ELSE' Expression 'END'
 A compound expression which evaluates the
 condition and then either executes the `then` or `else` expression. The
 condition expression is expected to leave an int32 on the evaluation
-stack.
+stack, which is consumed by 'then'. Both following branches (the one between
+'then' and 'else' and the one between 'else' and 'end' must push exactly one value 
+of the same type onto the stack.
 
 === *initobj – initialize the value at an address*
 
@@ -1349,10 +1386,6 @@ instructions are efficient encodings for loading any one of the first
 4 arguments. The ldarg.s instruction is an efficient encoding for
 loading argument numbers 4–255.
 
-For procedures that take a variable-length
-argument list, the ldarg instructions can be used only for the initial
-fixed arguments, not those in the variable part of the signature.
-
 Arguments that hold an integer value
 smaller than 4 bytes long are expanded to type int32 when they are
 loaded onto the stack. Floating-point values are expanded to their
@@ -1383,10 +1416,6 @@ The ldarga instruction fetches the address
 numbered 0 onwards. The address will always be aligned to a natural
 boundary on the target machine. The short form (ldarga.s) should be used
 for argument numbers 0–255.
-
-For procedures that take a variable-length
-argument list, the ldarga instructions can be used only for the initial
-fixed arguments, not those in the variable part of the signature.
 
 === *ldc – load numeric constant*
 
@@ -2630,9 +2659,6 @@ simple statements, the evaluation stack must be empty:
 `exit`, `goto`, `label`, `line`, and `ret`
 (for procedures without return value)
 
-After each simple or compound statement, the
-evaluation stack must be empty.
-
 .Syntax of textual representation:
 ....
 StatementSequence = { Statement | ExpInstr | Line }
@@ -2645,7 +2671,7 @@ SimpleStatement = 'free'| 'exit' | 'goto' ident
 | 'stfld' trident | 'stind' qualident
 | 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'
 | ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'
-| 'stind' qualident | 'strcpy' | 'stvar' qualident
+| 'strcpy' | 'stvar' qualident
 CompoundStatement = IfThenElse | Loop | RepeatUntil | Switch | WhileDo
 ....
 
@@ -2914,10 +2940,6 @@ from the stack and places it in argument slot _num_. The type of the
 value shall match the type of the argument, as specified in the current
 method’s signature. The starg.s instruction provides an efficient
 encoding for use with the first 256 arguments.
-
-For procedures that take a variable
-argument list, the starg instructions can be used only for the initial
-fixed arguments, not those in the variable part of the signature.
 
 Storing into arguments that hold an integer
 value smaller than 4 bytes long truncates the value as it moves from the
@@ -3380,6 +3402,7 @@ Expression = { ExpInstr | Line }
 ExpInstr = 'add' | 'and' | ('call' | 'calli') qualident | 'callmi' qortrident
 	| ('callinst' | 'callvirt') trident | 'castptr' qualident
 	| 'ceq' | 'cgt' | 'cgt_un' | 'clt' | 'clt_un' 
+	| 'cast_i4' | 'cast_i8'	| 'cast_r4' | 'cast_r8'
 	| 'conv_i1' | 'conv_i2' | 'conv_i4' | 'conv_i8' | 'conv_r4' | 'conv_r8'
 	| 'conv_u1' | 'conv_u2' | 'conv_u4' | 'conv_u8' 
 	| 'div' | 'div_un' | 'dup' | 'initobj' qualident | 'isinst' qualident
@@ -3438,7 +3461,7 @@ SimpleStatement = 'free'| 'exit' | 'goto' ident
 | 'stfld' trident | 'stind' qualident
 | 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'
 | ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'
-| 'stind' qualident | 'strcpy' | 'stvar' qualident
+| 'strcpy' | 'stvar' qualident
 CompoundStatement = IfThenElse | Loop | RepeatUntil | Switch | WhileDo
 module     = MODULE [Line] ident [ MetaParams ] [';'] 
              [ SOURCE string [';'] ]
