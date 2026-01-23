@@ -39,7 +39,7 @@ hexstringdelim- ::= '$'
 
 qualident ::= [ \LA: 1:ident & 2:'.'\ ident '.' ] ident  
 
-identdef ::= ident [ '*' | '-' ] 
+identdef ::= ident [ '*' | '-' | '~' ] 
 
 ConstDeclaration ::= identdef '=' ConstExpression 
 ConstExpression ::= expression

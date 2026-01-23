@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-01-22, work in progress
+2026-01-23, work in progress
 
 === Author
 
@@ -386,18 +386,21 @@ objects which are declared in nested blocks. The scope rules are:
   designators only.
 
 An identifier declared in a module block may
-be followed by an export mark ("\*" or "-") in its declaration to
-indicate that it is exported. An identifier _x_ exported by a module _M_
-may be used in other modules, if they import _M_ (see 
-<<Modules>>). The identifier is then denoted as _M.x_ in these modules and
-is called a _qualified identifier_. Identifiers marked with " - " in
-their declaration are _read-only_ in importing modules.
+be followed by an export mark ("\*", "-" or "~") in its declaration to indicate that it is exported. 
+An identifier _x_ exported by a module _M_ may be used in other modules, if they import _M_ (see <<Modules>>). 
+Such identifiers are called _public_.
+The identifier is then denoted as _M.x_ in these modules and is called a _qualified identifier_. 
+Identifiers marked with "-" in their declaration are _readonly_ in importing modules.
+Identifiers without an export mark, or marked with "~" in their declaration, are _not_ exported and considered _private_ to the module.
 
 .Syntax:
 ....
 qualident = [ident '.'] ident
-identdef  = ident ['*' | '-']
+identdef  = ident ['*' | '-' | '~']
 ....
+
+NOTE: Whether an identifier is _public_, _readonly_ or _private_ is called its _visibility_. The default visibility of an identifier
+  can be changed from _private_ to something else using the <<Visibility>> module attribute. 
 
 The following identifiers are predeclared;
 their meaning is defined in the indicated sections; either all capital
@@ -2088,8 +2091,7 @@ optionally be assigned with a constant expression. If no explicit
 constant expression is assigned, a boolean value of TRUE is assumed. An
 attribute name cannot appear more than once in the list.
 
-The following attributes are defines so
-far:
+The following attributes are defines so far:
 
 ===== Standard or Level
 
@@ -2097,6 +2099,13 @@ This attribute is used to set the
 language level (see <<Language levels>>). The expression must
 be an integer literal between 0 and 5. Both names - Standard and Level -
 are equivalent.
+
+===== Visibility
+
+This attribute is used to set the default visibility for declarations on module level.
+By default, declarations without an explicit export mark are considered _private_. The 
+expression can be "*" for _public_, "-" for _readonly_ or "~" for _private_; the corresponding identifiers
+are not case sensitive. See also <<Declarations and scope rules>>.
 
 === Generics
 
