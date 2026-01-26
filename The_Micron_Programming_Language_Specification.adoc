@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-01-23, work in progress
+2026-01-26, work in progress
 
 === Author
 
@@ -2620,9 +2620,9 @@ which predeclareds are available in which level.
 |corresponding capital letter (only for the ASCII subset of the CHAR type)
 
 |BITAND(x,y) 
-|x, y: unsigned integer 
-|UINT32 or UINT64 
-|bitwise AND; result is UINT64 if x or y is UINT64, else UINT32
+|x, y: integer 
+|integer 
+|bitwise AND; result is UINT64 if any is UINT64, else INT64 if any is INT64, else UINT32 if any is UINT32, else INT32
 
 |BITASR(x,n) 
 |x: signed integer n: unsigned integer 
@@ -2630,15 +2630,15 @@ which predeclareds are available in which level.
 |arithmetic shift right by n bits; result is INT64 if x is INT64, else INT32; the operation is defined for n >= 0 and n < SIZE(x)*8; no overflow checks (may halt program)
 
 |BITNOT(x) 
-|x: unsigned integer 
-|UINT32 or UINT64 
-|bitwise NOT; result is UINT64 if x or y is UINT64, else UINT32
+|x: integer 
+|integer 
+|bitwise NOT; result type corresponds to the type of x
 
 
 |BITOR(x,y) 
-|x, y: unsigned integer 
-|UINT32 or UINT64 
-|bitwise OR; result is UINT64 if x or y is UINT64, else UINT32
+|x, y: integer 
+|integer 
+|bitwise OR; result is UINT64 if any is UINT64, else INT64 if any is INT64, else UINT32 if any is UINT32, else INT32
 
 |BITS(x) 
 |x: unsigned integer 
@@ -2646,19 +2646,19 @@ which predeclareds are available in which level.
 |set corresponding to the integer; the first element corresponds to the least significant digit of the integer; no overflow checks (may halt program)
 
 |BITSHL(x,n) 
-|x, n: unsigned integer 
+|x: integer, n: unsigned integer 
 |UINT32 or UINT64 
-|logical shift left by n bits, where n >= 0 and n < SIZE(x)*8; result is UINT64 if x is UINT64, else UINT32
+|logical shift left by n bits, where n >= 0 and n < SIZE(x)*8; result is UINT64 if x is UINT64 or INT64, else UINT32
 
 |BITSHR(x,n) 
-|x, n: unsigned integer 
+|x: integer, n: unsigned integer 
 |UINT32 or UINT64 
-|logical shift right by n bits; result is UINT64 if x is UINT64, else UINT32; the operation is defined for n >= 0 and n < SIZE(x)*8; no overflow checks (may halt program)
+|logical shift right by n bits; result is UINT64 if x is UINT64 or INT64, else UINT32; the operation is defined for n >= 0 and n < SIZE(x)*8; no overflow checks (may halt program)
 
 |BITXOR(x,y) 
-|x, y: unsigned integer 
-|UINT32 or UINT64 
-|bitwise XOR; result is UINT64 if x or y is UINT64, else UINT32
+|x, y: integer 
+|integer
+|bitwise XOR; result is UINT64 if any is UINT64, else INT64 if any is INT64, else UINT32 if any is UINT32, else INT32
 
 |CAST(T,x)
 |T,x: numeric types
