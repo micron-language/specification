@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-01-26, work in progress
+2026-01-27, work in progress
 
 === Author
 
@@ -626,7 +626,8 @@ FixedPart = FieldList { [';'] FieldList}
 FieldList  = IdentList ':' type [ BITS integer ]
              | '..' BITS integer
              | INLINE identdef ':' type
-VariantPart   = CASE { ['|'] [INLINE] identdef ':' type }
+VariantPart = CASE ['|'] Variant ( { '|' Variant } | { Variant } )
+Variant     = [INLINE] identdef ':' type [';']
 IdentList  = identdef { [','] identdef }
 ....
 
@@ -643,8 +644,8 @@ RECORD
 END
 ....
 
-Fields of record type of the fixed part or
-the fields of the variant part can be prefixed by the INLINE (or
+Fields or variants of record type of the fixed part or
+the variant part can be prefixed by the INLINE (or
 abbreviated only IN) reserved word, in which case the name of the field
 or variant becomes transparent, and the fields of the corresponding
 record type are directly embedded in the enclosing record.
@@ -669,7 +670,8 @@ Each field or variant of a record must have
 a name which is unique within the record; if a field of a record
 embedded with the INLINE prefix has the same name as a field or variant
 of the embedding record, then the name of the prefixed field or variant
-must be used to access it.
+must be used to access it. If a name of an inlined field or variant
+is not unique, the first match in field and variant order is selected.
 
 TODO: open array as last field (no variant
 part) with new(ptr,len)
@@ -2461,7 +2463,8 @@ FixedPart = FieldList { [';'] FieldList}
 FieldList  = IdentList ':' type [ BITS integer ]
              | '..' BITS integer
              | INLINE identdef ':' type
-VariantPart   = CASE { ['|'] [INLINE] identdef ':' type }
+VariantPart = CASE ['|'] Variant ( { '|' Variant } | { Variant } )
+Variant     = [INLINE] identdef ':' type [';']
 IdentList  = identdef { [','] identdef }
 ObjectType = OBJECT ['(' BaseType ')'] { IdentList ':' type [ ';' ] } END
 BaseType = NamedType

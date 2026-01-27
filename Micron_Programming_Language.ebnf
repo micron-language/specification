@@ -69,7 +69,8 @@ BaseType ::= NamedType
 
 inline_ ::= INLINE | IN
 
-VariantPart ::= CASE { ['|'] [inline_] identdef ':' type } 
+VariantPart ::= CASE ['|'] Variant ( { '|' Variant } | { Variant } )
+Variant     ::= [inline_] identdef ':' type [';']
 
 FixedPart ::= FieldList  [ ';' ] { FieldList [ ';' ] }
 
