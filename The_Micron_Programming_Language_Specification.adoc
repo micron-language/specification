@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-01-27, work in progress
+2026-01-29, work in progress
 
 === Author
 
@@ -2636,51 +2636,40 @@ which predeclareds are available in which level.
 |type of x 
 |absolute value
 
-|CAP(x) 
-|x: CHAR 
-|CHAR 
-|corresponding capital letter (only for the ASCII subset of the CHAR type)
-
-|BITAND(x,y) 
-|x, y: integer 
-|integer 
-|bitwise AND; result is UINT64 if any is UINT64, else INT64 if any is INT64, else UINT32 if any is UINT32, else INT32
-
-|BITASR(x,n) 
+|ASR(x,n) 
 |x: signed integer n: unsigned integer 
 |INT32 or INT64 
 |arithmetic shift right by n bits; result is INT64 if x is INT64, else INT32; the operation is defined for n >= 0 and n < SIZE(x)*8; no overflow checks (may halt program)
 
-|BITNOT(x) 
+|BAND(x,y) 
+|x, y: integer 
+|integer 
+|bitwise AND; result is UINT64 if any is UINT64, else INT64 if any is INT64, else UINT32 if any is UINT32, else INT32
+
+|BNOT(x) 
 |x: integer 
 |integer 
 |bitwise NOT; result type corresponds to the type of x
 
-
-|BITOR(x,y) 
+|BOR(x,y) 
 |x, y: integer 
 |integer 
 |bitwise OR; result is UINT64 if any is UINT64, else INT64 if any is INT64, else UINT32 if any is UINT32, else INT32
 
-|BITS(x) 
+|BSET(x) 
 |x: unsigned integer 
 |SET 
 |set corresponding to the integer; the first element corresponds to the least significant digit of the integer; no overflow checks (may halt program)
 
-|BITSHL(x,n) 
-|x: integer, n: unsigned integer 
-|UINT32 or UINT64 
-|logical shift left by n bits, where n >= 0 and n < SIZE(x)*8; result is UINT64 if x is UINT64 or INT64, else UINT32
-
-|BITSHR(x,n) 
-|x: integer, n: unsigned integer 
-|UINT32 or UINT64 
-|logical shift right by n bits; result is UINT64 if x is UINT64 or INT64, else UINT32; the operation is defined for n >= 0 and n < SIZE(x)*8; no overflow checks (may halt program)
-
-|BITXOR(x,y) 
+|BXOR(x,y) 
 |x, y: integer 
 |integer
 |bitwise XOR; result is UINT64 if any is UINT64, else INT64 if any is INT64, else UINT32 if any is UINT32, else INT32
+
+|CAP(x) 
+|x: CHAR 
+|CHAR 
+|corresponding capital letter (only for the ASCII subset of the CHAR type)
 
 |CAST(T,x)
 |T,x: numeric types; T is a type name
@@ -2822,6 +2811,21 @@ which predeclareds are available in which level.
 |unsigned integer 
 |a numeric representation of the pointer, the exact type of it being target dependent
 
+|SIG(x) 
+|x: unsigned integer
+|signed integer 
+|bitwise reinterpret x as a signed integer of the same byte width; this is a shortcut of CAST(T,x)
+
+|SHL(x,n) 
+|x: integer, n: unsigned integer 
+|UINT32 or UINT64 
+|logical shift left by n bits, where n >= 0 and n < SIZE(x)*8; result is UINT64 if x is UINT64 or INT64, else UINT32
+
+|SHR(x,n) 
+|x: integer, n: unsigned integer 
+|UINT32 or UINT64 
+|logical shift right by n bits; result is UINT64 if x is UINT64 or INT64, else UINT32; the operation is defined for n >= 0 and n < SIZE(x)*8; no overflow checks (may halt program)
+
 |SIZE(T) 
 |T: all types besides open arrays and string literals 
 |UINT32 
@@ -2831,6 +2835,11 @@ which predeclareds are available in which level.
 |s: array of char, pointer to char, or string literal 
 |UINT32 
 |dynamic length of the string up to and not including the terminating 0X
+
+|USIG(x) 
+|x: signed integer
+|unsigned integer 
+|bitwise reinterpret x as an unsigned integer of the same byte width; this is a shortcut of CAST(T,x)
 
 |VAL(T,x) 
 |T: enumeration type, x: ordinal number 
