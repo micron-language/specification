@@ -304,6 +304,26 @@ string = ''' {character} ''' | '"' {character} '"'
 'x'
 ....
 
+===== Hex string literals
+
+Hex strings are sequences of bytes
+encoded in hexadecimal format and enclosed in dollar signs. The number
+of hex digits in the string must be even, two hex digits per byte. The
+number of bytes encoded in a hex string is called its length. Line
+breaks and other white space between the dollar signs is ignored. Both
+upper and lower-case hex digits are supported.
+
+.Syntax:
+....
+hexstring = '$' {hexDigit} '$'
+....
+
+.Examples:
+....
+const arrow = $0F0F 0060 0070 0038 001C 000E 0007 8003 C101 E300 
+               7700 3F00 1F00 3F00 7F00 FF00$
+....
+
 ==== Operators and Delimiters
 
 Operators and delimiters are the special
@@ -323,8 +343,8 @@ characters, or character pairs listed below.
 ==== Reserved Words
 
 The reserved words consist of either all
-capital or all lower case letters and cannot be used as identifiers. All
-words listed below are reserved (only capital letter versions shown).
+upper- or all lower-case letters and cannot be used as identifiers. All
+words listed below are reserved (only upper-case versions shown).
 
 
 
@@ -341,6 +361,10 @@ words listed below are reserved (only capital letter versions shown).
 |TRUE |TYPE |UNTIL |VAR |WHILE
 |===
 
+NOTE: Lower- and upper-case versions of keywords and built-in types and procedures can even be
+  mixed in the same module; so even if only the lower-case versions would be used, the upper-case
+  versions are still reserved.
+  
 ==== Comments
 
 Comments are arbitrary character sequences
@@ -428,6 +452,7 @@ shown).
 === Constant declarations
 
 A constant declaration associates an identifier with a constant expression.
+The expression can be of basic type, or a string liteal or hex string (see <<Hex string literals>>).
 
 .Syntax:
 ....
@@ -1108,6 +1133,7 @@ If the unary '-' or '\+' is applied to
 - all other operands of unsigned integer type, the result is the next larger signed integer type, or an error if the operand is of type UIN64;
 - all other operands, the type of the result is the same as the type of the operand.
 
+NOTE: the '\+' and '-' unary operators can be used as a shortcut to convert an unsigned to a signed integer.
 
 .Examples:
 ....
@@ -1311,7 +1337,17 @@ anonymous or indexed components can be used to assign element
 values; anonymous components are associated with elements in the order
 of indizes. The array type may be an open array in which case the number
 of elements is determined by the number of components or the largest
-index component.
+index component. 
+
+If NamedType is an array of char, it can be initialized
+with a single string literal. The string literal (including terminating
+zero) must fit into the char array, or it determines its size in case of 
+an open array.
+
+If NamedType is an array of byte, it can be initialized
+with a single hex string literal. The literal must exactly fit 
+the size of the byte array, or it determines its size in case of 
+an open array.
 
 If NamedType is a pointer type, then there
 is exactly one anonymous component which is an unsigned integer type
@@ -1326,29 +1362,9 @@ required.
 myVal := Rect{0,0,x1,y1}
 ....
 
-===== Hex Strings
-
-Hex strings are sequences of bytes
-encoded in hexadecimal format and enclosed in dollar signs. The number
-of hex digits in the string must be even, two hex digits per byte. The
-number of bytes encoded in a hex string is called its length. Line
-breaks and other white space between the dollar signs is ignored. Both
-upper and lower-case hex digits are supported.
-
-.Syntax:
-....
-hexstring = '$' {hexDigit} '$'
-....
-
-.Examples:
-....
-const arrow = $0F0F 0060 0070 0038 001C 000E 0007 8003 C101 E300 
-               7700 3F00 1F00 3F00 7F00 FF00$
-....
-
-NOTE: Hex strings are provided
-for compatibility with Oberon+; they are essentially an alternative
-syntax for an open byte array constructor.
+NOTE: A <<Hex string literal>> (or a constant of hex string literal type) is 
+  treated the same way as an array of byte constructor when it is used
+  (i.e. assigned, passed or returned).
 
 === Statements
 
@@ -2361,6 +2377,9 @@ conditions hold:
 - T~v~ is a non-open array of CHAR, T~e~ is
   a string literal, or an open array of CHAR;
 
+- T~v~ is a non-open array of UINT8, T~e~ is
+  a Hex string literal with the same size as the array;
+
 - T~v~ is a procedure type and `e` is the
   name of a procedure whose formal parameters _match_ those of T~v~;
 
@@ -2664,7 +2683,7 @@ which predeclareds are available in which level.
 |bitwise XOR; result is UINT64 if any is UINT64, else INT64 if any is INT64, else UINT32 if any is UINT32, else INT32
 
 |CAST(T,x)
-|T,x: numeric types
+|T,x: numeric types; T is a type name
 |T 
 |convert x to T; bitwise reinterpretation of x; SIZE(T) must equal SIZE(x)
 
@@ -2721,7 +2740,7 @@ which predeclareds are available in which level.
 |LEN(v) 
 |v: non-open array 
 |UINT32 
-|length of array v
+|length of array v; this is a pure compile-time operation
 
 |MAX(T) 
 |T: basic type 
@@ -2804,12 +2823,12 @@ which predeclareds are available in which level.
 |a numeric representation of the pointer, the exact type of it being target dependent
 
 |SIZE(T) 
-|any type 
+|T: all types besides open arrays and string literals 
 |UINT32 
-|number of bytes required by T
+|number of bytes required by T; compile time operation only for basic types
 
 |STRLEN(s) 
-|s: array of char or string literal 
+|s: array of char, pointer to char, or string literal 
 |UINT32 
 |dynamic length of the string up to and not including the terminating 0X
 
@@ -2819,7 +2838,7 @@ which predeclareds are available in which level.
 |the enum item with the ordinal number x; undefined behavior if int is out of enum range (may halt program)
 
 | 
-|T, x: numeric types
+|T, x: numeric types; T is a type name
 |T 
 |converts the value of `x` to `T`; this is a semantic conversion, not a bitwise reinterpretation; overflows for integers or loss of precision for floats are accepted; for x: floating-point type and T: integer type: the largest integer not greater than x
 
