@@ -1,5 +1,5 @@
 = Micron Intermediate Language
-:toc:
+:toc: left
 :numbered:
 
 == Front Matter
@@ -10,7 +10,7 @@ The Micron Intermediate Language Specification
 
 === Version
 
-2026-01-22, work in progress
+2026-01-30, work in progress
 
 === Author
 
@@ -2240,7 +2240,7 @@ corresponding result data type are encapsulated in
 
 Add offset to the pointer considering the
 size and alignment of the _basetype_. The byte offset is calculated by
-`_offset_ * sizeof(_basetype_)`. Offset can be of int32, int64 or intptr
+`_offset_ * sizeof(_basetype_)`. Offset can be of int32 und int64
 type.
 
 === *rem – compute remainder*

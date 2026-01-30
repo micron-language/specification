@@ -1,5 +1,5 @@
 = The Micron Programming Language Specification
-:toc:
+:toc: left
 :numbered:
 
 == Front Matter
@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-01-29, work in progress
+2026-01-30, work in progress
 
 === Author
 
@@ -248,7 +248,7 @@ but the first character is always a digit.
 ....
 number   = integer | real
 integer  = (digit {digit|'_'} ['O'|'B'] | digit {hexDigit|'_'} 'H')
-           ['U'|'U8'|'U16'|'U32'|'U64'|'I'|'I8'|'I16'|'I32'|'I64']
+           ['U'|'U1'|'U2'|'U4'|'U8'|'I'|'I1'|'I2'|'I4'|'I8']
 real     = digit {digit|'_'} '.' {digit|'_'} [Exponent]
 Exponent = ('E' | 'D' | 'F' ) ['+' | '-'] digit {digit}
 hexDigit = digit | 'A' ... 'F'
@@ -435,18 +435,68 @@ shown).
 
 [width="100%",cols="20%,20%,20%,20%,20%",]
 |===
-|ABS |ANY |ASSERT |BITAND |BITASR
-|BITNOT |BITOR |BITS |BITSHL |BITSHR
-|BITXOR |BOOLEAN |BYTE |CAP |CAST
-|CHAR |CHR |DEC |DEFAULT |DISPOSE
-|EXCL |FLT |FLT32 |FLT64 |FLOOR
-|HALT |INC |INCL |INT16 |INT32
-|INT64 |INT8 |INTEGER |LEN |LONG
-|LONGINT |LONGREAL |MAX |MIN |NEW
-|ODD |ORD |PCALL |PRINT |PRINTLN
-|RAISE |REAL |SET |SHORT |SHORTINT
-|SIGNED |SIZE |STRLEN |UINT16 |UINT32
-|UINT64 |UINT8 |UNSIGNED | |
+|ABS 
+|ANY 
+|ASR
+|ASSERT 
+|BAND 
+|BNOT 
+|BOOLEAN 
+|BOR 
+|BSET 
+|BSHL 
+|BSHR
+|BXOR 
+|BYTE 
+|CAP 
+|CAST
+|CHAR 
+|CHR 
+|DEC 
+|DEFAULT 
+|DISPOSE
+|EXCL 
+|FLOOR
+|FLT 
+|FLT32 
+|FLT64 
+|HALT 
+|INC 
+|INCL 
+|I1|I2|I4|I8
+|INT16 
+|INT32
+|INT64 
+|INT8 
+|INTEGER 
+|LEN 
+|LONG
+|LONGINT 
+|LONGREAL 
+|MAX 
+|MIN 
+|NEW
+|ODD 
+|ORD 
+|PCALL 
+|PRINT 
+|PRINTLN
+|R4
+|R8
+|RAISE 
+|REAL 
+|SET 
+|SHORT 
+|SHORTINT
+|SIG 
+|SIZE 
+|STRLEN 
+|U1|U2|U4|U8
+|UINT16 
+|UINT32
+|UINT64 
+|UINT8 
+|USIG 
 |===
 
 === Constant declarations
@@ -538,17 +588,17 @@ following:
 |===
 |BOOL, BOOLEAN |1 byte |the truth values true and false
 |CHAR |1 byte |the characters of the Latin-1 set (0x .. 0ffx)
-|UINT8, U8, BYTE |1 byte |the integers between 0 and 255
-|INT8, I8 |1 byte |the integers between -128 and 127
-|INT16, I16, SHORTINT |2 byte |the integers between -32'768 and 32'767
-|UINT16, U16 |2 byte |the integers between 0 and 65'535
-|INT32, I32, INTEGER |4 byte |the integers between -2'147'483'648 and 2'147'483'647
-|UINT32, U32 |4 byte |the integers between 0 and 4'294'967'295
-|INT64, I64, LONGINT |8 byte |the integers between -9'223'372'036'854'775'808 and
+|UINT8, U1, BYTE |1 byte |the integers between 0 and 255
+|INT8, I1 |1 byte |the integers between -128 and 127
+|INT16, I2, SHORTINT |2 byte |the integers between -32'768 and 32'767
+|UINT16, U2 |2 byte |the integers between 0 and 65'535
+|INT32, I4, INTEGER |4 byte |the integers between -2'147'483'648 and 2'147'483'647
+|UINT32, U4 |4 byte |the integers between 0 and 4'294'967'295
+|INT64, I8, LONGINT |8 byte |the integers between -9'223'372'036'854'775'808 and
 9'223'372'036'854'775'807
-|UINT64, U64 |8 byte |the integers between 0 and 18'446'744'073'709'551'615
-|FLT32, F32, REAL |32 bit |an IEEE 754 floating point number
-|FLT64, F64, LONGREAL |64 bit |an IEEE 754 floating point number
+|UINT64, U8 |8 byte |the integers between 0 and 18'446'744'073'709'551'615
+|FLT32, F4, REAL |32 bit |an IEEE 754 floating point number
+|FLT64, F8, LONGREAL |64 bit |an IEEE 754 floating point number
 |SET |4 byte |the sets of integers between 0 and 31
 |===
 
@@ -2263,13 +2313,13 @@ Integer types::
 	Signed integer types, Unsigned integer types, _universal integer_ type
 
 Signed integer types:: 
-	INT8, INT16, INT32, INT64, SHORTINT, INTEGER, LONGINT, I8, I16, I32, I64
+	INT8, INT16, INT32, INT64, SHORTINT, INTEGER, LONGINT, I1, I2, I4, I8
 
 Unsigned integer types::
-	BYTE, UINT8, UINT16, UINT32, UINT64, U8, U16, U32, U64
+	BYTE, UINT8, UINT16, UINT32, UINT64, U1, U2, U4, U8
 
 Floating-point types::
-	REAL, LONGREAL, F32, F64
+	REAL, LONGREAL, FLT32, FLT64, R4, R8
 
 
 === Same types
@@ -2459,7 +2509,7 @@ letter = 'A' ... 'Z' | 'a' ... 'z'
 digit  = '0' ... '9'
 number   = integer | real
 integer  = (digit {digit|'_'} ['O'|'B'] | digit {hexDigit|'_'} 'H')
-           ['U'|'U8'|'U16'|'U32'|'U64'|'I'|'I8'|'I16'|'I32'|'I64']
+           ['U'|'U1'|'U2'|'U4'|'U8'|'I'|'I1'|'I2'|'I4'|'I8']
 real     = digit {digit|'_'} '.' {digit|'_'} [Exponent]
 Exponent = ('E' | 'D' | 'F' ) ['+' | '-'] digit {digit}
 hexDigit = digit | 'A' ... 'F'
@@ -2603,16 +2653,16 @@ ANY::
 BOOLEAN::
 	see <<Basic types>>.
 
-BYTE, UINT8, UINT16, UINT32, UINT64, U8, U16, U32, U64::
+BYTE, UINT8, UINT16, UINT32, UINT64, U1, U2, U4, U8::
 	Unsigned integer types, see <<Basic types>>.
 
 CHAR::
 	see <<Basic types>>.
 
-INT8, INT16, INT32, INT64, SHORTINT, INTEGER,LONGINT, I8, I16, I32, I64::
+INT8, INT16, INT32, INT64, SHORTINT, INTEGER,LONGINT, I1, I2, I4, I8::
 	Signed integer types, see <<Basic types>>.
 
-REAL, LONGREAL, F32, F64::
+REAL, LONGREAL, FLT32, FLT64, R4, R8::
 	Floating-point types, see <<Basic types>>.
 
 SET::
