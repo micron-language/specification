@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-01-30, work in progress
+2026-01-31, work in progress
 
 === Author
 
@@ -1050,10 +1050,17 @@ predeclared procedure LEN().
 If `a` or `r` are read-only, then also
 `a[e]` and `r.f` are read-only.
 
-A type cast `v(T)` converts the original
-type of `v` to T. Within the designator, `v` is then regarded as having
-the type T instead of the original type. The cast is applicable, if `v`
-is a pointer type.
+A designator of the form `v(T)` denotes the pointer `v` treated as pointing to a value 
+of type `T`. If `T` is a pointer type `POINTER TO T0`, where `T0` is an object type, 
+the designator stands for `v` treated as type `T` (referencing `T0`).
+
+If the static type of `v` is a pointer to object type, `T` (or `T0`) must also denote an object type, 
+and the designator constitutes a *type guard*. It asserts that the dynamic type of the object 
+referenced by `v` extends `T` (or `T0`). If `v` is `NIL` or the assertion fails, program execution aborts.
+
+If neither the static type of `v` nor `T` refer to an object type, the designator implies a static 
+reinterpretation of the address `v` as the address of a value of type `T`; no run-time check is performed. 
+Other combinations are invalid (use the CAST predeclared function instead, see <<Predeclared function procedures>>).
 
 If the designated object is a constant or a
 variable, then the designator refers to its current value. If it is a
@@ -1270,11 +1277,10 @@ s_. If `s` is of type SET, `x` must be of an integer type.
 _`v`_ _is T (or an extension of T )_ and is called a type test. It is
 applicable if
 
-`v` is a pointer to object type (which
-can be NIL), and if
+- `v` is a pointer to object type (which can be NIL), and if
 
-T is an _extension_ of the static type
-of `v` (see <<Definition of terms>>).
+- T is an object or pointer to object type which is an _extension_ of the static 
+  type of `v` (see <<Definition of terms>>).
 
 NOTE: The IS operator is an
 extended feature of the language and not available in all language
@@ -2725,6 +2731,11 @@ which predeclareds are available in which level.
 |T,x: numeric types; T is a type name
 |T 
 |convert x to T; bitwise reinterpretation of x; SIZE(T) must equal SIZE(x)
+
+|
+|T,x: pointer types; T is a type name
+|T 
+|returns the pointer x statically retyped to the pointer type T; no run-time check is performed.
 
 |CHR(x) 
 |x: integer type 
