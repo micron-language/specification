@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-01-31, work in progress
+2026-02-01, work in progress
 
 === Author
 
@@ -2945,7 +2945,7 @@ which predeclareds are available in which level.
 |v := v - n; no overflow check (may halt program)
 
 | 
-|v: pointer to T 
+|v: pointer to T; n: integer type
 |decrement address by n times size of T
 
 |DISPOSE(p) 
@@ -2977,7 +2977,7 @@ which predeclareds are available in which level.
 |v := v \+ n; no overflow check (may halt program)
 
 | 
-|v: pointer to T 
+|v: pointer to T; n: integer type
 |increment address by n times size of T
 
 |INCL(v, x) 
