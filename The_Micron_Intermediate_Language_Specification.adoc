@@ -10,7 +10,7 @@ The Micron Intermediate Language Specification
 
 === Version
 
-2026-01-30, work in progress
+2026-04-22, work in progress
 
 === Author
 
@@ -131,7 +131,7 @@ power of_.
 .Syntax:
 ....
 integer = ['+' | '-'] unsigned
-unsigned  = (digit {digit} ['O'|'B' | digit {hexDigit} 'H')
+unsigned  = digit {digit} ['O'|'B'] | digit {hexDigit} 'H'
 float    = digit {digit} '.' {digit} [Exponent]
 number = ['+' | '-'] (float | unsigned)
 Exponent = 'E' ['+' | '-'] digit {digit}

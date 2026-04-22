@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-02-01, work in progress
+2026-04-22, work in progress
 
 === Author
 
@@ -1350,8 +1350,8 @@ FunctionCall           = designator ActualParameters
 
 ==== Constructors
 
-Constructors can be used to initialize
-records, objects, arrays and pointers via assignments, or to create an
+Constructors can be used to initialize variables of
+record, object, array, pointer and (non type-bound) procedure type via assignments, or to create an
 anonymous variable of the constructed type.
 
 .Syntax:
@@ -1405,12 +1405,12 @@ with a single hex string literal. The literal must exactly fit
 the size of the byte array, or it determines its size in case of 
 an open array.
 
-If NamedType is a pointer type, then there
-is exactly one anonymous component which is an unsigned integer type
+If NamedType is a pointer or procedure type, then there
+is exactly one anonymous component which is an unsigned integer
 constant representing the address.
 
 For each field or element which is of
-record, object, array or pointer type, an embedded constructor is
+record, object, array, pointer or procedure type, an embedded constructor is
 required.
 
 .Example:
@@ -1885,9 +1885,10 @@ otherwise the same name as in the identdef is assumed.
 NOTE: EXTERN is regarded as an
 alternative to ProcedureBody, why it follows the (optional) semicolon.
 
-In case of a forward declaration the formal
-parameters must be identical with the actual procedure declaration.
-Forward declarations are marked by '^'.
+Forward declarations are marked by '^'. For each forward declaration, there
+must be exactly one procedure in the same scope with the same name, which is 
+not a forward declaration (the implementation). The formal parameters and result type 
+of a forward declaration and the corresponding implementation must match.
 
 .Syntax:
 ....
