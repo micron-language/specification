@@ -1144,8 +1144,7 @@ compatibility with Pascal and Modula-2.
 The operators `+`, `-`, `*`, and `/` apply
 to operands of numeric types.
 
-When used as a binary operator, both
-operands must be of either of signed integer, unsigned integer or
+When used as a binary operator, both operands must be of either signed integer, unsigned integer or
 floating point type.
 
 NOTE: This is the same rule as in
@@ -1158,9 +1157,9 @@ https://wiki.sei.cmu.edu/confluence/display/c/INT02-C.+Understand+integer+conver
 but it is always possible to add explicit conversions when migrating C
 to Micron.
 
-As an exception, if one operand is a signed or unsigned integer and the other is a _universal integer_ type, 
-the latter is treated as the smallest signed or unsigned integer type that can represent its value. If the value is 
-too large for the largest supported signed integer type, an error is reported.
+As an exception, if one operand is a signed or unsigned integer and the other is a _universal integer_ type literal, 
+the latter is treated as the smallest signed or unsigned integer type that can represent its value compatible with the former.
+If the value is too large for the largest supported signed integer type, an error is reported.
 
 The type of the result of the operation is
 the type of that operand which includes the type of the other operand
@@ -1435,7 +1434,7 @@ selective, and repetitive execution.
 .Syntax:
 ....
 statement = [ assignment | ProcedureCall | IfStatement
-            | CaseStatement  | WithStatement | LoopStatement
+            | CaseStatement | LoopStatement
             | ExitStatement | GotoStatement | gotoLabel 
 		    | ReturnStatement | RepeatStatement | ForStatement ]
 ....
@@ -2576,7 +2575,7 @@ component = ident ':' expression
 				| expression ['..' expression]
 hexstring = '$' {hexDigit} '$'
 statement = [ assignment | ProcedureCall | IfStatement
-            | CaseStatement  | WithStatement | LoopStatement
+            | CaseStatement | LoopStatement
             | ExitStatement | GotoStatement | gotoLabel 
 		    | ReturnStatement | RepeatStatement | ForStatement ]
 StatementSequence = statement { [";"] statement} 
@@ -2694,24 +2693,24 @@ which predeclareds are available in which level.
 |absolute value
 
 |ASR(x,n) 
-|x: signed integer n: unsigned integer 
-|INT32 or INT64 
-|arithmetic shift right by n bits; result is INT64 if x is INT64, else INT32; the operation is defined for n >= 0 and n < SIZE(x)*8; no overflow checks (may halt program)
+|x: signed integer, n: unsigned integer 
+|signed integer 
+|arithmetic shift right by n bits; the result type corresponds to the type of x; the operation is defined for n >= 0 and n < SIZE(x)*8; no overflow checks of n (may halt program)
 
 |BAND(x,y) 
 |x, y: integer 
 |integer 
-|bitwise AND; result is UINT64 if any is UINT64, else INT64 if any is INT64, else UINT32 if any is UINT32, else INT32
+|bitwise AND; operand types and result type follow standard integer binary operator rules (see <<Arithmetic operators>>)
 
 |BNOT(x) 
 |x: integer 
 |integer 
-|bitwise NOT; result type corresponds to the type of x
+|bitwise NOT; result type corresponds to the type of x; a literal of _universal integer_ type has the smallest unsigned integer type that can represent its value
 
 |BOR(x,y) 
 |x, y: integer 
 |integer 
-|bitwise OR; result is UINT64 if any is UINT64, else INT64 if any is INT64, else UINT32 if any is UINT32, else INT32
+|bitwise OR; operand types and result type follow standard integer binary operator rules (see <<Arithmetic operators>>)
 
 |BSET(x) 
 |x: unsigned integer 
@@ -2721,7 +2720,7 @@ which predeclareds are available in which level.
 |BXOR(x,y) 
 |x, y: integer 
 |integer
-|bitwise XOR; result is UINT64 if any is UINT64, else INT64 if any is INT64, else UINT32 if any is UINT32, else INT32
+|bitwise XOR; operand types and result type follow standard integer binary operator rules (see <<Arithmetic operators>>)
 
 |CAP(x) 
 |x: CHAR 
@@ -2880,13 +2879,13 @@ which predeclareds are available in which level.
 
 |SHL(x,n) 
 |x: integer, n: unsigned integer 
-|UINT32 or UINT64 
-|logical shift left by n bits, where n >= 0 and n < SIZE(x)*8; result is UINT64 if x is UINT64 or INT64, else UINT32
+|unsigned integer 
+|logical shift left by n bits; result type is the unsigned integer type corresponding to the size of x; the operation is defined for n >= 0 and n < SIZE(x)*8; no overflow checks of n (may halt program)
 
 |SHR(x,n) 
 |x: integer, n: unsigned integer 
-|UINT32 or UINT64 
-|logical shift right by n bits; result is UINT64 if x is UINT64 or INT64, else UINT32; the operation is defined for n >= 0 and n < SIZE(x)*8; no overflow checks (may halt program)
+|unsigned integer 
+|logical shift right by n bits; result type is the unsigned integer type corresponding to the size of x; the operation is defined for n >= 0 and n < SIZE(x)*8; no overflow checks of n (may halt program)
 
 |SIZE(T) 
 |T: all types besides open arrays and string literals 
