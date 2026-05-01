@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-04-22, work in progress
+2026-05-01, work in progress
 
 === Author
 
@@ -452,6 +452,7 @@ shown).
 |CAST
 |CHAR 
 |CHR 
+|CLI
 |DEC 
 |DEFAULT 
 |DISPOSE
@@ -460,6 +461,7 @@ shown).
 |FLT 
 |FLT32 
 |FLT64 
+|GETREG
 |HALT 
 |INC 
 |INCL 
@@ -476,11 +478,15 @@ shown).
 |MAX 
 |MIN 
 |NEW
+|NEWGC
+|NEWINIT
+|NOP
 |ODD 
 |ORD 
 |PCALL 
 |PRINT 
 |PRINTLN
+|PUTREG
 |R4
 |R8
 |RAISE 
@@ -490,6 +496,7 @@ shown).
 |SHORTINT
 |SIG 
 |SIZE 
+|STI
 |STRLEN 
 |U1|U2|U4|U8
 |UINT16 
@@ -1373,9 +1380,11 @@ A constructor is a literal and thus can
 appear in a constant expression, if all expressions appearing in its
 components are constant expressions.
 
+When a constructor is a literal, NamedType may be an open array in which case the number
+of elements is determined based on the components. 
+
 When a constructor is prefixed with the
-address-of operator ('@'), then it represents an anonymous, local
-variable in the current scope.
+address-of operator ('@'), then it represents an anonymous, local variable.
 
 If NamedType is a record or object type,
 then anonymous or named components can be used to assign field
@@ -1390,19 +1399,18 @@ constructor is not available.
 If NamedType is an array type, then
 anonymous or indexed components can be used to assign element
 values; anonymous components are associated with elements in the order
-of indizes. The array type may be an open array in which case the number
-of elements is determined by the number of components or the largest
-index component. 
+of indizes. The size of an open array type is determined by the 
+number of components or the largest index component.
 
 If NamedType is an array of char, it can be initialized
 with a single string literal. The string literal (including terminating
-zero) must fit into the char array, or it determines its size in case of 
-an open array.
+zero) must fit into the char array, or it determines its size if NamedType
+is an open char array. 
 
 If NamedType is an array of byte, it can be initialized
 with a single hex string literal. The literal must exactly fit 
-the size of the byte array, or it determines its size in case of 
-an open array.
+the size of the byte array, or it determines its size if NamedType
+is an open byte array.
 
 If NamedType is a pointer or procedure type, then there
 is exactly one anonymous component which is an unsigned integer
@@ -1411,6 +1419,8 @@ constant representing the address.
 For each field or element which is of
 record, object, array, pointer or procedure type, an embedded constructor is
 required.
+
+Any field/element not explicitly specified in a constructor assumes its DEFAULT value.
 
 .Example:
 ....
@@ -2928,6 +2938,10 @@ which predeclareds are available in which level.
 |x: Boolean expression, n: integer constant 
 |terminate program execution if not x
 
+|CLI()
+|-
+|Clear interrupts: unconditionally disables maskable hardware interrupts; available on level 0 and 1.
+
 |DEC(v) 
 |v: integer type 
 |v := v - 1; no overflow check (may halt program)
@@ -2950,11 +2964,15 @@ which predeclareds are available in which level.
 
 |DISPOSE(p) 
 |p: pointer 
-|free the memory allocated by NEW().
+|free the memory allocated by NEW() and NEWINIT(); available from level 3.
 
 |EXCL(v, x) 
 |v: SET; x: integer type 
 |v := v - \{x}
+
+|GETREG(r,v)
+|r, v: unsigned integer type
+|copy register r to value v; available on level 0 and 1
 
 |HALT(n) 
 |integer constant 
@@ -2986,11 +3004,31 @@ which predeclareds are available in which level.
 
 |NEW(p) 
 |p: pointer to T 
-|allocate p^ of type T, uninitialized.
+|allocate p^ of type T, uninitialized; available from level 3.
 
 |NEW(p,n) 
 |p: pointer to open array, n: integer type
-|allocate p^ with length n, uninitialized.
+|allocate p^ with length n, uninitialized; available from level 3.
+
+|NEWGC(p) 
+|p: pointer to T 
+|allocate p^ of type T, initialized with default values, only available on level 5.
+
+|NEWGC(p,n) 
+|p: pointer to open array, n: integer type
+|allocate p^ with length n, initialized with default values, only available on level 5.
+
+|NEWINIT(p) 
+|p: pointer to T 
+|allocate p^ of type T, initialized with default values; available from level 3.
+
+|NEWINIT(p,n) 
+|p: pointer to open array, n: integer type
+|allocate p^ with length n, initialized with default values; available from level 3.
+
+|NOP() 
+|-
+|Call MIL NOP operation; needed for timing loops or pipeline flushing in very low-level drivers; available on level 0 and 1.
 
 |PCALL(e,p,a~0~,…​,a~n~) 
 |e: POINTER TO ANY; p: proper procedure type; a~i~: actual parameters 
@@ -3004,6 +3042,10 @@ which predeclareds are available in which level.
 |a: basic type, string or char array 
 |prints the argument to the standard output and terminates the line; for debugging and logging purpose only
 
+|PUTREG(r,v)
+|r, v: unsigned integer type
+|put value v to register r; available on level 0 and 1
+
 |RAISE(e) 
 |e: POINTER TO ANY 
 |terminates the last protected function called and returns e as the exception value; RAISE() never returns
@@ -3012,9 +3054,11 @@ which predeclareds are available in which level.
 |n: name string, v: basic or const enum type or array of char 
 |set the environment value
 
-|===
+|STI()
+|-
+|Set interrupts: unconditionally enables maskable hardware interrupts; available on level 0 and 1.
 
-TODO: add GETREG, PUTREG, CLI, STI, NOP, GCNEW
+|===
 
 == Language levels
 
