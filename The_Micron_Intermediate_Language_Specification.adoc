@@ -10,7 +10,7 @@ The Micron Intermediate Language Specification
 
 === Version
 
-2026-04-22, work in progress
+2026-05-03, work in progress
 
 === Author
 
@@ -435,6 +435,10 @@ ObjectType = OBJECT [ '(' NamedType ')' ] { MemberList [';'] } END
 MemberList = IdentList ':' NamedType
 ....
 
+NOTE: Each instance of an object carries explicit class information, whether the instance
+    is on the stack or on the heap. The runtime is responsible to assure that each instance
+    is properly initialized with this information before it is used.
+    
 === Pointer types
 
 Variables of a pointer type P assume as
@@ -591,6 +595,8 @@ For each field or element which is of
 struct, union, array or pointer type, an embedded constructor is
 required. Since the exact type of the field or element is known, the
 NamedType prefix is not required.
+
+Memory is initialized with zeros before the components are applied.
 
 === *add*
 
@@ -808,10 +814,6 @@ bound procedure type, or an interface method.
 NOTE: callmi doesn't do method
 dispatch, but uses exactly the procedure reference provided in the
 methref.
-
-TODO: change order, so that methref is
-pushed on stack first, before the arguments (so that we already have a
-slot for the object pointer).
 
 === *callvirt – call a method associated, at runtime, with an object*
 
@@ -1409,7 +1411,7 @@ native size (type F).
 |Fetch the address of argument _argNum_, short form.
 |===
 
-`…, -> …, address of argument number `_`argNum`_
+`…, -> …, address of argument number _argNum_`
 
 The ldarga instruction fetches the address
 (of type intptr) of the _argNum_ ’th argument, where arguments are
@@ -1698,12 +1700,10 @@ is an intptr. _field_ is a reference to an element of a structured type
 `…, obj -> …, ifaceref`
 
 The ldiface instruction pushes an interface
-reference (_ifaveref_) onto the stack. The _interface_ reference points
+reference (_ifaceref_) onto the stack. The _interface_ reference points
 to an interface declaration. _obj_ can be a record or object pointer.
-The method table is chosen based on the static type of _obj_.
-
-TODO: in future we should support method
-table creation at runtime based on the dynamic type of obj.
+The method table is chosen based on the static type (in case of a record)
+or the dynamic type (in case of an object) of _obj_.
 
 === *ldind – load value indirect onto the stack*
 
@@ -2077,21 +2077,21 @@ corresponding result data types are specified in <<unops, the compatibility tabl
 
 |8D <__T__> 
 |newarr _etype_ 
-|Create a new array with elements of type _etype._
+|Create a new array with elements of type _etype_.
 |===
 
-`…, numElems`_` `_`-> …, pointer to array`
+`…, numElems -> …, pointer to array`
 
 The newarr instruction pushes a pointer to
 a new zero-based, one-dimensional, open array whose elements are of type
-_etype. numElems_ (of type unsigned int32) specifies the number of
+_etype_. _numElems_ (of type unsigned int32) specifies the number of
 elements in the array. Valid array indexes are 0 ≤ index < _numElems_.
 The elements of an array can be any type. The elements are not
 initialized.
 
-NOTE: This operation is only for
-open array types. Array types with fixes size are created with newobj
-instead.
+NOTE: This operation is only for open array types. Array types with fixes size are created with newobj
+    instead. Even if elements are not initialized, object instances are still initialized with
+    type information. This also applies to embedded object instances stored by value.
 
 === *newvla – create a variable-length array on stack*
 
@@ -2104,14 +2104,14 @@ instead.
 
 |EE 0F <__T__> 
 |newvla _etype_ 
-|Create a new VLA with elements of type _etype._
+|Create a new VLA with elements of type _etype_.
 |===
 
-`…, numElems`_` `_`-> …, pointer to array`
+`…, numElems -> …, pointer to array`
 
 The newvla instruction pushes a pointer to
 a new zero-based, one-dimensional array whose elements are of type
-_etype. numElems_ (of type unsigned int32) specifies the number of
+_etype_. _numElems_ (of type unsigned int32) specifies the number of
 elements in the array. In contrast to newarr, newvla tries to allocated
 the array on the stack, and the memory is automatically disposed when
 the function finishes. Valid array indexes are 0 ≤ index < _numElems_.
@@ -2129,16 +2129,17 @@ initialized.
 
 |73 <__T__> 
 |newobj _type_ 
-|Allocate an instance of type (struct, union, or object)_._
+|Allocate an instance of type (struct, union, or object).
 |===
 
-`…,`_` `_`-> …, pointer to instance`
+`…, -> …, pointer to instance`
 
 The newobj instruction creates a new
 instance of _type_. The fields are not initialized.
 
-NOTE: This operation applies to all
-structured types of fixed size, including non-open arrays.
+NOTE: This operation applies to all structured types of fixed size, including non-open arrays.
+    Even if fields/elements are not initialized, object instances are still initialized with
+    type information.
 
 === *nop – no operation*
 
@@ -2711,7 +2712,7 @@ statement without a surrounding `loop` statement.
 |Free memory previously allocated by Newarr or Newobj.
 |===
 
-`…,addr-> …,`
+`…,addr -> …,`
 
 The `free` statement deallocates memory
 allocated with `newobj` or `newarr` expressions.
@@ -2731,7 +2732,7 @@ allocated with `newobj` or `newarr` expressions.
 |Jump to a label declared in the same scope.
 |===
 
-`…,-> …,`
+`…, -> …,`
 
 The `goto` statement is an unconditional
 jump to the given label.
@@ -3017,7 +3018,7 @@ suffix.
 |Replace the _value_ of _field_ of the record or object with _value._
 |===
 
-`…, ptr, value`_` `_`-> …,`
+`…, ptr, value -> …,`
 
 The stfld instruction replaces the value of
 a field of a record or object pointed to by _ptr_ (type intptr) with
@@ -3147,7 +3148,7 @@ their native size (type F) to the size associated with the argument.
 |Copy the characters of rhs to lhs__.__
 |===
 
-`…, lhs, rhs`_` `_`-> …,`
+`…, lhs, rhs, -> …,`
 
 The strcpy instruction copies the
 characters of the character array pointed to by _rhs_ to the character
@@ -3169,7 +3170,7 @@ operation, _lhs_ is always zero terminated.
 |Replace the value of _var_ with _val._
 |===
 
-`…, val`_` `_`-> …,`
+`…, val, -> …,`
 
 The stvar instruction replaces the value of
 a module variable with a value from the stack.
