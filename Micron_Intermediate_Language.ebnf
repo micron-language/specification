@@ -35,6 +35,7 @@ qualident ::= [\LL:2\ ident '!'] ident    // module : item
 trident ::= [\LL:2\ ident '!' ] ident '.' ident  // qualident '.' ident for field or method reference
 qortrident ::= [\LL:2\ ident '!' ] ident ['.' ident]
 identdef  ::= ident ['*']
+regwidth ::= unsigned // least significant 16 bits: hardware register number; upper 16 bits: byte width, 0 is native pointer width
 
 Line ::=  'LINE' unsigned
 
@@ -126,9 +127,10 @@ ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI') qualident | 'CALLMI' qo
                       | 'LDLOC_0' | 'LDLOC_1' | 'LDLOC_2' | 'LDLOC_3' | 'LDNULL' 
                       | 'LDIND' qualident | 'LDPROC' qualident | 'LDMETH' trident | 'LDSTR' (string|hexstring)
                       | ('LDVAR'|'LDVARA') qualident | 'MUL' | 'NEG' 
-                      | ('NEWARR'|'NEWVLA'|'NEWOBJ') qualident 
+                      | ('NEWARR'|'NEWVLA'|'NEWOBJ'|'NEWARR0'|'NEWOBJ0'|'NEWARRGC'|'NEWOBJGC') qualident 
                       | 'NOT' | 'OR' | 'REM' | 'REM_UN' | 'SHL' | 'SHR' | 'SHR_UN' 
                       | 'SIZEOF' qualident |'SUB' | 'XOR' | 'PTROFF' qualident | 'NOP' | CondOp 
+                      | 'GETREG'regwidth
 
 CondOp ::= 'IIF' Expression 'THEN' Expression 'ELSE' Expression 'END' 
 
@@ -143,7 +145,8 @@ Statement* ::= 'FREE' | RepeatUntil
                          | 'STFLD' trident
                          | 'STIND_I1' | 'STIND_I2' | 'STIND_I4' | 'STIND_I8' | 'STIND_R4' | 'STIND_R8' | 'STIND_IP' | 'STIND_IPP'
                          | ('STLOC' |'STLOC_S') (unsigned|ident) | 'STLOC_0' | 'STLOC_1' | 'STLOC_2' | 'STLOC_3'
-                         | 'STIND' qualident | 'STVAR' qualident | 'STRCPY' | Switch | WhileDo
+                         | 'STIND' qualident | 'STVAR' qualident | 'STRCPY' | Switch | WhileDo | 'CLI' | 'STI' 
+                         | 'PUTREG' regwidth
 
 IfThenElse ::= 'IF' Expression 'THEN' StatementSequence [ 'ELSE' StatementSequence ] 'END'
 Loop ::= 'LOOP' StatementSequence 'END'

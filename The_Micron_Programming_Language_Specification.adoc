@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-05-01, work in progress
+2026-05-06, work in progress
 
 === Author
 
@@ -337,7 +337,7 @@ characters, or character pairs listed below.
 |, |; |: |:= |.
 |.. |( |) |[ |] |{
 |} |* |/ |# |^ |+
-|<= |= |>= | \| |~ |
+|\<= |= |>= | \| |~ |
 |===
 
 ==== Reserved Words
@@ -1098,7 +1098,7 @@ right. For example, `x-y-z` stands for `(x-y)-z`.
 .Syntax:
 ....
 expression       = SimpleExpression [ relation SimpleExpression ]
-relation         = '=' | '#' | '<' | '<=' | '>' | '>=' | IN
+relation         = '=' | '#' | '<' | '\<=' | '>' | '>=' | IN
 SimpleExpression = ['+' | '-'] term { AddOperator term }
 AddOperator      = '+' | '-' | OR
 term             = factor {MulOperator factor}
@@ -1186,7 +1186,7 @@ defined for any `x` and positive divisors `y`:
 
 ....
 x = (x DIV y) * y + (x MOD y)
-0 <= (x MOD y) < y
+0 \<= (x MOD y) < y
 ....
 
 When used as unary operators, '-' denotes sign inversion and '\+' denotes the identity operation. 
@@ -1239,7 +1239,7 @@ in the interval [a, b].
 |= |equal
 |#, <> |unequal
 |< |less
-|<= |less or equal
+|\<= |less or equal
 |> |greater
 |>= |greater or equal
 |IN |membership
@@ -1248,7 +1248,7 @@ in the interval [a, b].
 
 Relations yield a BOOLEAN result.
 
-The relations `=`, `#`, `<`, `<=`, `>`,
+The relations `=`, `#`, `<`, `\<=`, `>`,
 and `>=` apply to the numeric types, as well as enumerations,
 pointer types, CHAR, string literals, and CHAR arrays containing `0x` as
 a terminator.
@@ -1301,10 +1301,10 @@ i div 3                // integer
 s - {8, 9, 13}         // set
 i + x                  // real
 a[i+j] * a[i-j]        // real
-(0<=i) & (i<100)       // boolean
+(0\<=i) & (i<100)       // boolean
 t.key = 0              // boolean
 k in {i..j-1}          // boolean
-w[i].name <= "John"    // boolean
+w[i].name \<= "John"    // boolean
 t is CenterTree        // boolean
 ....
 
@@ -1550,8 +1550,8 @@ ElseStatement  = ELSE StatementSequence
 
 .Example:
 ....
-if (ch >= "A") & (ch <= "Z") then ReadIdentifier
-elsif (ch >= "0") & (ch <= "9") then ReadNumber
+if (ch >= "A") & (ch \<= "Z") then ReadIdentifier
+elsif (ch >= "0") & (ch \<= "9") then ReadNumber
 elsif (ch = "'") OR (ch = '"') then ReadString
 else SpecialCharacter
 end
@@ -1663,7 +1663,7 @@ is equivalent to
 ....
 temp := last; v := first
 if step > 0 then
-    while v <= temp do statements; INC(v,step) end
+    while v \<= temp do statements; INC(v,step) end
 else
     while v >= temp do statements; DEC(v,-step) end
 end
@@ -1681,8 +1681,8 @@ enumeration type, then the statement is equivalent to
 
 ....
 temp := last; v := first
-if ORD(first) <= ORD(last) then
-    while v <= temp do statements; INC(v) end
+if ORD(first) \<= ORD(last) then
+    while v \<= temp do statements; INC(v) end
 else
     while v >= temp do statements; DEC(v) end
 end
@@ -1979,7 +1979,7 @@ Oberon-2, Micron allows array and record return types.
 proc ReadInt(x: pointer to integer)
   var i: integer; ch: char
 begin i := 0; Read(ch)
-  while ("0" <= ch) & (ch <= "9") do
+  while ("0" \<= ch) & (ch \<= "9") do
     i := 10*i + (ord(ch)-ord("0")); Read(ch)
   end
   x^ := i
@@ -2402,6 +2402,8 @@ between a object and a pointer to object type.
 
 === Assignment compatible
 
+`v := e`, `f(e)`, `return e`
+
 An expression e of type T~e~ is assignment
 compatible with a variable v of type T~v~ if one of the following
 conditions hold:
@@ -2482,22 +2484,22 @@ that are to be compared must contain 0X as a terminator.
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |===
 |*operator* |*first operand* |*second operand* |*result type*
-|+ - * |signed integer |signed integer |smallest signed integer type including both operands
+|`+` `-` `*` |signed integer |signed integer |smallest signed integer type including both operands
 | |unsigned integer |unsigned integer |smallest unsigned integer type including both operands
 | |floating point |floating point |smallest floating point type including both operands
-|/ |numeric |numeric |smallest floating point type type including both operands
-|+ - * / |SET |SET |SET
+|`/` |numeric |numeric |smallest floating point type type including both operands
+|`+` `-` `*` `/` |SET |SET |SET
 |DIV MOD |signed integer |signed integer |smallest signed integer type type including both operands
 | |unsigned integer |unsigned integer |smallest unsigned integer type type including both operands
-|OR & ~ |BOOLEAN |BOOLEAN |BOOLEAN
-|= # < ⇐ > >= |signed integer |signed integer |BOOLEAN
+|OR `&` AND `~` NOT |BOOLEAN |BOOLEAN |BOOLEAN
+|`=` `#` `<` `\<=` `>` `>=` |signed integer |signed integer |BOOLEAN
 | |unsignednteger |unsigned integer |BOOLEAN
 | |floating point |floating point |BOOLEAN
 | |CHAR |CHAR |BOOLEAN
-| |CHAR array, string |CHAR array, string |BOOLEAN
-|= # |BOOLEAN |BOOLEAN |BOOLEAN
-| |SET |SET |BOOLEAN
+| |CHAR array, string lit. |CHAR array, string lit. |BOOLEAN
 | |NIL, pointer type |NIL, pointer type |BOOLEAN
+|`=` `#` |BOOLEAN |BOOLEAN |BOOLEAN
+| |SET |SET |BOOLEAN
 | |procedure type, NIL |procedure type, NIL |BOOLEAN
 |IN |integer |SET |BOOLEAN
 |===
@@ -2565,7 +2567,7 @@ designator = qualident {selector}
 selector   = '.' ident | '[' expression ']' | '^' | '(' qualident ')'
 ExpList    = expression {[','] expression}
 expression       = SimpleExpression [ relation SimpleExpression ]
-relation         = '=' | '#' | '<' | '<=' | '>' | '>=' | IN
+relation         = '=' | '#' | '<' | '\<=' | '>' | '>=' | IN
 SimpleExpression = ['+' | '-'] term { AddOperator term }
 AddOperator      = '+' | '-' | OR
 term             = factor {MulOperator factor}
@@ -2971,7 +2973,7 @@ which predeclareds are available in which level.
 |v := v - \{x}
 
 |GETREG(r,v)
-|r, v: unsigned integer type
+|r, v: unsigned integer type; r is a constant expression
 |copy register r to value v; available on level 0 and 1
 
 |HALT(n) 
@@ -3035,15 +3037,15 @@ which predeclareds are available in which level.
 |call procedure type p with arguments a~0~…​a~n~ corresponding to the parameter list of p; e is set to nil in the normal case, and to the pointer passed to RAISE() otherwise
 
 |PRINT(a) 
-|a: basic type, string or char array 
+|a: basic type, string, char array, or pointer to char array
 |prints the argument to standard output, not terminating the line; for debugging and logging purpose only
 
 |PRINTLN(a) 
-|a: basic type, string or char array 
+|a: basic type, string, char array, or pointer to char array
 |prints the argument to the standard output and terminates the line; for debugging and logging purpose only
 
 |PUTREG(r,v)
-|r, v: unsigned integer type
+|r, v: unsigned integer type; r is a constant expression
 |put value v to register r; available on level 0 and 1
 
 |RAISE(e) 
