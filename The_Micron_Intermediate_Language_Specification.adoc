@@ -10,7 +10,7 @@ The Micron Intermediate Language Specification
 
 === Version
 
-2026-05-06, work in progress
+2026-05-11, work in progress
 
 === Author
 
@@ -2585,8 +2585,9 @@ naming scheme of the backend is assumed.
 A procedure declared INLINE is expanded by the
 backend at the call site. A procedure declared INVAR doesn't depend on
 runtime information and can be called at compile time. At most one
-procedure can be declared INIT, in which case it is automatically called
-at module load time.
+procedure can be declared INIT or ENTRY, in which case it is automatically called
+at module load time. A procedure declared with ENTRY has the meaning of
+"INLINE INIT"; either an INIT or ENTRY procedure can be declared.
 
 A procedure can be an alias of another
 procedure. The other procedure is referenced with a qualident. If the
@@ -2612,7 +2613,7 @@ INVAR, nor INIT.
 .Syntax of textual representation:
 ....
 ProcedureDeclaration = ProcedureHeading 
-                         (['INLINE'|'INVAR'|'INIT'] [';'] ProcedureBody 
+                         (['INLINE'|'INVAR'|'INIT'|'ENTRY'] [';'] ProcedureBody 
                           | [';'] EXTERN
                           | [';'] FOREIGN [string]
                           | [';'] FORWARD ) 
@@ -3540,7 +3541,7 @@ CondOp = 'IIF' Expression 'THEN' Expression 'ELSE' Expression 'END'
 ConstDeclaration = [Line] ident '=' ConstExpression2
 VariableDeclaration = IdentList ':' NamedType
 ProcedureDeclaration = ProcedureHeading 
-                         (['INLINE'|'INVAR'|'INIT'] [';'] ProcedureBody 
+                         (['INLINE'|'INVAR'|'INIT'|'ENTRY'] [';'] ProcedureBody 
                           | [';'] EXTERN
                           | [';'] FOREIGN [string]
                           | [';'] FORWARD ) 

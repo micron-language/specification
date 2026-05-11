@@ -218,7 +218,7 @@ block ::= BEGIN StatementSequence
                 [ FINALLY StatementSequence ]
 #endif
 
-ProcedureBody ::= DeclarationSequence block END ident
+ProcedureBody ::= DeclarationSequence block END ident ['.' ident]
 	
 DeclarationSequence ::= 
 	{ CONST { ConstDeclaration [';'] } 

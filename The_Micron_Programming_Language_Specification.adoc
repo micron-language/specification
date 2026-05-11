@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-05-06, work in progress
+2026-05-11, work in progress
 
 === Author
 
@@ -678,28 +678,21 @@ be accepted by a compiler, for fixed, dynamic and variable lengths.
 
 ==== Record types
 
-A record type is a structure consisting of a
-fixed number of elements, called fields, with possibly different types.
-The record type declaration specifies the name and type of each field.
-The scope of the field identifiers extends from the point of their
-declaration to the end of the record type, but they are also visible
-within designators referring to elements of record variables (see
-<<Operands>>). If a record type is exported, field
-identifiers that are to be visible outside the declaring module must be
-marked. They are called public fields; unmarked elements are called
-private fields.
+A record type is a composite structure consisting of a fixed number of fields, 
+which may be of different types. The declaration specifies the name and type of each field. 
+Field identifiers are in scope from their point of declaration to the end of the record definition, 
+and are accessible via designators on record variables (see <<Operands>>). If a record type is exported 
+from a module, its fields remain private by default; fields intended to be visible outside the declaring 
+module must be explicitly marked as public.
 
-The syntax for a record type also makes
-provisions for an optional variant part, started by the CASE reserved
-word. The variant part implies that a record type may be specified as
-consisting of several variants. This means that different variables,
-although said to be of the same type, may assume structures which differ
-in a certain manner. The differences may consist of a different number
-and different types of components. Each variant is characterised by a
-field, according to which the variants are discriminated.
-No field of a variant part can be of object type (see <<Object types>>).
-Fields in different cases of a variant part share the same memory storage. 
-The size of the variant part is the size of the largest case.
+A record type may include an optional variant part, introduced by the CASE keyword. 
+This allows variables of the same record type to contain different sets of fields depending on the active variant. 
+The variants are discriminated by a specific tag field. Because fields in different variants share the same memory storage, 
+the total size of the variant part is equal to the size of its largest case. No field within a variant part may be of an 
+object type (see <<Object types>>).
+
+The fields, variants and methods (see <<Type-bound procedures>>) of a record
+are collectively called members.
 
 .Syntax:
 ....
@@ -726,11 +719,15 @@ RECORD
 END
 ....
 
-Fields or variants of record type of the fixed part or
+Fields or variants of record or object type of the fixed part or
 the variant part can be prefixed by the INLINE (or
 abbreviated only IN) reserved word, in which case the name of the field
 or variant becomes transparent, and the fields of the corresponding
 record type are directly embedded in the enclosing record.
+
+Any field or variant of a record or object type, whether in the fixed or variant part, 
+may be prefixed with the INLINE (or IN) keyword. Doing so makes the field's name transparent, 
+promoting its inner members so they are directly embedded and accessible within the enclosing record.
 
 Fields of boolean or integer type within the
 fixed part of a record can be packed at the bit level for memory
@@ -748,12 +745,12 @@ the field value is interpreted (e.g., signed vs unsigned overflow
 behavior); the number of bits of a signed integer type includes the sign
 bit.
 
-Each field or variant of a record must have
-a name which is unique within the record; if a field of a record
-embedded with the INLINE prefix has the same name as a field or variant
-of the embedding record, then the name of the prefixed field or variant
-must be used to access it. If a name of an inlined field or variant
-is not unique, the first match in field and variant order is selected.
+All direct members (fields, variants, or methods) of a record must have unique names. 
+If an INLINE field or variant contains a promoted member with the same name as a direct member, 
+the direct member takes precedence, and the promoted member must be accessed via its explicit field designator. 
+If multiple INLINE fields or variants contain members with the same name, an unqualified reference resolves to 
+the first match in declaration order.
+    
 
 TODO: open array as last field (no variant
 part) with new(ptr,len)
@@ -1909,7 +1906,7 @@ ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]
 ForwardDeclaration   = ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]
 
 ProcedureBody        = DeclarationSequence BEGIN StatementSequence 
-                       [FINALLY StatementSequence] END ident
+                       [FINALLY StatementSequence] END [ident '.'] ident
 
 DeclarationSequence  = { CONST { ConstDeclaration [';'] }
             | TYPE { TypeDeclaration [';']
@@ -2025,7 +2022,8 @@ reference the record or object type T, or a pointer to T. The procedure
 is bound to the type T and is considered local to it. If the optional
 receiver parameter name is left out, the compiler automatically creates
 a hidden parameter which can be accessed from within the procedure body
-by the name "self".
+by the name "self". The procedure name at the end of the procedure
+can be prefixed with the receiver type name.
 
 NOTE: Regardless of whether the
 receiver is an object, record or pointer type, the receiver parameter is
@@ -2622,7 +2620,7 @@ ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]
 ForwardDeclaration   = ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]
 
 ProcedureBody        = DeclarationSequence BEGIN StatementSequence 
-                       [FINALLY StatementSequence] END ident
+                       [FINALLY StatementSequence] END [ident '.'] ident
 DeclarationSequence  = { CONST { ConstDeclaration [';'] }
             | TYPE { TypeDeclaration [';']
               | VAR { VariableDeclaration [';'] }

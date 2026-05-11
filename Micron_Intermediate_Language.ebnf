@@ -68,7 +68,7 @@ ProcedureDeclaration ::= ( 'PROCEDURE' | 'PROC' )  [Line] (
                        \LA: 1:ident & 2:'.'\ Binding identdef [ FormalParameters ] [ ';' ] ( 'ABSTRACT' | ProcedureBody )
                        | identdef  
                            [ FormalParameters ] (
-                               ['INLINE'|'INVAR'|'INIT'] [ ';' ] ProcedureBody  
+                               ['INLINE'|'INVAR'|'INIT'|'ENTRY'] [ ';' ] ProcedureBody  
                                | \LA: 1:('EXTERN'|'FOREIGN') | (1:';'&2:('EXTERN'|'FOREIGN'))\ [ ';' ] 
                                    ('EXTERN'|'FOREIGN' [string])   // \LL:2\ produces nonsense!
                                | \LA: 1:'FORWARD' | (1:';'&2:'FORWARD')\ [ ';' ] 'FORWARD' 
