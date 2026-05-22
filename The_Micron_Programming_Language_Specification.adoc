@@ -2615,10 +2615,6 @@ gotoLabel = ident ':'
 ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody 
                                         | [';'] EXTERN ['C' [string]]  ) 
                        | ForwardDeclaration
-
-ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]
-ForwardDeclaration   = ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]
-
 ProcedureBody        = DeclarationSequence BEGIN StatementSequence 
                        [FINALLY StatementSequence] END [ident '.'] ident
 DeclarationSequence  = { CONST { ConstDeclaration [';'] }
@@ -2941,6 +2937,10 @@ which predeclareds are available in which level.
 |CLI()
 |-
 |Clear interrupts: unconditionally disables maskable hardware interrupts; available on level 0 and 1.
+
+|COPY(d,s,n)
+|d: pointer to array of char; s: pointer to array of char or string literal; n: integer
+|Copies up to n-1 characters from s^ to d^ and guarantees d^ is 0X terminated. If s is longer than n-1, it truncates. If n <= 0, it does nothing.
 
 |DEC(v) 
 |v: integer type 

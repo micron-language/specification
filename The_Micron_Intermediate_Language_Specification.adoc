@@ -562,41 +562,30 @@ ConstExpression = qualident | number | string | hexstring
 
 === Constructors
 
-With constructors, struct, union, array and
-pointer literals can be declared.
+Constructors are used to declare and initialize struct, union, array, and pointer literals. 
 
 .Syntax of textual representation:
 ....
 constructor = NamedType component_list
 component_list = '{' [ component {[','] component} ] '}'
-component = [ident '='] ( ConstExpression | component_list )
+component = [(ident|unsigned) '='] ( ConstExpression | component_list )
 ....
 
-A constructor consists of an explicit type
-and a list of either named or anonymous components. Named and anonymous
-components cannot be mixed in the list.
+A constructor consists of an explicit `NamedType` prefix followed by a list of components. Components can be **designated** (explicitly prefixed with a field name or array index) or **anonymous** (providing only the value). 
 
-If NamedType is a struct type, then there is
-either an anonymous component for each field of the struct in the order
-of declaration, or there is a named component for each field in
-arbitrary order. For union types, only named components can be used, and
-only one option of the union can be initialized in the constructor.
+Before any components are applied, the memory for the literal is **fully initialized with zeros**. Because of this, it is not required to provide a component for every field or element; any omitted fields or elements will default to zero.
 
-If NamedType is an array type, then there is
-an anonymous componend for each element of the array. The array type may
-be an open array in which case the number of elements is determined by
-the number of components.
+Anonymous and designated components can be freely mixed within the same constructor. The compiler resolves which field or element a component applies to based on the following rules:
 
-If NamedType is a pointer type, then there
-is exactly one anonymous component which is an unsigned integer type
-constant representing the address.
+* A designated component explicitly initializes the named field or indexed element.
+* An anonymous component initializes the "current" field or element. At the start of the list, the "current" position is the first field or the 0th element. 
+* Whenever a component (designated or anonymous) is applied, the "current" position advances to the immediately following field or index.
+* Struct types: anonymous components map to the struct's fields in their exact order of declaration. A named component (`ident = value`) initializes that specific field, and any subsequent anonymous components will initialize the fields declared immediately after it.
+* Array types: anonymous components map to array elements sequentially. An indexed component (`unsigned = value`) initializes the element at that specific integer index, and subsequent anonymous components will continue sequentially from `index + 1`. If the array type is an open (unsized) array, its final length is determined by the highest initialized index plus one.
+* Union types: a constructor for a union must contain exactly one component. A named component must be used to explicitly identify which option of the union is being initialized.
+* Pointer types: A constructor for a pointer must contain exactly one anonymous component, which must be an unsigned integer constant representing the memory address.
 
-For each field or element which is of
-struct, union, array or pointer type, an embedded constructor is
-required. Since the exact type of the field or element is known, the
-NamedType prefix is not required.
-
-Memory is initialized with zeros before the components are applied.
+For any field or element that is itself of a struct, union, array, or pointer type, a nested constructor is required. Because the exact type of the field or element is already known from the parent's type definition, the `NamedType` prefix can be omitted for the inner constructor, allowing the use of a bare `component_list` (`{ ... }`).
 
 === *add*
 
@@ -1899,7 +1888,7 @@ provides an efficient encoding for use with the local variables 0–255.
 described in the ldind instruction, since the address obtained by ldloca
 can be used as an argument to ldind.)
 
-=== *ldmeth – load a virtual method pointer*
+=== *ldmeth – load a method pointer*
 
 
 [width="100%",cols="1,1,3",]
@@ -2702,11 +2691,12 @@ A compound statement starts with the `if`,
 `loop`, `repeat`, `switch`, or `while` instruction, and ends with the
 `end` instruction.
 
-Before each compound, and before the following
-simple statements, the evaluation stack must be empty:
+The evaluation stack is subject to strict consistency constraints across control-flow boundaries:
 
-`exit`, `goto`, `label`, `line`, and `ret`
-(for procedures without return value)
+1. The evaluation stack must be entirely empty upon entry to a procedure.
+2. When the ret statement is executed, the stack must be exactly empty for a procedure with no return type, or contain exactly one value of the correct return type for a function procedure.
+3. For compound statements (if, loop, while, etc.) and labels, the depth and types of the evaluation stack must be identical across all control-flow paths that reach them (Stack Consistency).
+
 
 .Syntax of textual representation:
 ....
@@ -3536,7 +3526,7 @@ ConstExpression = qualident | number | string | hexstring
 ConstExpression2 = qualident [component_list] | number | string | hexstring
 constructor = NamedType component_list
 component_list = '{' [ component {[','] component} ] '}'
-component = [ident '='] ( ConstExpression | component_list )
+component = [(ident|unsigned) '='] ( ConstExpression | component_list )
 CondOp = 'IIF' Expression 'THEN' Expression 'ELSE' Expression 'END' 
 ConstDeclaration = [Line] ident '=' ConstExpression2
 VariableDeclaration = IdentList ':' NamedType

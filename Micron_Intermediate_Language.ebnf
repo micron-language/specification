@@ -166,7 +166,7 @@ ConstExpression2 ::= qualident [ component_list ] | number | string | hexstring
 
 constructor ::= NamedType component_list | hexstring
 component_list ::= '{' [ component {[','] component} ] '}' 
-component ::= [\LL:2\ ident '='] ( ConstExpression | component_list )
+component ::= [\LL:2\ (ident|unsigned) '='] ( ConstExpression | component_list )
 
 /// Pragmas:
 %module ::= 'Micron'
