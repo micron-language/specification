@@ -10,7 +10,7 @@ The Micron Intermediate Language Specification
 
 === Version
 
-2026-05-11, work in progress
+2026-05-25, work in progress
 
 === Author
 

@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-05-11, work in progress
+2026-05-25, work in progress
 
 === Author
 
@@ -1881,11 +1881,11 @@ but they can access CONST declarations in the same or other modules.
 
 A procedure can be declared EXTERN to
 indicate that it is implemented elsewhere and the source code is not
-available. If EXTERN is followed by the ident C, then the procedure is
+available. If EXTERN is followed by the ident C and/or a string, then the procedure is
 implemented in an external library with C calling convention and called
 via the foreign function interface, otherwise it is assumed that the
-procedure is implemented in Micron. EXTERN C can be followed by a string
-literal with the name of the procedure in the external library,
+procedure is implemented in Micron. Using the string
+literal, the name of the procedure in the external library can be set,
 otherwise the same name as in the identdef is assumed.
 
 NOTE: EXTERN is regarded as an
@@ -1899,7 +1899,7 @@ of a forward declaration and the corresponding implementation must match.
 .Syntax:
 ....
 ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody 
-                                        | [';'] EXTERN ['C' [string]]  ) 
+                                        | [';'] EXTERN ['C' [string]| string]  ) 
                        | ForwardDeclaration
 
 ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]
@@ -2029,7 +2029,7 @@ NOTE: Regardless of whether the
 receiver is an object, record or pointer type, the receiver parameter is
 always a pointer to record or object type.
 
-Type-bound procedures cannot be INVAR.
+Type-bound procedures cannot be INVAR or EXTERN.
 Procedures bound to object types cannot be INLINE.
 
 .Syntax:
@@ -2613,7 +2613,7 @@ ExitStatement   = EXIT
 GotoStatement = 'GOTO' ident
 gotoLabel = ident ':'
 ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody 
-                                        | [';'] EXTERN ['C' [string]]  ) 
+                                        | [';'] EXTERN ['C' [string] | string]  ) 
                        | ForwardDeclaration
 ProcedureBody        = DeclarationSequence BEGIN StatementSequence 
                        [FINALLY StatementSequence] END [ident '.'] ident
@@ -3158,7 +3158,7 @@ everything expected from a traditional imperative programming language.
 Level 1 in addition has static bound
 procedures (i.e. procedures bound to records without virtual dispatch).
 
-Level 1 in addition has EXTERN and FOREIGN
+Level 1 in addition has EXTERN
 procedures.
 
 Level 1 in addition supports variable length

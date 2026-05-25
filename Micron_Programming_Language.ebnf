@@ -194,7 +194,8 @@ InterfaceProc ::= [procedure] identdef [FormalParameters] [';']
 
 ProcedureDeclaration ::= 
 	\LA: 2:'^'\ ForwardDecl
-	|  ProcedureHeading ( [INLINE | INVAR] [ ';' ] ProcedureBody | \LL:2\ [ ';' ] EXTERN [ident [string]] ) // ident = 'C'
+	|  ProcedureHeading ( [INLINE | INVAR] [ ';' ] ProcedureBody | \LL:2\ [ ';' ] 
+	EXTERN [ident [string] | string] ) // ident = 'C'
 	
 ProcedureHeading ::= procedure 
 #ifdef LEVEL3
