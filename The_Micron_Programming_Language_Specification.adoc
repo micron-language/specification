@@ -10,7 +10,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-05-25, work in progress
+2026-05-30, work in progress
 
 === Author
 
@@ -1054,17 +1054,13 @@ predeclared procedure LEN().
 If `a` or `r` are read-only, then also
 `a[e]` and `r.f` are read-only.
 
-A designator of the form `v(T)` denotes the pointer `v` treated as pointing to a value 
-of type `T`. If `T` is a pointer type `POINTER TO T0`, where `T0` is an object type, 
-the designator stands for `v` treated as type `T` (referencing `T0`).
+A designator of the form `v(T)` constitutes a *type guard*. It is applicable only if the static type of `v` is a pointer to an object type, and `T` is also a pointer to an object type. Furthermore, `T` must be an extension of the static type of `v`. The form `v(@O)` is also supported to convert the object type `O` to a pointer type in place.
 
-If the static type of `v` is a pointer to object type, `T` (or `T0`) must also denote an object type, 
-and the designator constitutes a *type guard*. It asserts that the dynamic type of the object 
-referenced by `v` extends `T` (or `T0`). If `v` is `NIL` or the assertion fails, program execution aborts.
+The type guard asserts that the dynamic type of the object referenced by `v` is equal to the object base type of `T` (or an extension thereof). If `v` is `NIL` or the assertion fails, program execution aborts. 
 
-If neither the static type of `v` nor `T` refer to an object type, the designator implies a static 
-reinterpretation of the address `v` as the address of a value of type `T`; no run-time check is performed. 
-Other combinations are invalid (use the CAST predeclared function instead, see <<Predeclared function procedures>>).
+If the assertion succeeds, the designator yields the value of `v` treated statically as type `T`. This allows access to the extended fields and type-bound procedures of `T`.
+
+NOTE: Type guards are strictly checked at run-time. For unchecked, static reinterpretation of memory addresses, such as casting pointers to records or basic types, use the `CAST` predeclared procedure instead (see <<Predeclared function procedures>>). 
 
 If the designated object is a constant or a
 variable, then the designator refers to its current value. If it is a
@@ -1335,6 +1331,10 @@ the type `POINTER TO T`.
 If `a[e]` designates an array element of
 type T at index `e`, then `@a[e]` denotes the address of the element at
 index `e`; the address is of type `POINTER TO T`.
+
+The address operator @ cannot be applied to a record field declared with a BITS specification.
+
+Returning or escaping a pointer to a local variable results in Undefined Behavior. 
 
 ===== Function Call
 
@@ -2739,7 +2739,7 @@ which predeclareds are available in which level.
 |convert x to T; bitwise reinterpretation of x; SIZE(T) must equal SIZE(x)
 
 |
-|T,x: pointer types; T is a type name
+|T,x: pointer types; T is a type name and can be prefixed with @ to create a pointer of T in place
 |T 
 |returns the pointer x statically retyped to the pointer type T; no run-time check is performed.
 
@@ -3085,12 +3085,12 @@ more features with each level.
 |*2* 
 |*Abstract* 
 |Logic/Safety 
-|*INTERFACEs* (dispatch), *FINALLY*, optional exceptions.
+|*INTERFACEs* (dispatch), *FINALLY*.
 
 |*3* 
 |*Dynamic* 
 |App Data 
-|*Heap* (`NEW`/`DISPOSE`), Pointers to Heap.
+|*Heap* (`NEW`/`DISPOSE`), Pointers to Heap, optional exceptions
 
 |*4* 
 |*Object* 
@@ -3132,8 +3132,8 @@ and let higher-level modules register their procedures for callback by lower-lev
 
 Level 0 is the minimal core language supposed
 to work in an environment where there is no stack and no heap. All
-procedures are implicitly INLINE and optionally INVAR. EXTERN is not
-supported. Recursion is not supported. NEW and DISPOSE are not
+procedures are implicitly INLINE and optionally INVAR. 
+EXTERN is not supported. Recursion is not supported. NEW and DISPOSE are not
 supported. PCALL and RAISE are not supported. VLA and interfaces not
 supported.
 
@@ -3161,8 +3161,7 @@ procedures (i.e. procedures bound to records without virtual dispatch).
 Level 1 in addition has EXTERN
 procedures.
 
-Level 1 in addition supports variable length
-arrays (VLA).
+Level 1 in addition supports variable length arrays (VLA).
 
 Levels 0 and 1 exclusively can set pointer
 variables to explicit values using constructor syntax (see <<Constructors>>).
@@ -3179,20 +3178,19 @@ fixed addresses (using constructor syntax) or in static arrays.
 
 === Level 2, Abstract
 
-Level 2 extends level 1 with interfaces
-(static dispatch), FINALLY sections and optional exceptions (PCALL,
-RAISE).
+Level 2 extends level 1 with interfaces (static dispatch), and FINALLY sections.
 
 NOTE: interfaces are not already in
 level 1 because the compiler has to generate meta data (such as
 interface tables for potentially each interface/record type pair).
 
-TODO: module attribute to enable exceptions.
-
 === Level 3, Dynamic
 
 Level 3 extends level 2 with dynamic memory
-allocation and deallocation (NEW, DISPOSE).
+allocation and deallocation (NEW, DISPOSE), 
+and optional exceptions (PCALL, RAISE).
+
+TODO: module attribute to enable exceptions.
 
 === Level 4, Object
 

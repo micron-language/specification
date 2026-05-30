@@ -883,6 +883,8 @@ pointer to type1 on the stack as a pointer to type2.
 If _ptr_ is null, castptr succeeds and
 returns null.
 
+// TODO: forbid cast of struct to object and vice versa?
+
 === *ceq – compare equal*
 
 
