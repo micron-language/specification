@@ -1,5 +1,11 @@
+// LeanDoc 2026-06-09
+
+// This file may be used under the terms of the GNU General Public
+// License (GPL) versions 2.0 or 3.0 as published by the Free Software
+// Foundation, see http://www.gnu.org/copyleft/gpl.html for more information
+
 = Micron Intermediate Language
-:toc: left
+:toc:
 :numbered:
 
 == Front Matter
@@ -10,7 +16,7 @@ The Micron Intermediate Language Specification
 
 === Version
 
-2026-05-25, work in progress
+2026-06-09, work in progress
 
 === Author
 
@@ -205,6 +211,7 @@ They do not affect the meaning of a program. Oberon+ also supports line
 comments; text starting with `//` up to a line break is considered a
 comment.
 
+[[line-information]]
 ==== Line Information
 
 Optional information of source line
@@ -263,6 +270,7 @@ assumed. The programming language the compiler of which generates MIL
 may specify namespaces, but the compiler has to combine these namespaces
 with the module name to a single name used as the MIL module name.
 
+[[Types]]
 == Types
 
 A data type determines the set of values which
@@ -286,8 +294,7 @@ identifiers. Either all capital or all lower case identifiers are
 supported (only lower case versions shown). For some basic types,
 abbreviations are available.
 
-
-[width="100%",cols="50%,50%",]
+[cols="1,1"]
 |===
 |*Name* 
 |*Description*
@@ -590,7 +597,7 @@ For any field or element that is itself of a struct, union, array, or pointer ty
 === *add*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -612,7 +619,7 @@ corresponding result data type are encapsulated as follows:
 
 .Arithmetic operands compatibility
 [#addops]
-[width="99%",cols="20%,16%,16%,16%,16%",options="header",]
+[cols="4,3,3,3,3"]
 |===
 |*A's Type*|*B's Type* | | |
 |          |*int32* |*int64* |*intptr* |*F* 
@@ -625,7 +632,7 @@ corresponding result data type are encapsulated as follows:
 === *abs – absolute value*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -647,7 +654,6 @@ corresponding result data types are encapsulated as follows:
 
 .Unary operator input and output types
 [#unops]
-[width="100%",cols="20%,20%,20%,20%,20%",]
 |===
 |*Operand Type* |int32  |int64 |x |F
 |*Result Type*  |int32  |int64 |x |F
@@ -656,7 +662,7 @@ corresponding result data types are encapsulated as follows:
 === *and – bitwise AND*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -676,7 +682,6 @@ encapsulated as follows:
 
 .Boolean operands compatibility
 [#boolops]
-[width="100%",cols="20%,20%,20%,20%,20%",options="header",]
 |===
 |        |*int32* |*int64* |*intptr* |*F*
 |*int32* |int32   |x       |x        |x
@@ -688,7 +693,7 @@ encapsulated as follows:
 === *call – call a function*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text* *Format* 
@@ -717,7 +722,7 @@ TODO: tail calls
 === *calli – indirect function call*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -749,7 +754,7 @@ TODO: tail calls
 === *callinst – call an explicit method on an object*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -771,7 +776,7 @@ compile-time class given by _method_.
 === *callmi – indirect method call*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -807,7 +812,7 @@ methref.
 === *callvirt – call a method associated, at runtime, with an object*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -830,7 +835,7 @@ _method_.
 === *cast – data conversion*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -864,7 +869,7 @@ must have the same byte width.
 === *castptr – cast a pointer to a type*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -888,7 +893,7 @@ returns null.
 === *ceq – compare equal*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -913,7 +918,6 @@ encapsulated as follows:
 
 .Comparison operands compatibility
 [#compops]
-[width="100%",cols="20%,20%,20%,20%,20%",]
 |===
 |        |*int32* |*int64* |*intptr* |*F*
 |*int32* |ok      |x       |x        |x
@@ -929,7 +933,7 @@ intptr of _value1_ are equal to the corresponding intptr of _value2_.
 === *cgt – compare greater than*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -956,7 +960,7 @@ encapsulated in the <<compops, compatibility table>>.
 === *cgt_un – compare greater than, unsigned or unordered*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -991,7 +995,7 @@ encapsulated in the <<compops, compatibility table>>.
 === *clt – compare less than*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1018,7 +1022,7 @@ encapsulated in the <<compops, compatibility table>>.
 === *clt_un – compare less than, unsigned or unordered*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1053,7 +1057,7 @@ encapsulated in the <<compops, compatibility table>>.
 === *conv – data conversion*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1125,7 +1129,6 @@ The acceptable operand types and their
 corresponding result data type is encapsulated as follows:
 
 .Conversion operands compatibility
-[width="99%",cols="20%,16%,16%,16%,16%",options="header",]
 |===
 |*Convert-To* |*Input* |        |         | 
 |             |*int32* |*int64* |*intptr* |*F* 
@@ -1160,7 +1163,7 @@ to compute the low order bit of the result.
 === *div – divide values*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1204,7 +1207,7 @@ corresponding result data type are encapsulated in
 === *div_un – divide integer values, unsigned*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1228,7 +1231,7 @@ corresponding result data type are encapsulated in
 === *dup – duplicate the top value of the stack*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1246,7 +1249,7 @@ element of the stack.
 
 === *getreg – push a register value onto the stack*
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1268,7 +1271,7 @@ the lower 16 bits contain the register number, and the upper 16 bits contain the
 === *iif – immediate if*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1309,7 +1312,7 @@ of the same type onto the stack.
 === *initobj – initialize the value at an address*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1334,7 +1337,7 @@ TODO: do we really need this?
 === *isinst – test if an object is an instance of a class or interface*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1355,7 +1358,7 @@ isinst fails and pushes 0.
 === *ldarg – load argument onto the stack*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1408,7 +1411,7 @@ native size (type F).
 === *ldarga – load an argument address*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1434,7 +1437,7 @@ for argument numbers 0–255.
 === *ldc – load numeric constant*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1527,7 +1530,7 @@ architectures.
 === *ldc_obj – load a literal object to the stack*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1549,7 +1552,7 @@ address of the literal bytes in read-only memory?
 === *ldelem – load element from array*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1631,7 +1634,7 @@ value is indicated by the type __ in the instruction.
 === *ldelema – load address of an element of an array*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1654,7 +1657,7 @@ stack.
 === *ldfld – load field of a struct or union*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1677,7 +1680,7 @@ pushes the value for the field in its place.
 === *ldflda – load field address*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1698,7 +1701,7 @@ is an intptr. _field_ is a reference to an element of a structured type
 === *ldiface – load interface*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1720,7 +1723,7 @@ or the dynamic type (in case of an object) of _obj_.
 === *ldind – load value indirect onto the stack*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1813,7 +1816,7 @@ value copy.
 === *ldloc – load local variable onto the stack*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1863,7 +1866,7 @@ Floating-point values are expanded to their native size (type F).
 === *ldloca – load local variable address*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1893,7 +1896,7 @@ can be used as an argument to ldind.)
 === *ldmeth – load a method pointer*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1919,7 +1922,7 @@ referenced by _method_.
 === *ldnull – load a null pointer*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1938,7 +1941,7 @@ intptr) on the stack.
 === *ldproc – load procedure pointer*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1962,7 +1965,7 @@ code (e.g., as a callback routine).
 === *ldstr – load a literal string*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -1990,7 +1993,7 @@ to by address is undefined in this specification.
 === *ldvar – load module variable*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2010,7 +2013,7 @@ return type is that associated with _var_.
 === *ldvara – load module variable address*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2029,7 +2032,7 @@ The ldvara instruction pushes the address
 === *mul – multiply values*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2054,7 +2057,7 @@ corresponding result data type are encapsulated in
 === *neg – negate*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2081,7 +2084,7 @@ corresponding result data types are specified in <<unops, the compatibility tabl
 === *newarr – create an open array*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2121,7 +2124,7 @@ NOTE: This operation is only for open array types. Array types with fixes size a
 === *newvla – create a variable-length array on stack*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2146,7 +2149,7 @@ initialized.
 === *newobj – create a new object*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2182,7 +2185,7 @@ NOTE: This operation applies to all structured types of fixed size, including no
 === *nop – no operation*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2201,7 +2204,7 @@ intended to fill in space if bytecodes are patched.
 === *not – bitwise complement*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2222,8 +2225,7 @@ type.
 The acceptable operand types and their
 corresponding result data type are as follows:
 
-
-[width="100%",cols="20%,20%,20%,20%,20%",]
+[cols="2,1,1,1,1"]
 |===
 |*Operand Type* 
 |int32 
@@ -2241,7 +2243,7 @@ corresponding result data type are as follows:
 === *or – bitwise OR*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2264,7 +2266,7 @@ corresponding result data type are encapsulated in
 === *ptroff - pointer offset*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2285,7 +2287,7 @@ type.
 === *rem – compute remainder*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2321,7 +2323,7 @@ where div is the division instruction, which truncates towards zero.
 === *rem_un – compute integer remainder, unsigned*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2355,7 +2357,7 @@ corresponding result data type are encapsulated in
 === *shl – shift integer left*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2379,7 +2381,6 @@ which operand types are allowed, and their corresponding result type.
 
 .Shift operands compatibility
 [#shiftops]
-[width="99%",cols="16%,14%,14%,14%,14%",options="header",]
 |===
 |                |*Shift-By* |       |        | 
 |*To Be Shifted* |*int32*    |*int64*|*intptr*|*F* 
@@ -2392,7 +2393,7 @@ which operand types are allowed, and their corresponding result type.
 === *shr – shift integer right*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2419,7 +2420,7 @@ result type.
 === *shr_un – shift integer right, unsigned*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2445,7 +2446,7 @@ result type.
 === *sizeof – load the size, in bytes,of a type*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2471,7 +2472,7 @@ steps.
 === *sub – subtract numeric values*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2498,7 +2499,7 @@ corresponding result data type are encapsulated in
 === *xor – bitwise XOR*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2662,7 +2663,7 @@ FPSection        = [ [Line] ident { [','] [Line] ident } ':'] NamedType
 === *line*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2676,7 +2677,7 @@ FPSection        = [ [Line] ident { [','] [Line] ident } ':'] NamedType
 `…,-> …,`
 
 This is a special operation representing
-line information (see <<Line Information>>) when
+line information (see <<line-information>>) when
 embedded in a statement sequence or expression. The line operation is
 neither a statement nor an expintr and shall be ignored besides updating
 the line information.
@@ -2720,7 +2721,7 @@ TODO: pcall and raise
 
 === *cli – clear interrupts*
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2738,7 +2739,7 @@ The cli instruction unconditionally disables maskable hardware interrupts.
 === *exit*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2758,7 +2759,7 @@ statement without a surrounding `loop` statement.
 === *free*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2779,7 +2780,7 @@ Applying `free` on memory allocated with `newobjgc` or `newarrgc` is undefined.
 === *goto*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2808,7 +2809,7 @@ It is explicitly illegal to jump into a nested compound statement.
 === *if then else*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2849,7 +2850,7 @@ evaluation stack.
 === *label*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2871,7 +2872,7 @@ procedure.
 === *loop*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2899,7 +2900,7 @@ unconditional loop which can be quit by an `exit` statement.
 === *pop – remove the top element of the stack*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2917,7 +2918,7 @@ from the stack.
 
 === *putreg – pop a register value from the stack*
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2939,7 +2940,7 @@ the lower 16 bits contain the register number, and the upper 16 bits contain the
 === *repeat until*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2973,7 +2974,7 @@ expression is expected to leave an int32 on the evaluation stack.
 === *ret – return from procedure*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -2998,7 +2999,7 @@ statement.
 === *starg – store a value in an argument slot*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -3029,7 +3030,7 @@ native size (type F) to the size associated with the argument.
 === *stelem – store element to array*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -3086,7 +3087,7 @@ suffix.
 === *stfld – store into a field of an object*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -3106,7 +3107,7 @@ the pointer off the stack and updates the record or object.
 
 === *sti – set interrupts*
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -3124,7 +3125,7 @@ The sti instruction unconditionally enables maskable hardware interrupts.
 === *stind – store value indirect from stack*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -3183,7 +3184,7 @@ or a non-open array.
 === *stloc – pop value from stack to local variable*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -3233,7 +3234,7 @@ their native size (type F) to the size associated with the argument.
 === *strcpy – string copy*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -3255,7 +3256,7 @@ operation, _lhs_ is always zero terminated.
 === *stvar – store a module variable*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Format* 
 |*Assembly Format* 
@@ -3274,7 +3275,7 @@ a module variable with a value from the stack.
 === *switch*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 
@@ -3322,7 +3323,7 @@ evaluation stack.
 === *while do*
 
 
-[width="100%",cols="1,1,3",]
+[cols="1,1,3"]
 |===
 |*Binary* 
 |*Text Format* 

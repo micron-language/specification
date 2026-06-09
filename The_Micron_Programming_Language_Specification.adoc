@@ -1,5 +1,11 @@
+// LeanDoc 2026-06-09
+
+// This file may be used under the terms of the GNU General Public
+// License (GPL) versions 2.0 or 3.0 as published by the Free Software
+// Foundation, see http://www.gnu.org/copyleft/gpl.html for more information
+
 = The Micron Programming Language Specification
-:toc: left
+:toc:
 :numbered:
 
 == Front Matter
@@ -10,7 +16,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-05-30, work in progress
+2026-06-09, work in progress
 
 === Author
 
@@ -169,6 +175,7 @@ blanks in strings); they are ignored unless they are essential to
 separate two consecutive symbols. Capital and lower-case letters are
 considered as distinct.
 
+[[Identifiers]]
 ==== Identifiers
 
 Identifiers are sequences of letters, digits
@@ -214,7 +221,7 @@ is determined when it is used.
 
 - U or I (without width) — compiler selects the minimal unsigned (U) or signed (I) type that can represent the value
 
-The compiler reports an error if an explicitly suffixed literal cannot be represented by the specified type (see <<Basic types>>). 
+The compiler reports an error if an explicitly suffixed literal cannot be represented by the specified type (see <<basic-types>>). 
 For width-omitted suffixes (U or I), the compiler guarantees the value fits by selecting an appropriately sized type.
 
 
@@ -232,7 +239,7 @@ contain a decimal scale factor. The letter 'E' means _times ten to the
 power of_.
 
 The type of a floating-point literal is the
-minimal <<Floating-point types>> to which the literal value
+minimal <<floating-point-types>> to which the literal value
 belongs.
 
 A real number is of type `LONGREAL`, if it
@@ -281,6 +288,7 @@ character = digit {hexDigit} ('X' | 'x')
 A character is encoded as a 8-bit code value
 using the ISO/IEC 8859-1 Latin-1 encoding scheme.
 
+[[string-literals]]
 ==== String literals
 
 String literals are sequences of printable
@@ -304,6 +312,7 @@ string = ''' {character} ''' | '"' {character} '"'
 'x'
 ....
 
+[[hex-string-literals]]
 ===== Hex string literals
 
 Hex strings are sequences of bytes
@@ -324,6 +333,7 @@ const arrow = $0F0F 0060 0070 0038 001C 000E 0007 8003 C101 E300
                7700 3F00 1F00 3F00 7F00 FF00$
 ....
 
+[[Operators]]
 ==== Operators and Delimiters
 
 Operators and delimiters are the special
@@ -331,7 +341,7 @@ characters, or character pairs listed below.
 
 
 
-[width="99%",cols="20%,16%,16%,16%,16%,16%",]
+[cols="4,3,3,3,3,3"]
 |===
 |- 
 |, |; |: |:= |.
@@ -348,7 +358,7 @@ words listed below are reserved (only upper-case versions shown).
 
 
 
-[width="100%",cols="20%,20%,20%,20%,20%",]
+
 |===
 |AND |ARRAY |BEGIN |BITS |BY
 |CASE |CONST |DIV |DO |ELSE
@@ -373,6 +383,7 @@ They do not affect the meaning of a program. Micron also supports line
 comments; text starting with `//` up to a line break is considered a
 comment.
 
+[[declarations-and-scope-rules]]
 === Declarations and scope rules
 
 Every identifier occurring in a program must
@@ -395,18 +406,18 @@ objects which are declared in nested blocks. The scope rules are:
   scope;
 
 - A type _T_ of the form POINTER TO _T1_ (see
-  <<Pointer types>>) can be declared at a point where _T1_
+  <<pointer-types>>) can be declared at a point where _T1_
   is still unknown. The declaration of _T1_ must follow before the base
   type of T is accessed for the first time;
 
 - Identifiers denoting record fields (see
-  <<Record types>>) are valid in record designators only;
+  <<record-types>>) are valid in record designators only;
 
 - Identifiers denoting object fields (see
-  <<Object types>>) are valid in object designators only;
+  <<object-types>>) are valid in object designators only;
 
 - Identifiers denoting interface procedures
-  (see <<Interface types>>) are valid in interface
+  (see <<interface-types>>) are valid in interface
   designators only.
 
 An identifier declared in a module block may
@@ -433,7 +444,7 @@ shown).
 
 
 
-[width="100%",cols="20%,20%,20%,20%,20%",]
+[cols="1,1,1,1,1"]
 |===
 |ABS 
 |ANY 
@@ -509,7 +520,7 @@ shown).
 === Constant declarations
 
 A constant declaration associates an identifier with a constant expression.
-The expression can be of basic type, or a string liteal or hex string (see <<Hex string literals>>).
+The expression can be of basic type, or a string liteal or hex string (see <<hex-string-literals>>).
 
 .Syntax:
 ....
@@ -520,7 +531,7 @@ ConstExpression  = expression
 A constant expression is an expression that
 can be evaluated by a mere textual scan without actually executing the
 program. Its operands are literals (see <<Operands>>),
-predeclared or INVAR functions (see <<Predeclared Procedure Reference>>, <<Procedures>>) or
+predeclared or INVAR functions (see <<predeclared-procedure-reference>>, <<procedure-declarations>>) or
 other constant expressions that can be evaluated at compile time. 
 If all operands are unsuffixed integer literals, the type of the
 constant expression (and thus the constant declaration) is 
@@ -542,6 +553,7 @@ values the same rules as for runtime calculation apply. An expression
 like `MAX(INT32)+1` thus causes an overflow of the INT32 range. To avoid
 this either `LONG(MAX(INT32))+1` or `MAX(INT32)+1I8` has to be used.
 
+[[type-declarations]]
 === Type declarations
 
 A data type determines the set of values which
@@ -577,12 +589,13 @@ end
 Function = procedure(x: integer): integer
 ....
 
+[[basic-types]]
 ==== Basic types
 
 The basic types are denoted by predeclared
 identifiers. The associated operators are defined in 
 <<Operators>> and the predeclared function procedures in 
-<<Predeclared Procedure Reference>>. All basic types support alternative
+<<predeclared-procedure-reference>>. All basic types support alternative
 identifiers. Either all capital or all lower case identifiers are
 supported (only capital versions shown).
 
@@ -591,7 +604,7 @@ following:
 
 
 
-[width="100%",cols="34%,33%,33%",]
+[cols="1,1,2"]
 |===
 |BOOL, BOOLEAN |1 byte |the truth values true and false
 |CHAR |1 byte |the characters of the Latin-1 set (0x .. 0ffx)
@@ -611,11 +624,11 @@ following:
 
 INT64, INT32, INT16, INT8, are signed
 integer types, UIN64, UINT32, UINT16, and UINT8, are unsigned integer
-types, FLT32 and FLT64 are floating-point types (see <<Numeric types>>), and
+types, FLT32 and FLT64 are floating-point types (see <<numeric-types>>), and
 together they are called numeric types. The larger type includes (the
 values of) the smaller type according to the following relations:
 
-[#type-inclusion]
+[[type-inclusion]]
 ....
 INT64 >= INT32 >= INT16 >= INT8
 UINT64 >= UINT32 >= UINT16 >= UINT8
@@ -646,7 +659,7 @@ varlength  = expression
 
 Arrays declared without length are called
 _open arrays_. They are restricted to pointer base types (see
-<<Pointer types>>).
+<<pointer-types>>).
 
 NOTE: In contrast to Oberon and
 Oberon+, in Micron only the first dimension of a multi-dimensional array
@@ -676,6 +689,7 @@ applications where dynamic memory allocation is not feasible.
 Array lengths of at least MAX(UINT32) shall
 be accepted by a compiler, for fixed, dynamic and variable lengths.
 
+[[record-types]]
 ==== Record types
 
 A record type is a composite structure consisting of a fixed number of fields, 
@@ -689,9 +703,9 @@ A record type may include an optional variant part, introduced by the CASE keywo
 This allows variables of the same record type to contain different sets of fields depending on the active variant. 
 The variants are discriminated by a specific tag field. Because fields in different variants share the same memory storage, 
 the total size of the variant part is equal to the size of its largest case. No field within a variant part may be of an 
-object type (see <<Object types>>).
+object type (see <<object-types>>).
 
-The fields, variants and methods (see <<Type-bound procedures>>) of a record
+The fields, variants and methods (see <<type-bound-procedures>>) of a record
 are collectively called members.
 
 .Syntax:
@@ -760,7 +774,7 @@ TODO: record layout like C
 NOTE: Self-referential records or
 objects are not directly supported. The name of the record type
 declaration is not known at the time the record fields are declared. By
-the deferred pointer type resolution (see <<Declarations and scope rules>>), 
+the deferred pointer type resolution (see <<declarations-and-scope-rules>>), 
 a pointer field to the currently declared record is
 still legal. In case of a pointer-to-record declaration, the following
 approach can be used (use the extra ItemDesc declaration so the Item
@@ -768,6 +782,7 @@ type is already known when "next" is declared): +
 `Item = POINTER TO ItemDesc` +
 `ItemDesc = RECORD value: INTEGER; next: Item END`
 
+[[object-types]]
 ==== Object types
 
 An object type, similar to a record type, is
@@ -797,7 +812,7 @@ T1 = record (T0) y: real end
 ....
 
 T1 is a (direct) extension of T0 and T0 is
-the (direct) base type of T1 (see <<Definition of terms>>).
+the (direct) base type of T1 (see <<definition-of-terms>>).
 An extended type T1 consists of the fields of its base type and of the
 fields which are declared in T1. Fields declared in the extended object
 shadow equally named fields declared in a base type.
@@ -808,8 +823,9 @@ pointer is used as the base type of the declared object.
 
 NOTE: Object types and type-bound
 procedures are an extended feature of the language and not available in
-all language levels (see <<Language levels>>).
+all language levels (see <<language-levels>>).
 
+[[pointer-types]]
 ==== Pointer types
 
 A variable of a pointer type P assumes as
@@ -838,7 +854,7 @@ PointerType = ( POINTER TO | '^' ) type
 
 If p is a variable of type
 `P = POINTER TO T`, a call of the predeclared procedure `NEW(p)` (see
-<<Predeclared Procedure Reference>>) allocates a variable of
+<<predeclared-procedure-reference>>) allocates a variable of
 type T on heap storage. If T is a record, object, or an array type with
 fixed length, the allocation is done with `NEW(p)`; if T is an open
 array type, the allocation has to be done with `NEW(p, e)` where T is
@@ -848,15 +864,15 @@ The dereferenced variable `p^` is of type T. Any pointer variable may
 assume the value NIL, which points to no memory at all. If an allocated
 record, object or array is no longer used, it can be explicitly
 deallocated with `DISPOSE(p)`. A pointer variable can also be set using
-the address operator (see <<Address operator>>).
+the address operator (see <<address-operator>>).
 
 ==== Procedure types
 
 Variables of a procedure type T have a
 procedure (or NIL) as value. If a procedure P is assigned to a variable
 of type T, the formal parameter lists and result types (see
-<<Formal parameters>>) of P and T must _match_ (see
-<<Definition of terms>>). A procedure P assigned to a
+<<formal-parameters>>) of P and T must _match_ (see
+<<definition-of-terms>>). A procedure P assigned to a
 variable or a formal parameter must not be a predeclared, nor an inlined
 procedure.
 
@@ -874,7 +890,7 @@ restriction.
 
 Variables of a type-bound procedure type T
 have a type-bound procedure (see 
-<<Type-bound procedures>>) or NIL as value. To assign a type-bound procedure P to a
+<<type-bound-procedures>>) or NIL as value. To assign a type-bound procedure P to a
 variable of a type-bound procedure type T, the right side of the
 assignment must be a designator of the form `v^.P` or `v.P`, where `v`
 is a pointer to record or object, and `P` is a procedure bound to this
@@ -882,8 +898,8 @@ record or object. Note, that in case of procedures bound to an object
 type, the dynamic type of `v` determines which procedure is assigned;
 this may be a different procedure than the one bound to the static type
 of `v`. The formal parameter lists and result types (see
-<<Formal parameters>>) of P and T must _match_ (see
-<<Definition of terms>>). The same rules apply when passing a
+<<formal-parameters>>) of P and T must _match_ (see
+<<definition-of-terms>>). The same rules apply when passing a
 type-bound procedure to a formal argument of a type-bound procedure
 type.
 
@@ -896,12 +912,13 @@ ProcedureType = ( PROCEDURE | PROC ) '(' ( POINTER | '^' ) ')' [FormalParameters
 NOTE: Type-bound procedure types
 support both, procedures bound to records and to objects, but the latter
 are an extended feature of the language and not available in all
-language levels (see <<Language levels>>).
+language levels (see <<language-levels>>).
 
+[[interface-types]]
 ==== Interface types
 
-An interface type specifies a set of type-bound procedures (see <<Type-bound procedures>>)
-by their signatures (see <<Matching formal parameter lists>>). 
+An interface type specifies a set of type-bound procedures (see <<type-bound-procedures>>)
+by their signatures (see <<matching-formal-parameter-lists>>). 
 An interface type defines a contract without implementation.
 
 A variable of interface type may hold NIL
@@ -917,7 +934,7 @@ If an interface type is exported, all
 procedure identifiers of the interface are visible outside the declaring
 module. Satisfaction determination considers whether the procedures
 bound to the candidate record or object type are exported (see
-<<Declarations and scope rules>>).
+<<declarations-and-scope-rules>>).
 
 Assignment of a pointer value to an
 interface variable is valid if the pointed-to type satisfies the
@@ -1017,6 +1034,7 @@ function procedures. Expressions consist of operands and operators.
 Parentheses may be used to express specific associations of operators
 and operands.
 
+[[Operands]]
 ==== Operands
 
 With the exception of constructors and
@@ -1024,7 +1042,7 @@ literals (numbers, characters, or strings), operands
 are denoted by designators. A designator consists of an identifier
 referring to a constant, variable, or procedure. This identifier may
 possibly be qualified by a module identifier 
-<<Declarations and scope rules>> and <<Modules>>) and may be
+<<declarations-and-scope-rules>> and <<Modules>>) and may be
 followed by selectors if the designated object is an element of a
 structure.
 
@@ -1060,7 +1078,7 @@ The type guard asserts that the dynamic type of the object referenced by `v` is 
 
 If the assertion succeeds, the designator yields the value of `v` treated statically as type `T`. This allows access to the extended fields and type-bound procedures of `T`.
 
-NOTE: Type guards are strictly checked at run-time. For unchecked, static reinterpretation of memory addresses, such as casting pointers to records or basic types, use the `CAST` predeclared procedure instead (see <<Predeclared function procedures>>). 
+NOTE: Type guards are strictly checked at run-time. For unchecked, static reinterpretation of memory addresses, such as casting pointers to records or basic types, use the `CAST` predeclared procedure instead (see <<predeclared-function-procedures>>). 
 
 If the designated object is a constant or a
 variable, then the designator refers to its current value. If it is a
@@ -1068,7 +1086,7 @@ procedure, the designator refers to that procedure unless it is followed
 by a (possibly empty) parameter list in which case it implies an
 activation of that procedure and stands for the value resulting from its
 execution. The actual parameters must correspond to the formal
-parameters as in proper procedure calls (see <<Formal parameters>>).
+parameters as in proper procedure calls (see <<formal-parameters>>).
 
 .Examples:
 ....
@@ -1106,10 +1124,10 @@ set              = '{' [ element {[','] element} ] '}'
 element          = expression ['..' expression]
 ....
 
-====== Logical operators
+===== Logical operators
 
 
-[width="100%",cols="25%,25%,25%,25%",]
+
 |===
 |OR |logical disjunction |`p or q` |_if p then TRUE, else q_
 |&, AND |logical conjunction |`p & q` |_if p then q, else FALSE_
@@ -1127,11 +1145,9 @@ NOTE: In addition to & and ~,
 Micron supports the AND and NOT operators with the same meaning, for
 compatibility with Pascal and Modula-2.
 
+[[arithmetic-operators]]
 ===== Arithmetic operators
 
-
-
-[width="100%",cols="50%,50%",]
 |===
 |+ |sum
 |- |difference
@@ -1183,13 +1199,13 @@ x = (x DIV y) * y + (x MOD y)
 ....
 
 When used as unary operators, '-' denotes sign inversion and '\+' denotes the identity operation. 
-If the unary '-' or '\+' is applied to 
+If the unary '-' or '+' is applied to 
 
 - an _universal integer_ type, it is treated as the smallest signed integer type that can represent its value;
 - all other operands of unsigned integer type, the result is the next larger signed integer type, or an error if the operand is of type UIN64;
 - all other operands, the type of the result is the same as the type of the operand.
 
-NOTE: the '\+' and '-' unary operators can be used as a shortcut to convert an unsigned to a signed integer.
+NOTE: the '+' and '-' unary operators can be used as a shortcut to convert an unsigned to a signed integer.
 
 .Examples:
 ....
@@ -1206,7 +1222,6 @@ overflow, i.e. the result could be MIN(INT32) or anything else.
 
 ===== Set Operators
 
-[width="100%",cols="50%,50%",]
 |===
 |+ |union
 |- |difference (x - y = x * (-y))
@@ -1227,7 +1242,7 @@ in the interval [a, b].
 
 ===== Relations
 
-[width="100%",cols="50%,50%",]
+
 |===
 |= |equal
 |#, <> |unequal
@@ -1279,11 +1294,11 @@ applicable if
 - `v` is a pointer to object type (which can be NIL), and if
 
 - T is an object or pointer to object type which is an _extension_ of the static 
-  type of `v` (see <<Definition of terms>>).
+  type of `v` (see <<definition-of-terms>>).
 
 NOTE: The IS operator is an
 extended feature of the language and not available in all language
-levels (see <<Language levels>>).
+levels (see <<language-levels>>).
 
 .Examples:
 ....
@@ -1303,7 +1318,7 @@ t is CenterTree        // boolean
 
 ===== String operators
 
-[width="100%",cols="50%,50%",]
+
 |===
 |+ |concatenation
 |===
@@ -1313,6 +1328,7 @@ string and character literals. The resulting string consists of the
 characters of the first operand followed by the characters of the second
 operand.
 
+[[address-operator]]
 ===== Address operator
 
 The address operator `@` applies to a
@@ -1339,18 +1355,19 @@ Returning or escaping a pointer to a local variable results in Undefined Behavio
 ===== Function Call
 
 A function call is a factor in an
-expression. In contrast to <<Procedure calls>> in a
+expression. In contrast to <<procedure-calls>> in a
 function call the actual parameter list is mandatory. Each expression in
 the actual parameters list (if any) is used to initialize a
 corresponding formal parameter. The number of expressions in the actual
 parameter list must correspond the number of formal parameters. See also
-<<Formal parameters>>.
+<<formal-parameters>>.
 
 .Syntax:
 ....
 FunctionCall           = designator ActualParameters
 ....
 
+[[Constructors]]
 ==== Constructors
 
 Constructors can be used to initialize variables of
@@ -1424,7 +1441,7 @@ Any field/element not explicitly specified in a constructor assumes its DEFAULT 
 myVal := Rect{0,0,x1,y1}
 ....
 
-NOTE: A <<Hex string literal>> (or a constant of hex string literal type) is 
+NOTE: A <<hex-string-literals>> (or a constant of hex string literal type) is 
   treated the same way as an array of byte constructor when it is used
   (i.e. assigned, passed or returned).
 
@@ -1462,7 +1479,7 @@ StatementSequence = statement { [";"] statement}
 Assignments replace the current value of a
 variable by a new value specified by an expression. The expression must
 be _assignment compatible_ with the variable (see 
-<<Definition of terms>>). The assignment operator is written as `:=` and
+<<definition-of-terms>>). The assignment operator is written as `:=` and
 pronounced as _becomes_.
 
 .Syntax:
@@ -1500,19 +1517,20 @@ w[i+1].name := "John"
 t := c
 ....
 
+[[procedure-calls]]
 ==== Procedure calls
 
 A procedure call activates a procedure. It
 may contain a list of actual parameters which replace the corresponding
 formal parameter list defined in the procedure declaration (see
-<<Procedure declarations>>). The correspondence is
+<<procedure-declarations>>). The correspondence is
 established by the positions of the parameters in the actual and formal
 parameter lists.
 
 Each actual parameter must be an expression.
 This expression is evaluated before the procedure activation, and the
 resulting value is assigned to the formal parameter (see also
-<<Formal parameters>>). The order of evaluation of the
+<<formal-parameters>>). The order of evaluation of the
 actual parameter expressions is undefined.
 
 .Syntax:
@@ -1571,7 +1589,7 @@ selected, if there is one, otherwise the program is aborted.
 The type T of the case expression (case
 variable) may also be a pointer to object type. Then each case consists
 of exactly one case label which must be an _extension_ of T (see
-<<Definition of terms>>), and in the statements S~i~ labelled
+<<definition-of-terms>>), and in the statements S~i~ labelled
 by T~i~, the case variable is considered as of type T~i~. If the case
 variable is of POINTER type, then one case label can also be NIL. The
 evaluation order corresponds to the case label order; the first
@@ -1717,14 +1735,15 @@ Loop statements are useful to express
 repetitions with several exit points or cases where the exit condition
 is in the middle of the repeated statement sequence.
 
+[[Return]]
 ==== Return, exit and goto statements
 
 A return statement indicates the
 termination of a procedure. It is denoted by RETURN, followed by an
 expression if the procedure is a function procedure. The type of the
 expression must be assignment compatible (see 
-<<Definition of terms>>) with the result type specified in the procedure heading (see
-<<Procedure declarations>>).
+<<definition-of-terms>>) with the result type specified in the procedure heading (see
+<<procedure-declarations>>).
 
 Return statements are illegal in module
 bodies and FINALLY sections.
@@ -1785,7 +1804,7 @@ implementation that doesn’t need a goto.
 
 Exception handling in Micron is implemented
 using the predeclared procedures PCALL and RAISE (see 
-<<Predeclared Procedure Reference>>), without any special syntax. There are
+<<predeclared-procedure-reference>>), without any special syntax. There are
 no predefined exceptions.
 
 An exception is just a value of type
@@ -1803,7 +1822,7 @@ PCALL. P cannot have a return type. P can be a nested procedure. If P
 has formal parameters the corresponding actual parameters are passed to
 PCALL immediately after P. The actual parameters must be _parameter
 compatible_ with the formal parameters of P (see 
-<<Definition of terms>>). The first parameter R of PCALL is a variable of
+<<definition-of-terms>>). The first parameter R of PCALL is a variable of
 type POINTER TO ANY; if RAISE(E) is called in the course of P, then R is
 set to E; otherwise R is set to NIL. The state of VAR parameters of P or
 local variables or parameters of an outer procedure accessed by P is
@@ -1832,12 +1851,13 @@ begin
 end ExceptionExample
 ....
 
+[[procedure-declarations]]
 === Procedure declarations
 
 A procedure declaration consists of a
 procedure heading and a procedure body. The heading specifies the
 procedure identifier and the formal parameters (see 
-<<Formal parameters>>). The body contains declarations and statements. The
+<<formal-parameters>>). The body contains declarations and statements. The
 procedure identifier must be repeated at the end of the procedure
 declaration.
 
@@ -1914,6 +1934,7 @@ DeclarationSequence  = { CONST { ConstDeclaration [';'] }
             | ProcedureDeclaration [';'] }
 ....
 
+[[formal-parameters]]
 ==== Formal parameters
 
 Formal parameters are identifiers declared
@@ -1944,7 +1965,7 @@ FormalType       = type
 
 Let T~f~ be the type of a formal parameter
 `f` and T~a~ the type of the corresponding actual parameter `a`. T~a~
-must be _parameter compatible_ to `f` (see <<Definition of terms>>).
+must be _parameter compatible_ to `f` (see <<definition-of-terms>>).
 
 CONST parameters are read-only in the
 procedure body. The read-only feature is transitive, i.e. also the
@@ -1966,7 +1987,7 @@ create the array on the fly.
 
 The return type is optional. The named
 return type can reference all types defined in 
-<<Type declarations>> besides open array types.
+<<type-declarations>> besides open array types.
 
 NOTE: In contrast to Oberon and
 Oberon-2, Micron allows array and record return types.
@@ -2001,7 +2022,7 @@ cannot be modified in the FINALLY section.
 
 The statements in the FINALLY section are
 also executed if a nested BEGIN section is terminated with RAISE (see
-<<Predeclared proper procedures>>). If a nested
+<<predeclared-proper-procedures>>). If a nested
 BEGIN section is terminated with RAISE, all FINALLY sections on the call
 chain up to (but not including) PCALL are executed in the reverse order
 of the call chain.
@@ -2009,8 +2030,9 @@ of the call chain.
 NOTE: Note that both, FINALLY
 sections and also exceptions are an extended feature of the language and
 not available in all language levels (see 
-<<Language levels>>) and compiler configurations.
+<<language-levels>>) and compiler configurations.
 
+[[type-bound-procedures]]
 ==== Type-bound procedures
 
 Procedures may be associated with a record
@@ -2047,8 +2069,8 @@ type T0, it is implicitly also bound to any object type T1 which is an
 extension of T0. However, a procedure P' (with the same name as P) may
 be explicitly bound to T1 in which case it overrides the binding of P.
 P' is considered a redefinition of P for T1. The formal parameters of P
-and P' must _match_ (see <<Definition of terms>>). If P and
-T1 are exported (see <<Declarations and scope rules>>), P'
+and P' must _match_ (see <<definition-of-terms>>). If P and
+T1 are exported (see <<declarations-and-scope-rules>>), P'
 must be exported too.
 
 NOTE: The name of a type-bound
@@ -2101,7 +2123,7 @@ end Insert
 
 NOTE: Object types and type-bound
 procedures are an extended feature of the language and not available in
-all language levels (see <<Language levels>>). Record types
+all language levels (see <<language-levels>>). Record types
 also support type-bound procedures, but in contrast to object types,
 these procedures are not virtual (since records don't support
 inheritance).
@@ -2112,9 +2134,10 @@ Predeclared procedures are provided by the
 compiler and accessible without extra imports. Some are generic
 procedures, i.e. they apply to several types of operands.
 
-See <<Predeclared Procedure Reference>> for the list of predeclared procedures each Micron compiler
+See <<predeclared-procedure-reference>> for the list of predeclared procedures each Micron compiler
 has to provide.
 
+[[Modules]]
 === Modules
 
 A module is a collection of declarations of
@@ -2158,13 +2181,14 @@ directly nor indirectly).
 
 Identifiers that are to be exported (i.e.
 that are to be visible in client modules) must be marked by an export
-mark in their declaration (see Chapter <<Declarations and scope rules>>).
+mark in their declaration (see Chapter <<declarations-and-scope-rules>>).
 
 The statement sequence following the symbol
 BEGIN is executed when the module is loaded, which is done after the
 imported modules have been loaded. It follows that cyclic import of
 modules is illegal.
 
+[[module-attributes]]
 ==== Module Attributes
 
 Optional attributes can be set for a
@@ -2178,7 +2202,7 @@ The following attributes are defines so far:
 ===== Standard or Level
 
 This attribute is used to set the
-language level (see <<Language levels>>). The expression must
+language level (see <<language-levels>>). The expression must
 be an integer literal between 0 and 5. Both names - Standard and Level -
 are equivalent.
 
@@ -2187,7 +2211,7 @@ are equivalent.
 This attribute is used to set the default visibility for declarations on module level.
 By default, declarations without an explicit export mark are considered _private_. The 
 expression can be "*" for _public_, "-" for _readonly_ or "~" for _private_; the corresponding identifiers
-are not case sensitive. See also <<Declarations and scope rules>>.
+are not case sensitive. See also <<declarations-and-scope-rules>>.
 
 === Generics
 
@@ -2204,7 +2228,7 @@ must correspond to this type. The correspondence between a WHERE
 declaration and a meta parameter is established by name equivalence;
 there can only be one WHERE declaration per meta parameter. The type of
 the actual meta parameter must be assignment compatible with the
-constraint type (see <<Definition of terms>>), which is
+constraint type (see <<definition-of-terms>>), which is
 checked when the generic module is instantiated. The special form of the
 ConstDeclaration may only be used for a CONST meta parameter with the
 same ident.
@@ -2242,7 +2266,7 @@ an interface type is used as a type constraint, then the type checker
 has information about what methods the generic type parameter supports
 which can be assured at compile time; there is no need that the actual
 type parameter is indeed an interface type, just that the type satisfies
-(see <<Interface types>>) the interface.
+(see <<interface-types>> the interface.
 
 === Source code directives
 
@@ -2319,8 +2343,10 @@ directives.
 <* end *>
 ....
 
+[[definition-of-terms]]
 == Definition of terms
 
+[[numeric-types]]
 === Numeric types
 
 Integer types::
@@ -2332,6 +2358,7 @@ Signed integer types::
 Unsigned integer types::
 	BYTE, UINT8, UINT16, UINT32, UINT64, U1, U2, U4, U8
 
+[[floating-point-types]]
 Floating-point types::
 	REAL, LONGREAL, FLT32, FLT64, R4, R8
 
@@ -2374,7 +2401,7 @@ Two types T~a~ and T~b~ are equal if
 Numeric types include (the values of) smaller
 numeric types. There is a separate type inclusion hierarchy for signed
 integeres, unsigned integers and floating point types. See
-<<Basic types>> for more information.
+<<basic-types>> for more information.
 
 === Type extension (object)
 
@@ -2455,9 +2482,9 @@ conditions hold:
 
 - T~v~ is an interface type and T~e~ is a
   pointer to a record or object type, and their bound procedures _satisfy_
-  (see <<Interface types>>) the interface type.
+  (see <<interface-types>> the interface type.
 
-NOTE: Also remember <<String literals>>.
+NOTE: Also remember <<string-literals>>.
 
 === Parameter compatible
 
@@ -2479,7 +2506,7 @@ table (which shows also the result type of the expression). CHAR arrays
 that are to be compared must contain 0X as a terminator.
 
 
-[width="100%",cols="25%,25%,25%,25%",options="header",]
+[cols="1,1,1,1",options="header"]
 |===
 |*operator* |*first operand* |*second operand* |*result type*
 |`+` `-` `*` |signed integer |signed integer |smallest signed integer type including both operands
@@ -2502,6 +2529,7 @@ that are to be compared must contain 0X as a terminator.
 |IN |integer |SET |BOOLEAN
 |===
 
+[[matching-formal-parameter-lists]]
 === Matching formal parameter lists
 
 Two formal parameter lists match if
@@ -2663,33 +2691,33 @@ ANY::
   which is assignment compatible with all pointer types, like void* in C.
 
 BOOLEAN::
-	see <<Basic types>>.
+	see <<basic-types>>.
 
 BYTE, UINT8, UINT16, UINT32, UINT64, U1, U2, U4, U8::
-	Unsigned integer types, see <<Basic types>>.
+	Unsigned integer types, see <<basic-types>>.
 
 CHAR::
-	see <<Basic types>>.
+	see <<basic-types>>.
 
 INT8, INT16, INT32, INT64, SHORTINT, INTEGER,LONGINT, I1, I2, I4, I8::
-	Signed integer types, see <<Basic types>>.
+	Signed integer types, see <<basic-types>>.
 
 REAL, LONGREAL, FLT32, FLT64, R4, R8::
-	Floating-point types, see <<Basic types>>.
+	Floating-point types, see <<basic-types>>.
 
 SET::
-	see <<Basic types>>.
+	see <<basic-types>>.
 
+[[predeclared-procedure-reference]]
 == Predeclared Procedure Reference
 
 TODO: add a language level column to assert
 which predeclareds are available in which level.
 
+[[predeclared-function-procedures]]
 === Predeclared function procedures
 
-
-
-[width="100%",cols="1,1,1,2",options="header",]
+[cols="1,1,1,2",options="header"]
 |===
 |Name |Argument type |Result type |Function
 
@@ -2706,7 +2734,7 @@ which predeclareds are available in which level.
 |BAND(x,y) 
 |x, y: integer 
 |integer 
-|bitwise AND; operand types and result type follow standard integer binary operator rules (see <<Arithmetic operators>>)
+|bitwise AND; operand types and result type follow standard integer binary operator rules (see <<arithmetic-operators>>)
 
 |BNOT(x) 
 |x: integer 
@@ -2716,7 +2744,7 @@ which predeclareds are available in which level.
 |BOR(x,y) 
 |x, y: integer 
 |integer 
-|bitwise OR; operand types and result type follow standard integer binary operator rules (see <<Arithmetic operators>>)
+|bitwise OR; operand types and result type follow standard integer binary operator rules (see <<arithmetic-operators>>)
 
 |BSET(x) 
 |x: unsigned integer 
@@ -2726,7 +2754,7 @@ which predeclareds are available in which level.
 |BXOR(x,y) 
 |x, y: integer 
 |integer
-|bitwise XOR; operand types and result type follow standard integer binary operator rules (see <<Arithmetic operators>>)
+|bitwise XOR; operand types and result type follow standard integer binary operator rules (see <<arithmetic-operators>>)
 
 |CAP(x) 
 |x: CHAR 
@@ -2920,9 +2948,10 @@ which predeclareds are available in which level.
 
 |===
 
+[[predeclared-proper-procedures]]
 === Predeclared proper procedures
 
-[width="100%",cols="1,1,2",options="header",]
+[cols="1,1,2",options="header"]
 |===
 |Name |Argument types |Function
 
@@ -2980,7 +3009,7 @@ which predeclareds are available in which level.
 
 |INC(v) 
 |integer type 
-|v := v \+ 1; no overflow check (may halt program)
+|v := v + 1; no overflow check (may halt program)
 
 | 
 |const enumeration type 
@@ -2992,7 +3021,7 @@ which predeclareds are available in which level.
 
 |INC(v, n) 
 |v, n: integer type 
-|v := v \+ n; no overflow check (may halt program)
+|v := v + n; no overflow check (may halt program)
 
 | 
 |v: pointer to T; n: integer type
@@ -3060,6 +3089,7 @@ which predeclareds are available in which level.
 
 |===
 
+[[language-levels]]
 == Language levels
 
 The Micron language explicitly defines different
@@ -3068,7 +3098,7 @@ more features with each level.
 
 
 
-[width="100%",cols="1,2,2,3",options="header",]
+[cols="1,2,2,3",options="header"]
 |===
 |Level |Name |Focus |Key Features
 
@@ -3104,7 +3134,7 @@ more features with each level.
 |===
 
 The language level a given module adheres to can
-be set via a module attribute (see <<Module Attributes>>) 
+be set via a module attribute (see <<module-attributes>>) 
 per module. A *default language level 3* is assumed if no
 explicit level is set.
 
