@@ -101,7 +101,7 @@ DeclarationSequence*  ::= {
 	           | 'VAR' { VariableDeclaration [';'] }
 	           | ProcedureDeclaration [';'] }
 	
-Expression ::= { ExpInstr|Line }
+Expression ::= ( ExpInstr|Line ) { ExpInstr|Line }
 
 ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI') qualident | 'CALLMI' qortrident
                       | ('CALLINST'|'CALLVIRT') trident | 'CASTPTR' qualident
@@ -151,8 +151,7 @@ Statement* ::= 'FREE' | RepeatUntil
 IfThenElse ::= 'IF' Expression 'THEN' StatementSequence [ 'ELSE' StatementSequence ] 'END'
 Loop ::= 'LOOP' StatementSequence 'END'
 Switch ::= 'SWITCH' Expression 
-                 { 'CASE' integer { [','] integer }
-                    'THEN' StatementSequence } 
+                 { 'CASE' integer { [','] integer } 'THEN' StatementSequence } 
                   [ 'ELSE' StatementSequence ] 'END'
 RepeatUntil ::= 'REPEAT' StatementSequence 'UNTIL' Expression 'END'
 WhileDo ::= 'WHILE' Expression 'DO' StatementSequence 'END'
@@ -172,6 +171,6 @@ component ::= [\LL:2\ (ident|unsigned) '='] ( ConstExpression | component_list )
 %module ::= 'Micron'
 %namespace ::= 'Mil'
 %suppress ::= ';' ',' '.' ':'
-//%no_syntree ::= 'true'
+%no_syntree ::= 'true'
 //%parentptr ::= 'true'
 %pseudo_keywords ::= 'true' 

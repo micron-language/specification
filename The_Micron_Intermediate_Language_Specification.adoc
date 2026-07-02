@@ -16,7 +16,7 @@ The Micron Intermediate Language Specification
 
 === Version
 
-2026-06-09, work in progress
+2026-07-02, work in progress
 
 === Author
 
@@ -534,7 +534,7 @@ only requires that values be one of:
 
 .Syntax of textual representation:
 ....
-Expression = { ExpInstr | Line }
+Expression = ( ExpInstr | Line ) { ExpInstr | Line }
 ExpInstr = 'add' | 'and' | ('call' | 'calli') qualident | 'callmi' qortrident
     | ('callinst' | 'callvirt') trident | 'castptr' qualident
     | 'ceq' | 'cgt' | 'cgt_un' | 'clt' | 'clt_un' 
@@ -3496,7 +3496,7 @@ IdentList = [Line] identdef { [','] [Line] identdef }
 PointerType = ( POINTER TO | '^' ) NamedType
 ProcedureType = (PROCEDURE|PROC) [FormalParameters]
 MethodType = (PROCEDURE|PROC)^ [FormalParameters]
-Expression = { ExpInstr | Line }
+Expression = ( ExpInstr | Line ) { ExpInstr | Line }
 ExpInstr = 'add' | 'and' | ('call' | 'calli') qualident | 'callmi' qortrident
 	| ('callinst' | 'callvirt') trident | 'castptr' qualident
 	| 'ceq' | 'cgt' | 'cgt_un' | 'clt' | 'clt_un' 
