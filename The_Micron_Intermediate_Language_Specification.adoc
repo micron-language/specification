@@ -16,7 +16,7 @@ The Micron Intermediate Language Specification
 
 === Version
 
-2026-07-02, work in progress
+2026-07-03, work in progress
 
 === Author
 
@@ -534,7 +534,7 @@ only requires that values be one of:
 
 .Syntax of textual representation:
 ....
-Expression = ( ExpInstr | Line ) { ExpInstr | Line }
+Expression = [Line] ExpInstr { ExpInstr | Line }
 ExpInstr = 'add' | 'and' | ('call' | 'calli') qualident | 'callmi' qortrident
     | ('callinst' | 'callvirt') trident | 'castptr' qualident
     | 'ceq' | 'cgt' | 'cgt_un' | 'clt' | 'clt_un' 
@@ -655,7 +655,7 @@ corresponding result data types are encapsulated as follows:
 .Unary operator input and output types
 [#unops]
 |===
-|*Operand Type* |int32  |int64 |x |F
+|*Operand Type* |int32  |int64 |intptr |F
 |*Result Type*  |int32  |int64 |x |F
 |===
 
@@ -866,7 +866,7 @@ the the value on top of the stack and the type specified in the opcode
 must have the same byte width.
 
 
-=== *castptr – cast a pointer to a type*
+=== *castptr – cast to a pointer type*
 
 
 [cols="1,1,3"]
@@ -877,18 +877,34 @@ must have the same byte width.
 
 |74 <__T__> 
 |castptr _type_ 
-|Cast pointer _ptr_ to _type_
+|Cast value to pointer to _type_
 |===
 
-`…, ptr -> …, ptr2`
+`…, value -> …, ptr`
 
 The castptr instruction reinterprets the
-pointer to type1 on the stack as a pointer to type2.
+value on the stack as a pointer to _type_.
+The _type_ references the base type of the pointer.
 
-If _ptr_ is null, castptr succeeds and
+The acceptable value types and their corresponding 
+result data types are encapsulated as follows:
+
+.castptr supported input and output types
+[#castptr]
+|===
+|*Input Type* |int32  |int64 |intptr |F
+|*Result Type*  |intptr |intptr|intptr |x
+|===
+
+If _value_ is 0 or null, castptr succeeds and
 returns null.
 
-// TODO: forbid cast of struct to object and vice versa?
+On a 64 bit architecture, an int32 value is zero extended to 64 bits.
+On a 32 bit architecture, an int64 value is truncated to 32 bits.
+
+// TODO: originally castptr only supported pointer to pointer casts; I had to 
+// add integer to pointer casts because of the C frontend; maybe I should add
+// and option to the validator whether it accepts integers or not?
 
 === *ceq – compare equal*
 
@@ -3496,7 +3512,7 @@ IdentList = [Line] identdef { [','] [Line] identdef }
 PointerType = ( POINTER TO | '^' ) NamedType
 ProcedureType = (PROCEDURE|PROC) [FormalParameters]
 MethodType = (PROCEDURE|PROC)^ [FormalParameters]
-Expression = ( ExpInstr | Line ) { ExpInstr | Line }
+Expression = [Line] ExpInstr { ExpInstr | Line }
 ExpInstr = 'add' | 'and' | ('call' | 'calli') qualident | 'callmi' qortrident
 	| ('callinst' | 'callvirt') trident | 'castptr' qualident
 	| 'ceq' | 'cgt' | 'cgt_un' | 'clt' | 'clt_un' 

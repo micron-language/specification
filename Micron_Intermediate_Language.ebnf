@@ -101,7 +101,7 @@ DeclarationSequence*  ::= {
 	           | 'VAR' { VariableDeclaration [';'] }
 	           | ProcedureDeclaration [';'] }
 	
-Expression ::= ( ExpInstr|Line ) { ExpInstr|Line }
+Expression ::= [Line] ExpInstr { ExpInstr|Line }
 
 ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI') qualident | 'CALLMI' qortrident
                       | ('CALLINST'|'CALLVIRT') trident | 'CASTPTR' qualident
