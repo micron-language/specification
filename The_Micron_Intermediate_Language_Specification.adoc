@@ -16,7 +16,7 @@ The Micron Intermediate Language Specification
 
 === Version
 
-2026-07-03, work in progress
+2026-07-09, work in progress
 
 === Author
 
@@ -126,7 +126,7 @@ integer or real constants.
 If the literal is specified with the
 suffix 'H', the representation is hexadecimal, if it is specified with
 suffix 'O', the representation is ocal, or if it is specified with
-suffic 'B', the representation is binary, otherwise the representation
+suffic 'Z', the representation is binary, otherwise the representation
 is decimal.
 
 A real number always contains a decimal
@@ -137,7 +137,7 @@ power of_.
 .Syntax:
 ....
 integer = ['+' | '-'] unsigned
-unsigned  = digit {digit} ['O'|'B'] | digit {hexDigit} 'H'
+unsigned  = digit {digit} ['O'|'Z'] | digit {hexDigit} 'H'
 float    = digit {digit} '.' {digit} [Exponent]
 number = ['+' | '-'] (float | unsigned)
 Exponent = 'E' ['+' | '-'] digit {digit}
@@ -148,20 +148,6 @@ digit    = '0' ... '9'
 Even though only the upper-case version is
 shown here, also the lower-case versions of the suffices and scale
 factor letters are supported.
-
-==== Characters
-
-Character constants are denoted by the
-ordinal number of the character in hexadecimal notation followed by the
-letter `X` (or `x`).
-
-.Syntax:
-....
-character = digit {hexDigit} ('X' | 'x')
-....
-
-A character is encoded as a 8-bit code
-value using the ISO/IEC 8859-1 Latin-1 encoding scheme.
 
 ==== Strings
 
@@ -2585,10 +2571,15 @@ implies recursive activation.
 A procedure can be declared EXTERN or FOREIGN
 to indicate that it is implemented elsewhere. An EXTERN procedure has
 the same calling convention as a normal procedure and is assumed to have
-been compiled earier by the same compiler. A FOREIGN procedure has C
-calling convention. FOREIGN can be followed by an explicit name of the
-procedure implementation, otherwise the (implementation dependent)
-naming scheme of the backend is assumed.
+been compiled earier by the same compiler. 
+A FOREIGN procedure uses the C calling convention.
+FOREIGN may be followed by an explicit name or address of the procedure implementation.
+If neither is given, the backend’s implementation-defined naming scheme is used.
+The name shall be specified either as a string literal or as a qualident denoting a constant 
+declaration whose value is a string literal. The characters of the string literal, excluding the 
+quotation marks, shall form a valid external name accepted by the target toolchain.
+The address shall be specified either as an unsigned integer literal or as a qualident denoting a 
+constant declaration whose value is an unsigned integer literal.
 
 A procedure declared INLINE is expanded by the
 backend at the call site. A procedure declared INVAR doesn't depend on
@@ -2623,7 +2614,7 @@ INVAR, nor INIT.
 ProcedureDeclaration = ProcedureHeading 
                          (['INLINE'|'INVAR'|'INIT'|'ENTRY'] [';'] ProcedureBody 
                           | [';'] EXTERN
-                          | [';'] FOREIGN [string]
+                          | [';'] FOREIGN [string|unsigned|qualident]
                           | [';'] FORWARD ) 
 
 ProcedureHeading     = (PROCEDURE | PROC) [Line]
@@ -3487,13 +3478,12 @@ ident  = ( letter | '_' ) { letter | digit | '_' | '$' }
 letter = 'A' ... 'Z' | 'a' ... 'z'
 digit  = '0' ... '9'
 integer = ['+' | '-'] unsigned
-unsigned  = (digit {digit} ['O'|'B' | digit {hexDigit} 'H')
+unsigned  = (digit {digit} ['O'|'Z' | digit {hexDigit} 'H')
 float    = digit {digit} '.' {digit} [Exponent]
 number = ['+' | '-'] (float | unsigned)
 Exponent = 'E' ['+' | '-'] digit {digit}
 hexDigit = digit | 'A' ... 'F'
 digit    = '0' ... '9'
-character = digit {hexDigit} ('X' | 'x')
 string = ''' {character} ''' | '"' {character} '"'
 hexstring = '#' {hexDigit} '#'
 qualident = [ident '!'] ident
@@ -3552,7 +3542,7 @@ VariableDeclaration = IdentList ':' NamedType
 ProcedureDeclaration = ProcedureHeading 
                          (['INLINE'|'INVAR'|'INIT'|'ENTRY'] [';'] ProcedureBody 
                           | [';'] EXTERN
-                          | [';'] FOREIGN [string]
+                          | [';'] FOREIGN [string|unsigned|qualident]
                           | [';'] FORWARD ) 
 ProcedureHeading     = (PROCEDURE | PROC) [Line]
                        [Binding]

@@ -13,9 +13,9 @@
 Mil ::= { module }
 
 
-ident ::= // ( letter | '_'  ) {letter | digit | '_' | '$'}
+ident ::= // (letter | '_') {letter | digit | '_' | '$'}
 
-unsigned ::= // digit {digit} | digit {hexDigit} 'H'
+unsigned ::= // digit {digit} ['O'|'Z'] | digit {hexDigit} 'H'
 
 integer ::= ['+'|'-'] unsigned
 
@@ -39,7 +39,8 @@ regwidth ::= unsigned // least significant 16 bits: hardware register number; up
 
 Line ::=  'LINE' unsigned
 
-ConstDeclaration ::= [Line] ident ('=' ConstExpression2 | ':' qualident)
+ConstDeclaration ::= [Line] ident ('=' ConstExpression2 // this is the normal constant declaration
+                                    | ':' qualident )   // this is the meta constant parameter declaration
 
 TypeDeclaration ::= [Line] identdef ['=' type]
 type            ::= ArrayType | StructUnionType | ObjectType | PointerType | ProcedureType | NamedType | InterfaceType
@@ -70,7 +71,7 @@ ProcedureDeclaration ::= ( 'PROCEDURE' | 'PROC' )  [Line] (
                            [ FormalParameters ] (
                                ['INLINE'|'INVAR'|'INIT'|'ENTRY'] [ ';' ] ProcedureBody  
                                | \LA: 1:('EXTERN'|'FOREIGN') | (1:';'&2:('EXTERN'|'FOREIGN'))\ [ ';' ] 
-                                   ('EXTERN'|'FOREIGN' [string])   // \LL:2\ produces nonsense!
+                                   ('EXTERN'|'FOREIGN' [string|unsigned|qualident]) // qualident points to a const declaration of string|unsigned
                                | \LA: 1:'FORWARD' | (1:';'&2:'FORWARD')\ [ ';' ] 'FORWARD' 
                             ) 
                         )
