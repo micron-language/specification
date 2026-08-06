@@ -16,7 +16,7 @@ The Micron Intermediate Language Specification
 
 === Version
 
-2026-07-09, work in progress
+2026-08-06, work in progress
 
 === Author
 
@@ -829,19 +829,19 @@ _method_.
 
 |TODO 
 |cast_i4 
-|Bitwise reinterpretation of float32 _value_, pushing int32 on stack.
+|Bitwise reinterpretation of _value_ on stack as int32.
 
 |TODO 
 |cast_i8 
-|Bitwise reinterpretation of float64 _value_, pushing int64 on stack.
+|Bitwise reinterpretation of _value_  on stack as int64.
 
 |TODO 
 |cast_r4 
-|Bitwise reinterpretation of int32 or uint32 _value_, pushing float32 on stack.
+|Bitwise reinterpretation of _value_, on stack as float32.
 
 |TODO 
 |cast_r8 
-|Bitwise reinterpretation of int64 or uint64 _value_, pushing float64 on stack.
+|Bitwise reinterpretation of _value_,  on stack as float64.
 
 |===
 
@@ -1132,14 +1132,14 @@ corresponding result data type is encapsulated as follows:
 
 .Conversion operands compatibility
 |===
-|*Convert-To* |*Input* |        |         | 
-|             |*int32* |*int64* |*intptr* |*F* 
-|*int8, uint8, int16, uint16* |Truncate^1^ |Truncate^1^ |Truncate^1^ |Truncate to zero^2^ 
-|*int32, uint32* |Nop |Truncate^1^ |Truncate^1^ |Truncate to zero^2^
-|*int64*  |Sign extend |Nop |Sign extend |Truncate to zero^2^
-|*uint64* |Zero extend |Nop |Zero extend |Truncate to zero^2^ 
-|*intptr* |Nop |Nop |Nop |Nop 
-|*All Float Types* |To Float |To Float |To Float |Change precision^3^ 
+|                             |*Input*    |           |           | 
+|*Convert-To*                 |*int32*    |*int64*    |*intptr*   |*F* 
+|*int8, uint8, int16, uint16* |Truncate^1^|Truncate^1^|Nop        |Truncate to zero^2^ 
+|*int32, uint32*              |Nop        |Truncate^1^|Nop        |Truncate to zero^2^
+|*int64*                      |Sign extend|Nop        |Nop        |Truncate to zero^2^
+|*uint64*                     |Zero extend|Nop        |Zero extend|Truncate to zero^2^ 
+|*intptr*                     |Nop        |Nop        |Nop        |Nop 
+|*All Float Types*            |To Float   |To Float   |To Float   |Change precision^3^ 
 |===
 
 1) “Truncate” means that the number is

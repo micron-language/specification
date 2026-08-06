@@ -16,7 +16,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-06-09, work in progress
+2026-08-06, work in progress
 
 === Author
 
@@ -780,7 +780,12 @@ still legal. In case of a pointer-to-record declaration, the following
 approach can be used (use the extra ItemDesc declaration so the Item
 type is already known when "next" is declared): +
 `Item = POINTER TO ItemDesc` +
-`ItemDesc = RECORD value: INTEGER; next: Item END`
+`ItemDesc = RECORD value: INTEGER; next: Item END` +
+In the case of a pointer to a self-referential array declaration, the following 
+approach can be used (use the extra ItemDesc2Array declaration so the 
+pointer has not to be resolved within the ItemDesc2 declaration): +
+`ItemDesc2 = RECORD value: INTEGER; children: POINTER TO ItemDesc2Array END` +
+`ItemDesc2Array = ARRAY OF ItemDesc2`
 
 [[object-types]]
 ==== Object types
@@ -1048,7 +1053,7 @@ structure.
 
 .Syntax:
 ....
-designator = qualident {selector}
+designator = (qualident|constructor) {selector}
 selector   = '.' ident | '[' expression ']' | '^' | '(' qualident ')'
 ExpList    = expression {[','] expression}
 ....
@@ -1118,7 +1123,7 @@ literal          = number | string | hexstring | hexchar
                    | NIL | TRUE | FALSE | set
 factor           = literal | designator [ActualParameters]
 		        | '(' expression ')' | ('~'|NOT) factor
-		        | '@' designator | constructor
+		        | '@' designator
 ActualParameters = '(' [ ExpList ] ')'
 set              = '{' [ element {[','] element} ] '}'
 element          = expression ['..' expression]
@@ -1376,7 +1381,7 @@ anonymous variable of the constructed type.
 
 .Syntax:
 ....
-constructor = ['@'][NamedType] '{' [ component {[','] component} ] '}'
+constructor = [NamedType] '{' [ component {[','] component} ] '}'
 component = ident ':' expression
  | '[' ConstExpression ']' ':' expression
  | expression ['..' expression]
@@ -1387,8 +1392,8 @@ NamedType and a list of either named, indexed or anonymous components.
 Named, Indexed and anonymous components can be mixed in the list.
 
 When the type of a constructor can be
-inferred (e.g. by the left side of an assignment), the NamedType prefix
-can be left out.
+inferred (e.g. by the left side of an assignment or formal parameter),
+the NamedType prefix can be left out.
 
 A constructor is a literal and thus can
 appear in a constant expression, if all expressions appearing in its
@@ -1428,7 +1433,8 @@ is an open byte array.
 
 If NamedType is a pointer or procedure type, then there
 is exactly one anonymous component which is an unsigned integer
-constant representing the address.
+constant representing the address. Such a constructor can also
+be used in a designator instead of the qualident.
 
 For each field or element which is of
 record, object, array, pointer or procedure type, an embedded constructor is
@@ -2589,7 +2595,7 @@ InterfaceProc = [PROCEDURE | PROC] identdef [FormalParameters] [';']
 enumeration ::= '(' constEnum ')' 
 constEnum ::= ident [ '=' ConstExpression ] { [','] ident } 
 VariableDeclaration = IdentList ':' type
-designator = qualident {selector}
+designator = (qualident|constructor) {selector}
 selector   = '.' ident | '[' expression ']' | '^' | '(' qualident ')'
 ExpList    = expression {[','] expression}
 expression       = SimpleExpression [ relation SimpleExpression ]
@@ -2602,12 +2608,12 @@ literal          = number | string | hexstring | hexchar
                    | NIL | TRUE | FALSE | set
 factor           = literal | designator [ActualParameters]
 		         | '(' expression ')' | ('~'|NOT) factor
-		         | '@' designator | constructor
+		         | '@' designator
 ActualParameters = '(' [ ExpList ] ')'
 set              = '{' [ element {[','] element} ] '}'
 element          = expression ['..' expression]
 FunctionCall           = designator ActualParameters
-constructor = ['@'][NamedType] '{' [ component {[','] component} ] '}'
+constructor = [NamedType] '{' [ component {[','] component} ] '}'
 component = ident ':' expression
 				| '[' ConstExpression ']' ':' expression
 				| expression ['..' expression]
@@ -2906,6 +2912,11 @@ which predeclareds are available in which level.
 |unsigned integer 
 |a numeric representation of the pointer, the exact type of it being target dependent
 
+|PTROFF(p, n) 
+|p: pointer to T; n: integer type
+|pointer to T
+|returns an address corresponding to p plus n times size of T, where T is not ANY
+
 |SIG(x) 
 |x: unsigned integer
 |signed integer 
@@ -2981,7 +2992,7 @@ which predeclareds are available in which level.
 
 | 
 |pointer to T 
-|decrement address by size of T
+|decrement address by size of T, where T is not ANY
 
 |DEC(v, n) 
 |v, n: integer type 
@@ -2989,7 +3000,7 @@ which predeclareds are available in which level.
 
 | 
 |v: pointer to T; n: integer type
-|decrement address by n times size of T
+|decrement address by n times size of T, where T is not ANY
 
 |DISPOSE(p) 
 |p: pointer 
@@ -3017,7 +3028,7 @@ which predeclareds are available in which level.
 
 | 
 |pointer to T 
-|increment address by size of T
+|increment address by size of T, where T is not ANY
 
 |INC(v, n) 
 |v, n: integer type 
@@ -3025,7 +3036,7 @@ which predeclareds are available in which level.
 
 | 
 |v: pointer to T; n: integer type
-|increment address by n times size of T
+|increment address by n times size of T, where T is not ANY
 
 |INCL(v, x) 
 |v: SET; x: integer type 

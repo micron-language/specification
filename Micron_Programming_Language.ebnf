@@ -89,7 +89,7 @@ WhereDeclaration ::= ident ':' type // used to constrain meta params
 
 VariableDeclaration ::= IdentList ':' type
 
-designator ::= qualident {selector}
+designator ::= qualident [constructor] {selector}
 
 selector ::= '.' ident | '[' expression ']' | '^' | '(' [ ExpList ] ')' 
 
@@ -112,7 +112,8 @@ MulOperator ::= '*' | '/' | DIV | MOD | '&' | AND
 
 literal ::= number | string | hexstring | hexchar | NIL | TRUE | FALSE
 
-constructor ::= [NamedType] '{' [ component {[','] component} ] '}' 
+constructor ::= '{' [ component {[','] component} ] '}'  // note that in the spec constructor ::= [NamedType]'{'..'}', 
+                                                         // but here this is split to designator and factor
 
 component ::= 
         \LL:2\ ident ':' expression // explicit record field name (ident is like a label, thus ':')
@@ -120,14 +121,12 @@ component ::=
         | expression ['..' expression] // value mapped to record or array by field/element order; '..' only for sets
 
 factor ::= 
-        \LA: 1:'{' | (1:ident & 2:'{') \ constructor
-        | literal
+        literal
+        | constructor
         | variableOrFunctionCall // replaces: designator [ActualParameters]
         | '(' expression ')' 
         | ('~'| NOT) factor // negation
-        | '@' (
-            \LA: 1:'{' | (1:ident & 2:'{') \ constructor
-            designator )
+        | '@' (designator | constructor)
 
 variableOrFunctionCall ::= designator // designator includes [ ActualParameters ] 
 
