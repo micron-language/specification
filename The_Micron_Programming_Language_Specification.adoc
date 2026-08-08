@@ -16,7 +16,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-08-06, work in progress
+2026-08-08, work in progress
 
 === Author
 
@@ -138,6 +138,9 @@ assumed.
   and ~.
 
 - Interface types similar to Go.
+
+- Oberon uses _floor division_, while Micron uses _truncating division_ (as most programming
+  languages and integer division instructions of common processors)
 
 === Syntax
 
@@ -492,9 +495,12 @@ shown).
 |NEWGC
 |NEWINIT
 |NOP
+|OBDIV
+|OBMOD
 |ODD 
 |ORD 
 |PCALL 
+|PTROFF
 |PRINT 
 |PRINTLN
 |PUTREG
@@ -1194,14 +1200,30 @@ of intermediate operations.
 The operator '`/`' applies to real
 operands only.
 
-The operators `DIV` and `MOD` apply to
-integer operands only. They are related by the following formulas
-defined for any `x` and positive divisors `y`:
+The operators `DIV` and `MOD` apply to integer operands only.
+
+`DIV` yields the quotient rounded towards zero (truncating division), 
+and `MOD` yields the corresponding remainder. They are related by the following formulas, 
+defined for any `x` and any `y # 0`:
 
 ....
 x = (x DIV y) * y + (x MOD y)
-0 \<= (x MOD y) < y
+abs(x MOD y) < abs(y)
 ....
+
+The result of `x MOD y` is either zero or has the sign of `x`. 
+
+
+NOTE: This deviates from Oberon, Pascal and Modula-2, which are defined by floor division, 
+where the operations are related by `x = (x DIV y) * y + (x MOD y), 0 \<= (x MOD y) < y` instead
+and the remainder is never negative
+In Oberon, `(-7) DIV 2 = -4` and `(-7) MOD 2 = 1`, whereas in Micron `(-7) DIV 2 = -3` and `(-7) MOD 2 = -1`. 
+The two definitions agree whenever both operands are non-negative. 
+Micron implements the same semantics as the `/` and `%` operators of C and most other contemporary languages, 
+and as the integer division instructions of common processors.
+Use the predefined OBDIV() and OBMOD() functions if you need Oberon compatibility.
+
+
 
 When used as unary operators, '-' denotes sign inversion and '\+' denotes the identity operation. 
 If the unary '-' or '+' is applied to 
@@ -2881,6 +2903,16 @@ which predeclareds are available in which level.
 |x,y: character type 
 |character type 
 |smaller of x and y, returns smallest character type including both arguments
+
+|OBDIV(x, y) 
+|x, y: signed integer
+|signed integer 
+|integer _floor division_ as implemented in Oberon, related by `x = OBDIV(x, y) * y + OBMOD(x, y), 0 \<= OBMOD(x, y) < y`. Operand types and result type follow standard integer binary operator rules (see <<arithmetic-operators>>)
+
+|OBMOD(x, y) 
+|x, y: signed integer
+|signed integer 
+|integer modulo operation based on the Oberon _floor division_. Operand types and result type follow standard integer binary operator rules (see <<arithmetic-operators>>)
 
 |ODD(x) 
 |integer type 
