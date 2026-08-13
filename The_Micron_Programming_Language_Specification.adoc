@@ -16,7 +16,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-08-08, work in progress
+2026-08-13, work in progress
 
 === Author
 
@@ -486,7 +486,6 @@ shown).
 |INT8 
 |INTEGER 
 |LEN 
-|LONG
 |LONGINT 
 |LONGREAL 
 |MAX 
@@ -509,9 +508,9 @@ shown).
 |RAISE 
 |REAL 
 |SET 
-|SHORT 
 |SHORTINT
-|SIG 
+|SIGC
+|SIGL
 |SIZE 
 |STI
 |STRLEN 
@@ -557,7 +556,7 @@ fullSet = {min(set) .. max(set)}
 NOTE:  For compile time calculations of
 values the same rules as for runtime calculation apply. An expression
 like `MAX(INT32)+1` thus causes an overflow of the INT32 range. To avoid
-this either `LONG(MAX(INT32))+1` or `MAX(INT32)+1I8` has to be used.
+this `MAX(INT32)+1I8` has to be used.
 
 [[type-declarations]]
 === Type declarations
@@ -1229,10 +1228,11 @@ When used as unary operators, '-' denotes sign inversion and '\+' denotes the id
 If the unary '-' or '+' is applied to 
 
 - an _universal integer_ type, it is treated as the smallest signed integer type that can represent its value;
-- all other operands of unsigned integer type, the result is the next larger signed integer type, or an error if the operand is of type UIN64;
+- all other operands of unsigned integer type, the result is the next wider signed integer type, or an error if the operand is of type UIN64;
 - all other operands, the type of the result is the same as the type of the operand.
 
-NOTE: the '+' and '-' unary operators can be used as a shortcut to convert an unsigned to a signed integer.
+NOTE: the '+' and '-' unary operators can be used to convert unsigned to a signed integer values. 
+This behaviour is a shortcut of the SIGL() predeclared function (see <<predeclared-function-procedures>>).
 
 .Examples:
 ....
@@ -2949,10 +2949,15 @@ which predeclareds are available in which level.
 |pointer to T
 |returns an address corresponding to p plus n times size of T, where T is not ANY
 
-|SIG(x) 
+|SIGC(x) 
 |x: unsigned integer
 |signed integer 
 |bitwise reinterpret x as a signed integer of the same byte width; this is a shortcut of CAST(T,x)
+
+|SIGL(x) 
+|x: unsigned integer
+|signed integer type T
+|convert x to the next larger signed integer type, preserving its value; this is a semantic conversion equivalent to VAL(T,x) or the unary \+/- operator; reports an error if x is of type UINT64
 
 |SHL(x,n) 
 |x: integer, n: unsigned integer 
@@ -3148,12 +3153,12 @@ more features with each level.
 |*0* 
 |*Bootstrap* 
 |Hardware Init 
-|Inlined code, `P{addr}` (Variables), `PUTREG`/`GETREG`/`CLI`/`STI`. No Stack. `P{addr}` allowed.
+|Inlined code, `PUTREG`/`GETREG`/`CLI`/`STI`. No Stack. 
 
 |*1* 
 |*Systems* 
 |Drivers/Kernels 
-|Stack Frames, Recursion, *VLA*, *Static Bound Procedures*. EXTERN and `P{addr}` allowed.
+|Stack Frames, Recursion, *VLA*, *Static Bound Procedures*. EXTERN allowed.
 
 |*2* 
 |*Abstract* 
