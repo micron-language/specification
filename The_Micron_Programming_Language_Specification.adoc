@@ -16,7 +16,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-08-13, work in progress
+2026-08-15, work in progress
 
 === Author
 
@@ -658,7 +658,7 @@ by indices, which are integers between 0 and the length minus 1.
 .Syntax:
 ....
 ArrayType  = ARRAY [ length ] OF type | '[' [ length ] ']' type
-length     = ConstExpression | VAR varlength
+length     = ConstExpression
 varlength  = expression
 ....
 
@@ -680,19 +680,9 @@ pointer to array of char
 [N] T
 ....
 
-Local variables of array type can have
-variable lengths calculated at runtime; in this case the LengthList is
-prefixed with the VAR reserved word; the expression cannot reference
-other local variables of the same scope.
-
-NOTE: In contrast to array pointers
-allocated with NEW(), variable length arrays (VLA) can be allocated on
-the stack instead of the heap (depending on the compiler and supported
-options), which makes them attractive to low-resource embedded
-applications where dynamic memory allocation is not feasible.
 
 Array lengths of at least MAX(UINT32) shall
-be accepted by a compiler, for fixed, dynamic and variable lengths.
+be accepted by a compiler, for fixed and dynamic lengths.
 
 [[record-types]]
 ==== Record types
@@ -848,8 +838,7 @@ called dereferencing. Pointers can reference:
 
 - dynamically allocated memory on the heap,
 
-- local variables or parameters on the
-stack,
+- local variables or parameters on the stack,
 
 - elements within arrays,
 
@@ -1852,18 +1841,16 @@ PCALL immediately after P. The actual parameters must be _parameter
 compatible_ with the formal parameters of P (see 
 <<definition-of-terms>>). The first parameter R of PCALL is a variable of
 type POINTER TO ANY; if RAISE(E) is called in the course of P, then R is
-set to E; otherwise R is set to NIL. The state of VAR parameters of P or
-local variables or parameters of an outer procedure accessed by P is
-non-deterministic in case RAISE is called in the course of P.
+set to E; otherwise R is set to NIL. 
 
 .Example:
 ....
 module ExceptionExample
   var ex1, ex2: integer // type doesn't matter
 
-  proc Print(in str: array of char)
+  proc Print(const str: ^array of char)
   begin
-    println(str)
+    println(str^)
     raise(@ex1)
     println("this is not printed")
   end Print
@@ -1911,8 +1898,7 @@ in the procedure.
 A procedure can be declared INLINE in which
 case the code of the procedure is embedded at the call site, and no call
 actually happens. Procedures declared INLINE don't support recursion,
-neither directly nor indirectly. INLINE procedures neither support
-variable length array local variables. 
+neither directly nor indirectly. 
 If the INLINE procedure uses local variable names that clash with the caller's variables, 
 the compiler automatically renames the internal variables.
 A RETURN statement in an INLINE procedure provides the expression result and doens't affect
@@ -2483,8 +2469,7 @@ conditions hold:
 - T~e~ and T~v~ are object types and T~e~ is
   a _type extension_ of T~v~ and the dynamic type of v is T~v~
 
-- T~v~ is a pointer or a procedure type and
-  `e` is NIL;
+- T~v~ is a pointer, a procedure or interface type and `e` is NIL;
 
 - T~e~ and T~v~ are procedure types whose
   formal parameters _match_;
@@ -2597,7 +2582,7 @@ type            = NamedType | ArrayType | RecordType | PointerType | ProcedureTy
                  | enumeration | ObjectType | InterfaceType
 NamedType       = qualident
 ArrayType  = ARRAY [ length ] OF type | '[' [ length ] ']' type
-length     = ConstExpression | VAR varlength
+length     = ConstExpression
 varlength  = expression
 RecordType = RECORD [FixedPart][VariantPart] END
 FixedPart = FieldList { [';'] FieldList}
@@ -3158,12 +3143,12 @@ more features with each level.
 |*1* 
 |*Systems* 
 |Drivers/Kernels 
-|Stack Frames, Recursion, *VLA*, *Static Bound Procedures*. EXTERN allowed.
+|Stack Frames, Recursion, Static Bound Procedures. EXTERN allowed. 
 
 |*2* 
 |*Abstract* 
 |Logic/Safety 
-|*INTERFACEs* (dispatch), *FINALLY*.
+|*INTERFACEs* (dispatch), FINALLY.
 
 |*3* 
 |*Dynamic* 
@@ -3182,9 +3167,8 @@ more features with each level.
 |===
 
 The language level a given module adheres to can
-be set via a module attribute (see <<module-attributes>>) 
-per module. A *default language level 3* is assumed if no
-explicit level is set.
+be set via a module attribute (see <<module-attributes>>) per module. 
+A *default language level 3* is assumed if no explicit level is set.
 
 A module of a given language level can only import modules of the same or lower language levels.
 
@@ -3212,8 +3196,7 @@ Level 0 is the minimal core language supposed
 to work in an environment where there is no stack and no heap. All
 procedures are implicitly INLINE and optionally INVAR. 
 EXTERN is not supported. Recursion is not supported. NEW and DISPOSE are not
-supported. PCALL and RAISE are not supported. VLA and interfaces not
-supported.
+supported. PCALL, RAISE and Interfaces are not supported. 
 
 Level 0 exclusively has a couple of low-level
 predeclared procedures for register access, enable/disable interrupts,
@@ -3236,18 +3219,12 @@ everything expected from a traditional imperative programming language.
 Level 1 in addition has static bound
 procedures (i.e. procedures bound to records without virtual dispatch).
 
-Level 1 in addition has EXTERN
-procedures.
-
-Level 1 in addition supports variable length arrays (VLA).
-
-Levels 0 and 1 exclusively can set pointer
-variables to explicit values using constructor syntax (see <<Constructors>>).
+Level 1 in addition has EXTERN procedures.
 
 NOTE: This level represents a fully
 functional system programming language (like C99), but without the
 hidden costs of v-tables or exception unwinding. It is designed for
-real-time drivers where VLA can be used for buffers, but with
+real-time drivers with
 predictable control flow. The typical design patterns of level 1 are
 strictly static and stack-based, such as those used for writing an UART,
 network card, or frame buffer driver. Buffers are statically allocated
@@ -3283,7 +3260,7 @@ type CASE statements.
 
 Level 5 extends level 4 with a garbage
 collector (GC), which applies to all dynamic records, objects or arrays
-allocated with GCNEW.
+allocated with NEWGC.
 
 In level 5, all pointer values are
 automatically initialized with NIL.

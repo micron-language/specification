@@ -1,4 +1,4 @@
-// Copyright (c) 2024, 2025 by Rochus Keller <mailto:me@rochus-keller.ch>
+// Copyright (c) 2024, 2025, 2026 by Rochus Keller <mailto:me@rochus-keller.ch>
 // 
 // GNU General Public License Usage
 // This file may be used under the terms of the GNU General Public
@@ -9,13 +9,9 @@
 // http://www.fsf.org/licensing/licenses/info/GPLv2.html and
 // http://www.gnu.org/copyleft/gpl.html.
 
-// To consider in future:
-// - smart pointers (i.e. a separate pointer type) with garbage collection (AUTOPTR, SMARTPTR, REF, ?)
-// - Go interfaces for object types
-// - set language level directly in source code? in module header or via directive?
-
 #define LEVEL1
-#define LEVEL3
+#define LEVEL2
+#define LEVEL4
 
 Micron ::=  module
 
@@ -47,10 +43,10 @@ ConstExpression ::= expression
 TypeDeclaration ::= identdef 	'=' type
 
 type ::= NamedType | ArrayType | RecordType | PointerType | ProcedureType | enumeration
-#ifdef LEVEL1
+#ifdef LEVEL2
                 | InterfaceType
 #endif
-#ifdef LEVEL3
+#ifdef LEVEL4
                 | ObjectType
 #endif
 
@@ -58,11 +54,11 @@ NamedType ::= qualident
 
 ArrayType ::= ARRAY [ length ] OF type | '[' [ length ] ']' type
 
-length ::= ConstExpression | VAR expression
+length ::= ConstExpression
 
 RecordType ::= RECORD [FixedPart] [VariantPart]  END
 
-#ifdef LEVEL3
+#ifdef LEVEL4
 ObjectType ::= OBJECT ['(' BaseType ')'] { IdentList ':' type [ ';' ] } END   // no inlines, case, nor bitfields
 BaseType ::= NamedType
 #endif
@@ -98,7 +94,7 @@ ExpList ::= expression { [','] expression }
 expression ::= SimpleExpression [ relation SimpleExpression ]
 
 relation ::= '=' | '#' | '<>' | '<' | '<=' | '>' | '>=' | IN  
-#ifdef LEVEL3
+#ifdef LEVEL4
                      | IS
 #endif
 
@@ -186,7 +182,7 @@ ProcedureType ::= procedure
 #endif                                 
                                  [FormalParameters] 
 
-#ifdef LEVEL1
+#ifdef LEVEL2
 InterfaceType ::= INTERFACE {InterfaceProc} END
 InterfaceProc ::= [procedure] identdef [FormalParameters] [';']
 #endif
@@ -197,24 +193,24 @@ ProcedureDeclaration ::=
 	EXTERN [ident [string] | string] ) // ident = 'C'
 	
 ProcedureHeading ::= procedure 
-#ifdef LEVEL3
+#ifdef LEVEL4
                                         [ Receiver | \LL:2\ ident '.' ]
 #endif
                                         identdef [ FormalParameters ]  
                                         
 ForwardDecl ::= procedure '^'
-#ifdef LEVEL3
+#ifdef LEVEL4
                              [ Receiver | \LL:2\ ident '.' ]
 #endif
                              identdef [ FormalParameters ] 
 
                                         
-#ifdef LEVEL3                                        
+#ifdef LEVEL4                                    
 Receiver ::= '(' ident ':' ident ')' // right ident is either a pointer or object type, which doesn't matter
 #endif
 
 block ::= BEGIN StatementSequence 
-#ifdef LEVEL1
+#ifdef LEVEL2
                 [ FINALLY StatementSequence ]
 #endif
 

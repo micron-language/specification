@@ -1,4 +1,4 @@
-// Copyright (c) 2024 by Rochus Keller <mailto:me@rochus-keller.ch>
+// Copyright (c) 2024, 2026 by Rochus Keller <mailto:me@rochus-keller.ch>
 // 
 // GNU General Public License Usage
 // This file may be used under the terms of the GNU General Public
@@ -125,7 +125,7 @@ ExpInstr* ::= 'ADD' | 'ABS' | 'AND' | ('CALL' | 'CALLI') qualident | 'CALLMI' qo
                       | 'LDIND_I1' | 'LDIND_I2' | 'LDIND_I4' | 'LDIND_I8' | 'LDIND_U1' | 'LDIND_U2'
                       | 'LDIND_U4' | 'LDIND_R4' | 'LDIND_U8' | 'LDIND_R8' | 'LDIND_IP' | 'LDIND_IPP'
                       | ('LDLOC'|'LDLOC_S'|'LDLOCA'|'LDLOCA_S')(unsigned|ident)
-                      | 'LDLOC_0' | 'LDLOC_1' | 'LDLOC_2' | 'LDLOC_3' | 'LDNULL' 
+                      | 'LDLOC_0' | 'LDLOC_1' | 'LDLOC_2' | 'LDLOC_3' | 'LDNULL' | 'LDNULL_IPP'
                       | 'LDIND' qualident | 'LDPROC' qualident | 'LDMETH' trident | 'LDSTR' (string|hexstring)
                       | ('LDVAR'|'LDVARA') qualident | 'MUL' | 'NEG' 
                       | ('NEWARR'|'NEWVLA'|'NEWOBJ'|'NEWARR0'|'NEWOBJ0'|'NEWARRGC'|'NEWOBJGC') qualident 

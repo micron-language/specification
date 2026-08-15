@@ -16,7 +16,7 @@ The Micron Intermediate Language Specification
 
 === Version
 
-2026-08-06, work in progress
+2026-08-15, work in progress
 
 === Author
 
@@ -270,7 +270,7 @@ cannot contain itself.
 ....
 TypeDeclaration = [Line] identdef '=' type
 type            = NamedType | ArrayType | StructUnionType | PointerType 
-                  | ProcedureType | MethodType
+                  | ProcedureType | MethodType | ObjectType | InterfaceType
 ....
 
 === Basic types
@@ -477,6 +477,52 @@ _methref_ value in the runtime.
 MethodType = (PROCEDURE|PROC)^ [FormalParameters]
 ....
 
+=== Interface types
+
+An interface type declares a set of methods
+without providing an implementation. A method of an interface is
+declared as an ABSTRACT procedure bound to the interface type (see
+<<Procedures>>); the receiver parameter is explicit, the first parameter
+in the parameter list, and of the interface type itself.
+
+Variables of an interface type have an
+_interface reference_ as value. An interface reference is represented by
+an _ifaceref_ value in the runtime, an opaque compound of two _intptr_:
+one pointing to a record or object instance, the other to an internal
+procedure table which provides one implementation procedure for each
+method declared in it. 
+
+An interface reference is created with the
+_ldiface_ instruction from a record or object pointer. The referenced
+type is said to _implement_ the interface; for each abstract method it must  
+declare a bound procedure with the same name whose formal
+parameter list and return type match the method's declaration (not
+regarding the receiver parameter, which is a pointer to the implementing
+type). For a record, the procedure table is selected based on the static
+type of the operand; for an object, it is selected based on the dynamic
+type. The instance _intptr_ of the resulting interface reference is the
+operand pointer itself.
+
+A method is invoked by loading a method
+reference from the interface reference with _ldmeth_, which combines the
+instance _intptr_ with the corresponding entry of the procedure table,
+and calling it with _callmi_. 
+
+NOTE: no dispatch happens at the call; the implementation procedure was 
+determined when the interface reference was created with _ldiface_.
+
+A variable or parameter of interface type
+may assume the value NIL, in which case both _intptr_ of the compound
+are null. A NIL interface reference is created with the _ldnull_ipp_
+instruction. Two interface references can be compared with _ceq_; they
+are equal if both _intptr_ of one value are equal to the corresponding
+_intptr_ of the other value.
+
+.Syntax of textual representation:
+....
+InterfaceType = INTERFACE
+....
+
 == Expressions
 
 Expressions are calculated using a conceptual
@@ -540,9 +586,9 @@ ExpInstr = 'add' | 'and' | ('call' | 'calli') qualident | 'callmi' qortrident
     | 'ldelem_u4' | 'ldelem_u8' | 'ldelem_r4' | 'ldelem_r8' | 'ldelem_ip' | 'ldelem_ipp'
     | ('ldfld'|'ldflda') trident | 'ldind' qualident
     | 'ldind_i1' | 'ldind_i2' | 'ldind_i4' | 'ldind_i8' | 'ldind_u1' | 'ldind_u2'
-    | 'ldind_u4' | 'ldind_r4' | 'ldind_u8' | 'ldind_r8' | 'ldind_ip'
+    | 'ldind_u4' | 'ldind_r4' | 'ldind_u8' | 'ldind_r8' | 'ldind_ip' | 'ldind_ipp'
     | ('ldloc'|'ldloc_s'|'ldloca'|'ldloca_s')(unsigned|ident)
-    | 'ldloc_0' | 'ldloc_1' | 'ldloc_2' | 'ldloc_3' | 'ldnull' 
+    | 'ldloc_0' | 'ldloc_1' | 'ldloc_2' | 'ldloc_3' | 'ldnull' | 'ldnull_ipp'
     | 'ldproc' qualident |'ldmeth' trident
     | 'ldstr' (string|hexstring)
     | ('ldvar'|'ldvara') qualident | 'mul' | 'neg' 
@@ -746,7 +792,7 @@ TODO: tail calls
 |*Text Format* 
 |*Description*
 
-|TODO <__T__> 
+|TBD <__T__> 
 |callinst _method_ 
 |Call an explicit method.
 |===
@@ -788,7 +834,7 @@ argument is computed and placed on the stack, then the second argument,
 and so on. If the method has a return value, it is pushed on the stack
 upon method completion.
 
-The _function_ reference either point to a
+The _function_ reference either points to a
 bound procedure type, or an interface method.
 
 NOTE: callmi doesn't do method
@@ -827,19 +873,19 @@ _method_.
 |*Text Format* 
 |*Description*
 
-|TODO 
+|TBD 
 |cast_i4 
 |Bitwise reinterpretation of _value_ on stack as int32.
 
-|TODO 
+|TBD 
 |cast_i8 
 |Bitwise reinterpretation of _value_  on stack as int64.
 
-|TODO 
+|TBD 
 |cast_r4 
 |Bitwise reinterpretation of _value_, on stack as float32.
 
-|TODO 
+|TBD 
 |cast_r8 
 |Bitwise reinterpretation of _value_,  on stack as float64.
 
@@ -1336,7 +1382,7 @@ type.
 
 TODO: do we really need this?
 
-=== *isinst – test if an object is an instance of a class or interface*
+=== *isinst – test if an object is an instance of a class*
 
 
 [cols="1,1,3"]
@@ -1619,7 +1665,7 @@ as an float64.
 |Load the element with type intptr at _index_ onto the top of the stack
 as a intptr.
 
-|TODO 
+|TBD 
 |ldelem_ipp 
 |Load the element with type methref at _index_ onto the top of the stack
 as a methref.
@@ -1709,7 +1755,7 @@ is an intptr. _field_ is a reference to an element of a structured type
 |*Text Format* 
 |*Description*
 
-|TODO 
+|TBD 
 |ldiface _interface_ 
 |Push an ifaceref.
 |===
@@ -1921,7 +1967,7 @@ _obj_ can be a record or object pointer, or an interface reference
 based on the dynamic type of _obj_ rather than the compile-time type
 referenced by _method_.
 
-=== *ldnull – load a null pointer*
+=== *ldnull – load a null pointer or reference*
 
 
 [cols="1,1,3"]
@@ -1932,13 +1978,18 @@ referenced by _method_.
 
 |14 
 |ldnull 
-|Push a null reference on the stack.
+|Push a null pointer on the stack.
+
+|TBD 
+|ldnull_ipp
+|Push a null methref or ifaceref on the stack.
+
 |===
 
 `… -> …, null value`
 
-The ldnull __ pushes a null pointer (type
-intptr) on the stack.
+The ldnull instruction pushes a null pointer (type intptr) on the stack,
+whereas ldnull_ipp pushes a compound of two null pointers on the stack.
 
 === *ldproc – load procedure pointer*
 
@@ -2096,11 +2147,11 @@ corresponding result data types are specified in <<unops, the compatibility tabl
 |newarr _etype_ 
 |Create a new array with elements of type _etype_.
 
-|TODO 
+|TBD 
 |newarr0 _etype_ 
 |Create a new array with elements of type _etype_.
 
-|TODO 
+|TBD 
 |newarrgc _etype_ 
 |Create a new array with elements of type _etype_.
 
@@ -2161,11 +2212,11 @@ initialized.
 |newobj _type_ 
 |Allocate an instance of a structured type.
 
-|TODO 
+|TBD 
 |newobj0 _type_ 
 |Allocate and initialize an instance of a structured type.
 
-|TODO 
+|TBD 
 |newobjgc _type_ 
 |Allocate and initialize an instance of a structured type.
 
@@ -2592,7 +2643,7 @@ A procedure can be an alias of another
 procedure. The other procedure is referenced with a qualident. If the
 other procedure is in another module, it must be exported.
 
-Procedures may be associated with an object
+Procedures may be associated with an object, struct, or interface
 type declared in the same module. The procedures are said to be bound to
 the object type. The binding is expressed by prefixing the procedure
 name with the name of the local object type T the procedure is bound to.
@@ -2609,13 +2660,19 @@ unique within the object type to which it is bound, not within the
 module in which it is declared. Type-bound procedures cannot be INLINE,
 INVAR, nor INIT.
 
+A procedure declared ABSTRACT has no body; abstract procedures are
+used to declare the methods of an interface type. The binding of an
+abstract procedure names an interface type, and the receiver
+parameter is of the interface type itself.
+
 .Syntax of textual representation:
 ....
 ProcedureDeclaration = ProcedureHeading 
                          (['INLINE'|'INVAR'|'INIT'|'ENTRY'] [';'] ProcedureBody 
                           | [';'] EXTERN
                           | [';'] FOREIGN [string|unsigned|qualident]
-                          | [';'] FORWARD ) 
+                          | [';'] FORWARD
+                          | [';'] ABSTRACT ) 
 
 ProcedureHeading     = (PROCEDURE | PROC) [Line]
                        [Binding]
@@ -2628,7 +2685,6 @@ ProcedureBody        = [VAR { LocalDeclaration [';'] }]
 LocalDeclaration     = [IdentList ':'] NamedType
 ....
 
-TODO: explicit EXTERN calling conventions
 
 === Formal parameters
 
@@ -2718,7 +2774,7 @@ SimpleStatement = 'cli' | 'free'| 'exit' | 'goto' ident
     | 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8'
     | 'stelem_r4' | 'stelem_r8' | 'stelem_ip' | 'stelem_ipp'
     | 'stfld' trident | 'sti' | 'stind' qualident
-    | 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'
+    | 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip' | 'stind_ipp'
     | ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'
     | 'strcpy' | 'stvar' qualident
 CompoundStatement = IfThenElse | Loop | RepeatUntil | Switch | WhileDo
@@ -3492,7 +3548,7 @@ qortrident= qualident ['.' ident]
 identdef = ident ['*']
 TypeDeclaration = [Line] identdef '=' type
 type            = NamedType | ArrayType | StructUnionType | PointerType 
-                  | ProcedureType | MethodType
+                  | ProcedureType | MethodType | ObjectType | InterfaceType
 NamedType = qualident
 ArrayType = ARRAY [ length ] OF NamedType | '[' [ length ] ']' NamedType
 length = unsigned
@@ -3502,6 +3558,7 @@ IdentList = [Line] identdef { [','] [Line] identdef }
 PointerType = ( POINTER TO | '^' ) NamedType
 ProcedureType = (PROCEDURE|PROC) [FormalParameters]
 MethodType = (PROCEDURE|PROC)^ [FormalParameters]
+InterfaceType = INTERFACE
 Expression = [Line] ExpInstr { ExpInstr | Line }
 ExpInstr = 'add' | 'and' | ('call' | 'calli') qualident | 'callmi' qortrident
 	| ('callinst' | 'callvirt') trident | 'castptr' qualident
@@ -3522,9 +3579,9 @@ ExpInstr = 'add' | 'and' | ('call' | 'calli') qualident | 'callmi' qortrident
 	| 'ldelem_u4' | 'ldelem_u8' | 'ldelem_r4' | 'ldelem_r8' | 'ldelem_ip' | 'ldelem_ipp'
 	| ('ldfld'|'ldflda') trident | 'ldind' qualident
 	| 'ldind_i1' | 'ldind_i2' | 'ldind_i4' | 'ldind_i8' | 'ldind_u1' | 'ldind_u2'
-	| 'ldind_u4' | 'ldind_r4' | 'ldind_u8' | 'ldind_r8' | 'ldind_ip'
+	| 'ldind_u4' | 'ldind_r4' | 'ldind_u8' | 'ldind_r8' | 'ldind_ip' | 'ldind_ipp'
 	| ('ldloc'|'ldloc_s'|'ldloca'|'ldloca_s')(unsigned|ident)
-	| 'ldloc_0' | 'ldloc_1' | 'ldloc_2' | 'ldloc_3' | 'ldnull' 
+	| 'ldloc_0' | 'ldloc_1' | 'ldloc_2' | 'ldloc_3' | 'ldnull' | 'ldnull_ipp'
 	| 'ldproc' qualident |'ldmeth' trident
 	| 'ldstr' (string|hexstring)
 	| ('ldvar'|'ldvara') qualident | 'mul' | 'neg' 
@@ -3543,7 +3600,8 @@ ProcedureDeclaration = ProcedureHeading
                          (['INLINE'|'INVAR'|'INIT'|'ENTRY'] [';'] ProcedureBody 
                           | [';'] EXTERN
                           | [';'] FOREIGN [string|unsigned|qualident]
-                          | [';'] FORWARD ) 
+                          | [';'] FORWARD
+                          | [';'] ABSTRACT ) 
 ProcedureHeading     = (PROCEDURE | PROC) [Line]
                        [Binding]
                        identdef [FormalParameters]
@@ -3564,7 +3622,7 @@ SimpleStatement = 'cli' | 'free'| 'exit' | 'goto' ident
     | 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8'
     | 'stelem_r4' | 'stelem_r8' | 'stelem_ip' | 'stelem_ipp'
     | 'stfld' trident | 'sti' | 'stind' qualident
-    | 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip'
+    | 'stind_i1' | 'stind_i2' | 'stind_i4' | 'stind_i8' | 'stind_r4' | 'stind_r8' | 'stind_ip' | 'stind_ipp'
     | ('stloc' |'stloc_s') (unsigned|ident) | 'stloc_0' | 'stloc_1' | 'stloc_2' | 'stloc_3'
     | 'strcpy' | 'stvar' qualident
 CompoundStatement = IfThenElse | Loop | RepeatUntil | Switch | WhileDo
