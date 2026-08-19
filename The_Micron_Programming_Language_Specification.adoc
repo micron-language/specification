@@ -16,7 +16,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-08-15, work in progress
+2026-08-19, work in progress
 
 === Author
 
@@ -652,7 +652,7 @@ or CAST() function must be used.
 An array is a structure consisting of a
 number of elements which are all of the same type, called the element
 type. The number of elements of an array is called its length. The
-length is a positive integer. The elements of the array are designated
+length is an unsigned integer. The elements of the array are designated
 by indices, which are integers between 0 and the length minus 1.
 
 .Syntax:
@@ -2236,29 +2236,46 @@ parameters default to types, but can be explicitly prefixed with the
 TYPE reserved word; the CONST prefix designates a constant meta
 parameter.
 
-Meta parameters can be constrained with a
-type using a WHERE declaration, in which case the actual meta parameter
-must correspond to this type. The correspondence between a WHERE
-declaration and a meta parameter is established by name equivalence;
-there can only be one WHERE declaration per meta parameter. The type of
+Meta parameters can be constrained with a type, in which case this
+type is assumed in the generic module.
+For the types which are known at the point of meta parameter declaration,
+which in general are only the <<Basic types>>, the constraint can be 
+directly added to the declaration like in a normal parameter declaration.
+For types, which need an import or type declaration within the generic module,
+a WHERE declaration can be used thereafter. The correspondence between a WHERE
+declaration and a meta parameter is established by name equivalence.
+There can only be one type constraint per meta parameter. 
+
+A type constraint of a meta parameter can in particular be an
+interface type which is a special but legal use of interface types.
+
+The type of
 the actual meta parameter must be assignment compatible with the
 constraint type (see <<definition-of-terms>>), which is
-checked when the generic module is instantiated. The special form of the
-ConstDeclaration may only be used for a CONST meta parameter with the
-same ident.
+checked when the generic module is instantiated. 
+
 
 Generic modules can be instantiated with
 different sets of meta actuals which enables the design of reusable
 algorithms and data structures. The instantiation of a generic module
 occurs when importing it. A generic module can be instantiated more than
 once in the same module with different actual meta parameters. 
-Every generic module instantiation creates a distinct new module identity.
+Every distinct set of meta actuals creates a distinct module identity.
+Two sets of meta actuals are equal if the corresponding type actuals denote 
+the same type, and the corresponding const actuals have the same type and value.
 See also <<Modules>>.
+
+NOTE: In consequence, not every import declaration with meta actuals
+creates a new module identity, but the compiler automatically unites all import
+declarations with the same set of meta actuals.
+
+unites all import declarations with the same set of meta actuals, .
+
 
 .Syntax:
 ....
 MetaParams       = '(' MetaSection { [';'] MetaSection } ')'
-MetaSection      = ['CONST' | 'TYPE'] ident { [','] ident } 
+MetaSection      = ['CONST' | 'TYPE'] ident { [','] ident } [ ':' NamedType ]
 
 WhereDecls       = WHERE { WhereDeclaration [';'] }
 WhereDeclaration = ident ':' type
@@ -2272,15 +2289,15 @@ about the actual type is required; otherwise the type constraint
 determines the permitted operations. The rules for _same types_ and
 _equal types_ apply analogously to meta parameters, and subsequently
 also the corresponding assignment, parameter and array compatibility
-rules.
+rules. 
 
-NOTE: A type constraint can be an
-interface type which is a special but legal use of interface types; if
-an interface type is used as a type constraint, then the type checker
+When an interface type is used as a type constraint, then the type checker
 has information about what methods the generic type parameter supports
 which can be assured at compile time; there is no need that the actual
 type parameter is indeed an interface type, just that the type satisfies
-(see <<interface-types>> the interface.
+the interface (see <<interface-types>>).
+
+NOTE: This is a compile-time use of interfaces with no extra runtime cost. 
 
 === Source code directives
 
@@ -2682,7 +2699,7 @@ ImportList = IMPORT import { [','] import } [';']
 import     = [ ident ':=' ] ImportPath ident [ MetaActuals ]
 ImportPath = { ident '.' }
 MetaParams       = '(' MetaSection { [';'] MetaSection } ')'
-MetaSection      = ['CONST' | 'TYPE'] ident { [','] ident } 
+MetaSection      = ['CONST' | 'TYPE'] ident { [','] ident } [ ':' NamedType ]
 WhereDecls       = WHERE { WhereDeclaration [';'] }
 WhereDeclaration = ident ':' type
 MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'

@@ -253,7 +253,7 @@ MetaActuals ::= '(' ConstExpression { [','] ConstExpression } ')'
 
 MetaParams ::= '(' MetaSection { [';'] MetaSection } ')'
 
-MetaSection ::= [ TYPE | CONST ] ident { \LL:2\ [','] ident }
+MetaSection ::= [ TYPE | CONST ] ident { \LL:2\ [','] ident } [ ':' NamedType ]
 
 reserved_for_future_extensions- ::= 'AUTOPTR' 
 
