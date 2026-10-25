@@ -202,7 +202,7 @@ ForwardDecl ::= procedure '^'
 #ifdef LEVEL4
                              [ Receiver | \LL:2\ ident '.' ]
 #endif
-                             identdef [ FormalParameters ] 
+                             identdef [ FormalParameters ] [INVAR]
 
                                         
 #ifdef LEVEL4                                    
@@ -236,7 +236,7 @@ FormalType ::= type
 
 module ::= MODULE ident [ MetaParams ] [ ModuleAttributes ] [';'] 
 	{ ImportList | WhereDecls | DeclarationSequence }
-	[ block ] END ident ['.'] 
+	[ BEGIN StatementSequence ] END ident ['.'] // FINALLY in module bodies potential future extension
 
 ModuleAttributes ::= '[' Attribute { [','] Attribute } ']'
 Attribute ::= ident [ '=' ConstExpression ]
