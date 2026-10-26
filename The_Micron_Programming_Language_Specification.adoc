@@ -14,7 +14,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-09-08, work in progress
+2026-10-26, work in progress
 
 === Author
 
@@ -201,6 +201,7 @@ _y
 firstLetter
 ....
 
+[[Numbers]]
 ==== Numbers
 
 Micron supports integer or real literals.
@@ -450,86 +451,91 @@ shown).
 
 [cols="1,1,1,1,1"]
 |===
-|ABS 
-|ANY 
+|ABS
+|ANY
 |ASR
-|ASSERT 
-|BAND 
-|BNOT 
-|BOOLEAN 
-|BOR 
-|BSET 
-|BSHL 
-|BSHR
-|BXOR 
-|BYTE 
-|CAP 
+|ASSERT
+|BAND
+|BNOT
+|BOOLEAN
+|BOR
+|BSET
+|BXOR
+|BYTE
+|CAP
 |CAST
-|CHAR 
-|CHR 
+|CHAR
+|CHR
 |CLI
-|DEC 
-|DEFAULT 
+|COPY
+|DEC
+|DEFAULT
 |DISPOSE
-|EXCL 
+|EXCL
 |FLOOR
-|FLT 
-|FLT32 
-|FLT64 
+|FLT
+|FLT32
+|FLT64
+|GETENV
 |GETREG
-|HALT 
-|INC 
-|INCL 
-|I1|I2|I4|I8
-|INT16 
+|HALT
+|I1
+|I2
+|I4
+|I8
+|INC
+|INCL
+|INT16
 |INT32
-|INT64 
-|INT8 
-|INTEGER 
-|LEN 
-|LONGINT 
-|LONGREAL 
-|MAX 
-|MIN 
+|INT64
+|INT8
+|INTEGER
+|LEN
+|LONGINT
+|LONGREAL
+|MAX
+|MIN
 |NEW
 |NEWGC
 |NEWINIT
 |NOP
 |OBDIV
 |OBMOD
-|ODD 
-|ORD 
-|PCALL 
-|PTROFF
-|PRINT 
+|ODD
+|ORD
+|PCALL
+|PRINT
 |PRINTLN
+|PTROFF
 |PUTREG
 |R4
 |R8
-|RAISE 
-|REAL 
-|SET 
+|RAISE
+|REAL
+|SET
+|SHL
 |SHORTINT
+|SHR
 |SIGC
 |SIGL
-|SIZE 
+|SIZE
 |STI
-|STRLEN 
-|U1|U2|U4|U8
-|UINT16 
+|STRLEN
+|U1
+|U2
+|U4
+|U8
+|UINT16
 |UINT32
-|UINT64 
-|UINT8 
-|USIG 
-|
-|
-|
+|UINT64
+|UINT8
+|USIG
 |===
 
 === Constant declarations
 
 A constant declaration associates an identifier with a constant expression.
-The expression can be of basic type, or a string liteal or hex string (see <<hex-string-literals>>).
+The expression can be of basic type, or a string literal or hex string (see <<hex-string-literals>>).
 
 .Syntax:
 ....
@@ -537,17 +543,23 @@ ConstDeclaration = identdef '=' ConstExpression
 ConstExpression  = expression
 ....
 
-A constant expression is an expression that
-can be evaluated by a mere textual scan without actually executing the
-program. Its operands are literals (see <<Operands>>),
-predeclared or INVAR functions (see <<predeclared-procedure-reference>>, <<procedure-declarations>>) or
-other constant expressions that can be evaluated at compile time. 
-If all operands are unsuffixed integer literals, the type of the
-constant expression (and thus the constant declaration) is 
-_universal integer_. 
-The constant expression for a constant is evaluated once at the 
-constant declaration and then all uses of the constant declaration
-are substituted by the resulting value. 
+A constant expression is an expression that the compiler can evaluate without knowledge of the run-time environment.
+Its operands (see <<Operands>>) are literals, constants, constructors whose components are constant expressions
+(see <<Constructors>>), and calls of compile-time predeclared functions (see <<predeclared-procedure-reference>>)
+or INVAR function procedures (see <<procedure-declarations>>) whose actual parameters are constant expressions or types;
+LEN of a non-open array is a constant expression regardless of its argument.
+
+Compile-time evaluation follows the same rules as run-time evaluation on the target;
+a run-time error during compile-time evaluation (e.g. a failing ASSERT, a HALT, a division by zero) is a compile-time error.
+The compiler may limit the number of steps of a compile-time evaluation and report an error when the limit is exceeded.
+
+If all expression operands are unsuffixed integer literals,
+the type of the constant expression (and thus the constant declaration) is _universal integer_;
+such an expression is evaluated with the precision of the largest supported signed integer type,
+and an overflow is a compile-time error. 
+
+The constant expression for a constant is evaluated once at the constant declaration
+and then all uses of the constant declaration are substituted by the resulting value. 
 Examples of constant declarations are:
 
 .Examples:
@@ -765,11 +777,6 @@ If multiple INLINE fields or variants contain members with the same name, an unq
 the first match in declaration order.
     
 
-TODO: open array as last field (no variant
-part) with new(ptr,len)
-
-TODO: record layout like C
-
 NOTE: Self-referential records or
 objects are not directly supported. The name of the record type
 declaration is not known at the time the record fields are declared. By
@@ -868,6 +875,12 @@ assume the value NIL, which points to no memory at all. If an allocated
 record, object or array is no longer used, it can be explicitly
 deallocated with `DISPOSE(p)`. A pointer variable can also be set using
 the address operator (see <<address-operator>>).
+
+POINTER TO ANY denotes an address without a known base type. 
+Every pointer type is assignment compatible to POINTER TO ANY (see <<definition-of-terms>>);
+a POINTER TO ANY cannot be dereferenced, indexed, incremented or decremented, but can be compared with pointers and NIL
+and converted to a specific pointer type with CAST.
+ANY can only be used as the base type of a pointer type.
 
 ==== Procedure types
 
@@ -1821,31 +1834,41 @@ were mostly added to the language to ease migration of existing C code.
 It is always possible to replace a goto statement by an alternative
 implementation that doesn’t need a goto.
 
+[[exception-handling]]
 === Exception handling
 
-Exception handling in Micron is implemented
-using the predeclared procedures PCALL and RAISE (see 
-<<predeclared-procedure-reference>>), without any special syntax. There are
-no predefined exceptions.
+Exception handling in Micron is implemented using the predeclared procedures PCALL and RAISE, without any dedicated syntax.
+PCALL and RAISE are only available in modules of level 3 or higher with the Exceptions attribute (see <<module-attributes>>).
 
-An exception is just a value of type
-POINTER TO ANY. The pointer representing the exception is passed as an
-actual argument to RAISE. RAISE may be called without an argument in
-which case the compiler provides a random internal pointer. RAISE never
-returns, but control is transferred from the place where RAISE is called
-to the nearest dynamically-enclosing call of PCALL. When calling RAISE
-without a dynamically-enclosing call of PCALL the program execution is
-aborted.
+An exception is a value of type POINTER TO ANY (see <<pointer-types>>).
+There are no predefined exceptions.
+RAISE(E) (see <<predeclared-proper-procedures>>) terminates the most recent protected call:
+all activations between RAISE and the PCALL are terminated,
+and their FINALLY sections are executed in reverse order of the call chain (see <<finally-section>>).
+RAISE() raises a pointer distinct from the address of any object accessible to the program;
+RAISE with a NIL pointer is equivalent to RAISE(), and RAISE with the literal NIL is a compile-time error.
 
-PCALL executes a protected call of the
-procedure or procedure type P. P is passed as the second argument to
-PCALL. P cannot have a return type. P can be a nested procedure. If P
-has formal parameters the corresponding actual parameters are passed to
-PCALL immediately after P. The actual parameters must be _parameter
-compatible_ with the formal parameters of P (see 
-<<definition-of-terms>>). The first parameter R of PCALL is a variable of
-type POINTER TO ANY; if RAISE(E) is called in the course of P, then R is
-set to E; otherwise R is set to NIL. 
+If no protected call is active, the FINALLY sections of all active procedures are executed
+and the program is aborted as by HALT with an implementation-defined code.
+ASSERT, HALT, arithmetic traps and hardware faults are not exceptions and cannot be caught.
+
+PCALL executes a protected call of the procedure or procedure type P.
+P is passed as the second argument to PCALL.
+P must be a proper procedure or a variable of a proper procedure type;
+it must not be predeclared, INLINE or type-bound. P can be a nested procedure.
+
+If P has formal parameters the corresponding actual parameters are passed to PCALL immediately after P.
+The actual parameters are evaluated as for an ordinary call;
+they must be _parameter compatible_ with the formal parameters of P (see <<definition-of-terms>>).
+
+The first parameter R of PCALL is a variable of type POINTER TO ANY (not of another pointer type).
+If P is terminated by RAISE(E), R is set to E; if P returns normally, R is set to NIL.
+R is assigned after P has returned or has been terminated.
+Terminating a foreign (EXTERN C) activation, an activation of a procedure declared in a level 1 module,
+or an interrupt handler by RAISE is undefined behaviour (see <<level-1>>).
+
+NOTE: the object an exception points to must outlive the handler;
+use module variables or heap objects (which the handler has to DISPOSE).
 
 .Example:
 ....
@@ -1905,17 +1928,43 @@ actually happens. Procedures declared INLINE don't support recursion,
 neither directly nor indirectly. 
 If the INLINE procedure uses local variable names that clash with the caller's variables, 
 the compiler automatically renames the internal variables.
-A RETURN statement in an INLINE procedure provides the expression result and doens't affect
-the caller otherwise.
+A RETURN statement in an INLINE procedure provides the expression result and doesn't affect
+the caller otherwise; a FINALLY section of the INLINE procedure is executed as for an ordinary call
+(see <<finally-section>>).
 
 Nested procedures of an INLINE procedure must also be INLINE.
+An INLINE procedure must not call itself, directly or through other procedures; since all procedures are implicitly INLINE on level 0, procedures cannot be recursive on level 0.
 
-A procedure can be declared INVAR
-(invariable) in which case it can be used in CONST declarations to
-derive a constant value at compile time. INVAR procedures can only call
-other INVAR procedures or predeclared procedures not depending on
-runtime information. INVAR procedures cannot access module variables,
-but they can access CONST declarations in the same or other modules.
+A procedure can be declared INVAR (invariable).
+An INVAR procedure is an ordinary procedure which the compiler can in addition execute at compile time:
+a call of an INVAR function procedure whose actual parameters are all constant expressions is itself a constant expression
+and is evaluated at compile time; any other call is an ordinary call.
+A proper INVAR procedure can only be called at compile time from another INVAR procedure.
+The result type of an INVAR function procedure must be a basic or enumeration type.
+In a compile-time call, the actual parameters are values of basic or enumeration types or string literals;
+a string literal is passed to a CONST formal parameter of type pointer to open array of CHAR
+(see <<definition-of-terms>>).
+
+The body of an INVAR procedure may access its own parameters and local variables,
+constants and string literals of any module, and may call only INVAR procedures and compile-time predeclared procedures
+(see <<predeclared-procedure-reference>>).
+It may not access module variables, call through procedure variables, call type-bound or EXTERN procedures,
+call INLINE procedures which are not also INVAR (see <<level-0>>), use PCALL or RAISE,
+use the address operator @,
+or use operations whose result depends on the target (SIZE of non-basic types, ORD or CAST of pointers, pointer arithmetic).
+The parameters and local variables of an INVAR procedure must be of a basic type, an enumeration type,
+or a fixed array type with such elements (recursively); in addition, a CONST parameter can be of type pointer to open array of CHAR.
+Pointer, procedure, record, object, union and interface types and other open arrays are not allowed.
+Nested procedures of an INVAR procedure must be INVAR.
+These restrictions are checked at the declaration, regardless of whether the procedure is called at compile time.
+INVAR procedures may be recursive.
+A compile-time call of an INVAR procedure whose body has not yet been declared
+(e.g. when only its forward declaration precedes the call) is an error.
+The forward declaration of an INVAR procedure must include INVAR, and the INVAR attributes of the forward declaration and of the procedure declaration must agree.
+
+NOTE: An exported INVAR procedure must be evaluable by importing modules,
+i.e. its body is part of the module interface.
+A compiler may omit the run-time code of a non-exported INVAR procedure that is never called at run time.
 
 A procedure can be declared EXTERN to
 indicate that it is implemented elsewhere and the source code is not
@@ -1941,7 +1990,7 @@ ProcedureDeclaration = ProcedureHeading ( [ INLINE | INVAR ] [';'] ProcedureBody
                        | ForwardDeclaration
 
 ProcedureHeading     = ( PROCEDURE | PROC ) identdef [ FormalParameters ]
-ForwardDeclaration   = ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ]
+ForwardDeclaration   = ( PROCEDURE | PROC ) '^' identdef [ FormalParameters ] [ INVAR ]
 
 ProcedureBody        = DeclarationSequence BEGIN StatementSequence 
                        [FINALLY StatementSequence] END [ident '.'] ident
@@ -2022,33 +2071,38 @@ begin i := 0; Read(ch)
 end ReadInt
 ....
 
+[[finally-section]]
 ==== Finally section
 
-The statement sequence after the symbol
-BEGIN can optionally be followed by the symbol FINALLY and yet another
-statement sequence.
-
-The statements in this FINALLY section are
-executed whenever the corresponding BEGIN section terminates.
-
-A FINALLY section cannot include a RETURN
-statement.
+The statement sequence after BEGIN can be followed by FINALLY and a further statement sequence.
+The FINALLY section is executed when the BEGIN section terminates,
+i.e. (1) after its last statement,
+(2) when a RETURN statement is executed, after the evaluation of its expression,
+or (3) when the activation of the procedure is terminated by a RAISE (see <<predeclared-proper-procedures>>)
+executed by the procedure itself or by a procedure it called directly or indirectly, also if no protected call is active.
+It is not executed when the program terminates (HALT, failing ASSERT,
+or an abort other than by a RAISE without an active protected call). 
 
 NOTE: The expression of a RETURN
 statement is evaluated before the FINALLY section is run; it therefore
 cannot be modified in the FINALLY section.
 
-The statements in the FINALLY section are
-also executed if a nested BEGIN section is terminated with RAISE (see
-<<predeclared-proper-procedures>>). If a nested
-BEGIN section is terminated with RAISE, all FINALLY sections on the call
-chain up to (but not including) PCALL are executed in the reverse order
-of the call chain.
+A FINALLY section cannot contain a RETURN statement; a GOTO cannot leave or enter it. 
 
-NOTE: Note that both, FINALLY
-sections and also exceptions are an extended feature of the language and
-not available in all language levels (see 
-<<language-levels>>) and compiler configurations.
+If an exception was raised and the FINALLY section executes a RAISE, the new exception replaces the raised one
+and unwinding continues from the current activation. 
+A PCALL within a FINALLY section is independent of an already raised exception.
+
+When an activation is terminated by RAISE,
+the FINALLY sections of all activations between the RAISE and the protected call are executed in reverse order of the call chain,
+regardless of the language level of their modules. 
+ 
+If an INLINE procedure has a FINALLY section, it is expanded after the inlined BEGIN section;
+an inlined activation counts as an activation with respect to RAISE.
+
+NOTE: Both FINALLY sections and exceptions are extended features of the language and
+not available in all language levels (see <<language-levels>>); exceptions in addition
+require the Exceptions module attribute (see <<module-attributes>>).
 
 [[type-bound-procedures]]
 ==== Type-bound procedures
@@ -2075,7 +2129,7 @@ Procedures bound to object types cannot be INLINE.
 .Syntax:
 ....
 ProcedureHeading = ( PROCEDURE | PROC ) [Receiver] identdef [ FormalParameters ]
-ForwardDeclaration = ( PROCEDURE | PROC ) '^' [Receiver] identdef [ FormalParameters ]
+ForwardDeclaration = ( PROCEDURE | PROC ) '^' [Receiver] identdef [ FormalParameters ] [ INVAR ]
 Receiver = '(' ReceiverParam ':' ReceiverType ')' | ReceiverType '.'
 ReceiverParam = ident
 ReceiverType = ident
@@ -2168,7 +2222,7 @@ unit).
 ....
 module     = MODULE ident [ MetaParams ] [ ModuleAttributes ] [';']
              { ImportList | WhereDecls | DeclarationSequence }
-  			[ BEGIN StatementSequence [FINALLY StatementSequence] ] 
+  			[ BEGIN StatementSequence ] 
              END ident ['.']
 ModuleAttributes ::= '[' Attribute { [','] Attribute } ']' 
 Attribute ::= ident [ '=' ConstExpression ]
@@ -2215,7 +2269,7 @@ optionally be assigned with a constant expression. If no explicit
 constant expression is assigned, a boolean value of TRUE is assumed. An
 attribute name cannot appear more than once in the list.
 
-The following attributes are defines so far:
+The following attributes are defined so far:
 
 ===== Standard or Level
 
@@ -2223,6 +2277,14 @@ This attribute is used to set the
 language level (see <<language-levels>>). The expression must
 be an integer literal between 0 and 5. Both names - Standard and Level -
 are equivalent.
+
+===== Exceptions
+
+The boolean attribute Exceptions enables the use of PCALL and RAISE in the module; it requires language level 3 or higher.
+Without it, a call of PCALL or RAISE is a compile-time error.
+The attribute does not affect other modules: activations of procedures in modules of level 2 or higher
+without the attribute can be terminated by RAISE,
+and their FINALLY sections are executed during unwinding (see <<exception-handling>> and <<finally-section>>).
 
 ===== Visibility
 
@@ -2273,8 +2335,6 @@ NOTE: In consequence, not every import declaration with meta actuals
 creates a new module identity, but the compiler automatically unites all import
 declarations with the same set of meta actuals.
 
-unites all import declarations with the same set of meta actuals, .
-
 
 .Syntax:
 ....
@@ -2305,40 +2365,35 @@ NOTE: This is a compile-time use of interfaces with no extra runtime cost.
 
 === Source code directives
 
-Source code directives are used to set
-configuration variables in the source text and to select specific pieces
-of the source text to be compiled (conditional compilation). Oberon+
-uses the syntax recommended in <<Oak95>>.
+Source code directives are used to select specific pieces
+of the source text to be compiled (conditional compilation),
+depending on the values of configuration variables.
+The syntax follows the one recommended in <<Oak95>>.
 
+[[configuration-variables]]
 ==== Configuration Variables
 
-Configuration variables can be set or unset
-in the source code using the following syntax:
+A configuration variable is a named value which is set outside of the source code, 
+when the compiler is invoked (e.g. by a command line option or a project setting).
+Each variable is named by an ident which follows the syntax specified in <<Identifiers>>.
+Variable names have a scope which is separate from all other scopes of the program.
+The value of a configuration variable is a string; a variable which is set without an explicit value has the value TRUE.
 
-.Syntax:
-....
-directive = '<*' ident ( '+' | '-' ) '*>'
-....
+The set of configuration variables and their values is fixed during the compilation;
+all compilation units compiled by the same invocation of the compiler see the same values.
+Configuration variables cannot be set or changed in the source code.
 
-Each variable is named by an ident which
-follows the syntax specified in <<Identifiers>>. Variable
-names have compilation unit scope which is separate from all other
-scopes of the program. Configuration variable directives can be placed
-anywhere in the source code. The directive only affects the present
-compilation unit, starting from its position in the source code.
+Configuration variables are used in conditional compilation directives (see below)
+and with the predeclared function procedure GETENV (see <<configuration-values>>).
 
 .Example:
 ....
-<* WIN32+ *>
-<* WIN64- *>
+micc -D WIN32 -D BUFSIZE=4096 Main.mic
 ....
 
-NOTE: Usually the compiler provides
-the possibility to set configuration variables, e.g. via command line
-interface.
-
-TODO: import configuration files with a list
-of flags for project wide configuration
+NOTE: The <<Oak95>> directives to set (`<* ident+ *>`) or unset (`<* ident- *>`) configuration
+variables in the source code are not supported, since they would let the configuration
+depend on the position in the source code and on the compilation unit.
 
 ==== Conditional compilation
 
@@ -2363,8 +2418,9 @@ an END directive. The directives form sections of the source code. Only
 the section the condition of which is TRUE (or the section framed by
 ELSE and END directive otherwise) is visible to the compiler. Conditions
 are boolean expressions. Ident refers to a configuration variable. When
-a configuration variable is not explicitly set it is assumed to be
-FALSE. Each section can contain nested conditional compilation
+a configuration variable is not set it is assumed to be
+FALSE. The value of a configuration variable used in a condition must be TRUE, FALSE, 1 or 0
+(regardless of case); any other value is a compile-time error. Each section can contain nested conditional compilation
 directives.
 
 .Example:
@@ -2689,13 +2745,13 @@ ReturnType       = [ POINTER TO | '^' ] NamedType
 FPSection        = [CONST] ident { [','] ident } ':' FormalType
 FormalType       = type
 ProcedureHeading = ( PROCEDURE | PROC ) [Receiver] identdef [ FormalParameters ]
-ForwardDeclaration = ( PROCEDURE | PROC ) '^' [Receiver] identdef [ FormalParameters ]
+ForwardDeclaration = ( PROCEDURE | PROC ) '^' [Receiver] identdef [ FormalParameters ] [ INVAR ]
 Receiver = '(' ReceiverParam ':' ReceiverType ')' | ReceiverType '.'
 ReceiverParam = ident
 ReceiverType = ident
 module     = MODULE ident [ MetaParams ] [ ModuleAttributes ] [';']
              { ImportList | WhereDecls | DeclarationSequence }
-		    [ BEGIN StatementSequence [FINALLY StatementSequence] ] 
+		    [ BEGIN StatementSequence ] 
              END ident ['.']
 ModuleAttributes ::= '[' Attribute { [','] Attribute } ']' 
 Attribute ::= ident [ '=' ConstExpression ]
@@ -2707,7 +2763,6 @@ MetaSection      = ['CONST' | 'TYPE'] ident { [','] ident } [ ':' NamedType ]
 WhereDecls       = WHERE { WhereDeclaration [';'] }
 WhereDeclaration = ident ':' type
 MetaActuals      = '(' ConstExpression { [','] ConstExpression } ')'
-directive = '<*' ident ( '+' | '-' ) '*>'
 directive  = '<*' [ scIf | scElsif | scElse | scEnd ] '*>'
 scIf       = IF scExpr THEN
 scElsif    = ELSIF condition THEN
@@ -2745,8 +2800,137 @@ SET::
 [[predeclared-procedure-reference]]
 == Predeclared Procedure Reference
 
-TODO: add a language level column to assert
-which predeclareds are available in which level.
+The following table shows the language levels in which each predeclared procedure is available,
+and whether it can be used at compile time.
+In the compile-time column, _args_ means that a call is a constant expression if all actual parameters are
+constant expressions; _always_ means that a call is a constant expression regardless of its argument
+(the argument is a type or a non-open array);
+_INVAR_ means that the proper procedure can be called in the body of an INVAR procedure
+and is executed during compile-time evaluation;
+_no_ means that the procedure cannot be used at compile time, nor in the body of an INVAR procedure.
+
+[cols="2,1,3",options="header"]
+|===
+|Name |Levels |Compile time
+
+|ABS, ASR, BAND, BNOT, BOR, BSET, BXOR, CAP, CHR, FLOOR, FLT, OBDIV, OBMOD, ODD, SHL, SHR, SIGC, SIGL, USIG, VAL
+|0-5
+|args
+
+|CAST
+|0-5
+|args for numeric types; no for pointer types
+
+|DEFAULT
+|0-5
+|always for basic and enumeration types; no otherwise
+
+|GETENV
+|0-5
+|always (see <<configuration-values>>)
+
+|LEN
+|0-5
+|always (non-open arrays only)
+
+|MAX(T), MIN(T)
+|0-5
+|always
+
+|MAX(x,y), MIN(x,y)
+|0-5
+|args
+
+|ORD
+|0-5
+|args, except for pointer and procedure types
+
+|PTROFF
+|0-5
+|no
+
+|SIZE
+|0-5
+|always for basic types; no otherwise
+
+|STRLEN
+|0-5
+|args for string literals; no otherwise
+
+|ASSERT, HALT
+|0-5
+|INVAR; a failing ASSERT or a HALT during compile-time evaluation is a compile-time error
+
+|COPY, EXCL, INCL
+|0-5
+|INVAR
+
+|DEC, INC
+|0-5
+|INVAR, except for pointer variables
+
+|CLI, GETREG, NOP, PUTREG, STI
+|0-1
+|no
+
+|NEW, NEWINIT, DISPOSE
+|3-5
+|no
+
+|NEWGC
+|5
+|no
+
+|PCALL, RAISE
+|3-5, with the Exceptions module attribute
+|no
+
+|PRINT, PRINTLN
+|1-5
+|no
+
+|===
+
+NOTE: On level 0 there is no run-time environment; the effect of a failing ASSERT or a HALT executed at run time
+is implementation-defined on level 0 (e.g. an endless loop).
+
+[[configuration-values]]
+=== Configuration values
+
+GETENV gives constant expressions access to the values of the configuration variables
+(see <<configuration-variables>>), e.g. for sizes, frequencies or feature selections supplied when the program is built.
+
+The name n of the variable is a constant expression of string literal type.
+GETENV(T, n) returns the value of the configuration variable n converted to type T,
+or DEFAULT(T) if the variable is not set;
+GETENV(T, n, d) returns d if the variable is not set; d is a constant expression
+assignment compatible with T.
+A call of GETENV is a constant expression; it can be used wherever a constant expression can be used,
+including the body of INVAR procedures. Since configuration variables cannot change during the compilation,
+each call with the same name and type yields the same value.
+
+T is an integer, floating point, BOOLEAN, CHAR, enumeration or CHAR array type.
+The value string is converted as follows:
+
+- integer types: an optional sign followed by decimal digits, by hexadecimal digits with prefix `0x`,
+  or by hexadecimal digits with suffix `H` or `h`; the value must be in the range of T,
+  and a sign is only allowed for signed integer types;
+- floating point types: a decimal number, as for real number literals (see <<Numbers>>), or an integer;
+- BOOLEAN: TRUE, FALSE, 1 or 0, regardless of case;
+- CHAR: exactly one character;
+- enumeration types: the name of one of the constants of the enumeration;
+- CHAR array types: the string itself, which including the terminating 0X must fit into T;
+  the result is a string literal.
+
+It is a compile-time error if the value string cannot be converted to T.
+
+.Example:
+....
+CONST BufSize = GETENV(UINT32, "BUFSIZE", 1024)
+TYPE Shade = (Red, Green, Blue)
+CONST Background = GETENV(Shade, "BACKGROUND", Blue)
+VAR buffer: ARRAY BufSize OF BYTE
+....
 
 [[predeclared-function-procedures]]
 === Predeclared function procedures
@@ -2843,7 +3027,7 @@ which predeclareds are available in which level.
 |GETENV(T,n) 
 |T: basic, enumeration or char array type 
 |T 
-|get the value of the environment variable with name n or the default value
+|the value of configuration variable n converted to T, or DEFAULT(T) if n is not set; a constant expression (see <<configuration-values>>)
 
 | 
 |n: name string 
@@ -2853,7 +3037,7 @@ which predeclareds are available in which level.
 |GETENV(T,n,d) 
 |d: default of T 
 |T 
-|like GETENV(T,n), but with explicit default value if not set
+|like GETENV(T,n), but with explicit default value d if n is not set
 
 |LEN(v) 
 |v: non-open array 
@@ -3115,7 +3299,8 @@ which predeclareds are available in which level.
 
 |PCALL(e,p,a~0~,…​,a~n~) 
 |e: POINTER TO ANY; p: proper procedure type; a~i~: actual parameters 
-|call procedure type p with arguments a~0~…​a~n~ corresponding to the parameter list of p; e is set to nil in the normal case, and to the pointer passed to RAISE() otherwise
+|call procedure type p with arguments a~0~…​a~n~ corresponding to the parameter list of p;
+e is set to nil in the normal case, and to the pointer passed to RAISE() otherwise; available from level 3 with the Exceptions module attribute
 
 |PRINT(a) 
 |a: basic type, string, char array, or pointer to char array
@@ -3129,13 +3314,11 @@ which predeclareds are available in which level.
 |r, v: unsigned integer type; r is a constant expression
 |put value v to register r; available on level 0 and 1
 
-|RAISE(e) 
-|e: POINTER TO ANY 
-|terminates the last protected function called and returns e as the exception value; RAISE() never returns
-
-|SETENV(n,v) 
-|n: name string, v: basic or const enum type or array of char 
-|set the environment value
+|RAISE(e) or RAISE()
+|e: POINTER TO ANY (optional)
+|terminates the most recent protected call;
+without e or with e = NIL a pointer distinct from the address of any object accessible to the program is raised;
+RAISE never returns; available from level 3 with the Exceptions module attribute
 
 |STI()
 |-
@@ -3174,7 +3357,7 @@ more features with each level.
 |*3* 
 |*Dynamic* 
 |App Data 
-|*Heap* (`NEW`/`DISPOSE`), Pointers to Heap, optional exceptions
+|*Heap* (`NEW`/`DISPOSE`), Pointers to Heap, Exceptions (if enabled by module attribute)
 
 |*4* 
 |*Object* 
@@ -3211,11 +3394,13 @@ and let higher-level modules register their procedures for callback by lower-lev
 ====
 
 
+[[level-0]]
 === Level 0, Bootstrap
 
 Level 0 is the minimal core language supposed
 to work in an environment where there is no stack and no heap. All
-procedures are implicitly INLINE and optionally INVAR. 
+procedures are implicitly INLINE and optionally INVAR; a procedure declared INVAR on level 0
+is both INLINE and INVAR. 
 EXTERN is not supported. Recursion is not supported. NEW and DISPOSE are not
 supported. PCALL, RAISE and Interfaces are not supported. 
 
@@ -3231,6 +3416,7 @@ platforms with plattform-independent syntax and intrinsic, standardized
 methods to access registers and other core processor features, without
 having to resort to assembler.
 
+[[level-1]]
 === Level 1, Systems
 
 Level 1 extends level 0 with regular
@@ -3252,6 +3438,10 @@ network card, or frame buffer driver. Buffers are statically allocated
 (e.g. using generic modules). DMA descriptors can be records living at
 fixed addresses (using constructor syntax) or in static arrays.
 
+Level 1 code is not prepared for exception unwinding; terminating an activation of a level 1 procedure by RAISE
+(e.g. in a higher-level procedure called back through a procedure variable) is undefined behaviour
+(see <<exception-handling>>).
+
 === Level 2, Abstract
 
 Level 2 extends level 1 with interfaces (static dispatch), and FINALLY sections.
@@ -3264,9 +3454,7 @@ interface tables for potentially each interface/record type pair).
 
 Level 3 extends level 2 with dynamic memory
 allocation and deallocation (NEW, DISPOSE), 
-and optional exceptions (PCALL, RAISE).
-
-TODO: module attribute to enable exceptions.
+and exceptions (PCALL, RAISE) if enabled by the Exceptions module attribute (see <<module-attributes>>).
 
 === Level 4, Object
 

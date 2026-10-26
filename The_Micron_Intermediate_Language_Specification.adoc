@@ -14,7 +14,7 @@ The Micron Intermediate Language Specification
 
 === Version
 
-2026-09-08, work in progress
+2026-10-26, work in progress
 
 === Author
 
@@ -101,7 +101,7 @@ digits and dollar signs. The first character cannot be a digit.
 
 .Syntax:
 ....
-ident  = ( letter | '_' ) { letter | digit | '_' | '$' }
+ident  = ( letter | '_' | '$' ) { letter | digit | '_' | '$' }
 letter = 'A' ... 'Z' | 'a' ... 'z'
 digit  = '0' ... '9'
 ....
@@ -582,7 +582,7 @@ ExpInstr = 'add' | 'and' | ('call' | 'calli') qualident | 'callmi' qortrident
     | ('ldvar'|'ldvara') qualident | 'mul' | 'neg' 
     | ('newarr'|'newarr0'|'newarrgc'|'newvla'|'newobj'|'newobj0'|'newobjgc') qualident 
     | 'not' | 'or' | 'rem' | 'rem_un' | 'shl' | 'shr' | 'shr_un'
-    | 'sizeof' qualident | 'sub' | 'xor' | 'ptroff' qualident | 'nop' | CondOp
+    | 'sizeof' qualident | 'sub' | 'xor' | 'ptroff' qualident | 'nop' | 'pcall' qualident | CondOp
 
 ConstExpression = qualident | number | string | hexstring 
 ....
@@ -2304,6 +2304,36 @@ The acceptable operand types and their
 corresponding result data type are encapsulated in
 <<boolops, the compatibility table>>.
 
+[[pcall]]
+=== *pcall – protected indirect call*
+
+
+[cols="1,1,3"]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 19 <__T__> 
+|pcall _function_ 
+|Call the procedure indicated on the stack, with arguments described by _function_,
+and push the exception or nil.
+|===
+
+`…, arg1, arg2 … argN, ftn -> …, exc`
+
+The pcall instruction calls _ftn_ in the same way as the calli instruction, with the difference
+that the call is protected. _function_ is a qualident denoting either a procedure type or a procedure
+declaration; in the latter case the signature of the procedure describes the arguments.
+In both cases it must describe a procedure without return type.
+If _ftn_ returns normally, pcall pushes a nil pointer (intptr).
+If the activation of _ftn_ is terminated by a raise statement executed by _ftn_ or by a procedure
+it called directly or indirectly, pcall pushes the exception, i.e. the pointer popped by raise (see <<raise>>);
+all activations between the raise and the pcall are terminated, and their FINALLY sections are executed
+in reverse order of the call chain (see <<finally>>).
+In both cases the values on the evaluation stack below _arg1_ are preserved.
+Protected calls can be dynamically nested; a raise terminates the most recent active pcall.
+
 === *ptroff - pointer offset*
 
 
@@ -2652,6 +2682,23 @@ used to declare the methods of an interface type. The binding of an
 abstract procedure names an interface type, and the receiver
 parameter is of the interface type itself.
 
+[[finally]]
+A procedure body can include a FINALLY section, i.e. a statement sequence which is executed when the
+activation of the procedure terminates:
+(1) after the last statement of the BEGIN section,
+(2) when a ret statement of the BEGIN section is executed, after the return value has been fetched from the stack,
+or (3) when the activation is terminated by a raise statement executed in the procedure itself
+or in a procedure it called directly or indirectly (see <<raise>>).
+In case (2) the return value is copied to the stack of the calling procedure after the FINALLY section has been executed.
+The evaluation stack is empty at entry to and at the end of the FINALLY section.
+A FINALLY section must not contain a ret statement; a goto cannot leave or enter a FINALLY section.
+If a FINALLY section which was entered because of a raise executes another raise, the new exception replaces
+the former one and unwinding continues from the current activation; a pcall within a FINALLY section is
+independent of the exception being unwound.
+Procedures declared INIT or ENTRY cannot have a FINALLY section.
+If an INLINE procedure has a FINALLY section, it is expanded after the inlined BEGIN section,
+and the inlined activation counts as an activation with respect to raise.
+
 .Syntax of textual representation:
 ....
 ProcedureDeclaration = ProcedureHeading 
@@ -2667,7 +2714,7 @@ ProcedureHeading     = (PROCEDURE | PROC) [Line]
 Binding              = ident '.'
 
 ProcedureBody        = [VAR { LocalDeclaration [';'] }]
-                       BEGIN StatementSequence END ident
+                       BEGIN StatementSequence [FINALLY StatementSequence] END ident
 
 LocalDeclaration     = [IdentList ':'] NamedType
 ....
@@ -2749,6 +2796,7 @@ The evaluation stack is subject to strict consistency constraints across control
 1. The evaluation stack must be entirely empty upon entry to a procedure.
 2. When the ret statement is executed, the stack must be exactly empty for a procedure with no return type, or contain exactly one value of the correct return type for a function procedure.
 3. For compound statements (if, loop, while, etc.) and labels, the depth and types of the evaluation stack must be identical across all control-flow paths that reach them (Stack Consistency).
+4. The evaluation stack must be empty at entry to and at the end of a FINALLY section (see <<finally>>).
 
 
 .Syntax of textual representation:
@@ -2756,7 +2804,7 @@ The evaluation stack is subject to strict consistency constraints across control
 StatementSequence = { Statement | ExpInstr | Line }
 Statement = SimpleStatement | CompoundStatement
 SimpleStatement = 'cli' | 'free'| 'exit' | 'goto' ident
-    | 'label' ident | 'pop' | 'putreg' unsigned | 'ret'
+    | 'label' ident | 'pop' | 'putreg' unsigned | 'raise' | 'ret'
     | ('starg'|'starg_s') (unsigned|ident)
     | 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8'
     | 'stelem_r4' | 'stelem_r8' | 'stelem_ip' | 'stelem_ipp'
@@ -2767,7 +2815,9 @@ SimpleStatement = 'cli' | 'free'| 'exit' | 'goto' ident
 CompoundStatement = IfThenElse | Loop | RepeatUntil | Switch | WhileDo
 ....
 
-TODO: pcall and raise
+The raise statement, together with the pcall instruction (see <<pcall>>), implements exceptions;
+like ret and goto, raise is a termination point of the statement sequence in which it appears
+(see <<raise>>).
 
 === *cli – clear interrupts*
 
@@ -2987,6 +3037,35 @@ Therefore, the register number is accompanied by a second value that specifies t
 where 0 denotes the platform-dependent pointer width. Both values are encoded into a single integer (_regwidth_): 
 the lower 16 bits contain the register number, and the upper 16 bits contain the width.
 
+[[raise]]
+=== *raise – raise an exception*
+
+[cols="1,1,3"]
+|===
+|*Binary* 
+|*Text Format* 
+|*Description*
+
+|EE 1A 
+|raise
+|Terminate the most recent protected call with the exception on the stack.
+|===
+
+`…, exc ->`
+
+The raise statement pops a pointer (intptr) from the stack and terminates all activations up to
+the most recent active pcall (see <<pcall>>), executing their FINALLY sections in reverse order of the
+call chain (see <<finally>>); the pcall then pushes _exc_.
+If _exc_ is nil, a pointer distinct from the address of any object accessible to the program is used instead.
+The raise statement never returns; further values on the evaluation stack of the terminated activations are discarded.
+Like ret and goto, raise is a termination point: statements following it in the same statement sequence
+are not reached, and for the rule that each control path of a function procedure must return a value,
+a path ending with raise counts as returning.
+
+If no pcall is active, the FINALLY sections of all active procedures are executed and the program is aborted
+with an implementation-defined exit code.
+Terminating a FOREIGN activation by raise is undefined behaviour.
+
 === *repeat until*
 
 
@@ -3044,7 +3123,8 @@ only if) the current procedure has a return type, a value of this type
 is fetched from the top of the stack and copied onto the stack of the
 procedure that called the current procedure. The evaluation stack for
 the current procedure shall be empty after execution of the ret
-statement.
+statement. If the procedure has a FINALLY section, it is executed before control returns to the caller,
+and the return value is preserved (see <<finally>>).
 
 === *starg – store a value in an argument slot*
 
@@ -3517,7 +3597,7 @@ compatibility, packing
 = Complete syntax of the textual representation
 
 ....
-ident  = ( letter | '_' ) { letter | digit | '_' | '$' }
+ident  = ( letter | '_' | '$' ) { letter | digit | '_' | '$' }
 letter = 'A' ... 'Z' | 'a' ... 'z'
 digit  = '0' ... '9'
 integer = ['+' | '-'] unsigned
@@ -3574,7 +3654,7 @@ ExpInstr = 'add' | 'and' | ('call' | 'calli') qualident | 'callmi' qortrident
 	| ('ldvar'|'ldvara') qualident | 'mul' | 'neg' 
     | ('newarr'|'newarr0'|'newarrgc'|'newvla'|'newobj'|'newobj0'|'newobjgc') qualident 
 	| 'not' | 'or' | 'rem' | 'rem_un' | 'shl' | 'shr' | 'shr_un'
-	| 'sizeof' qualident | 'sub' | 'xor' | 'ptroff' qualident | 'nop' | CondOp
+	| 'sizeof' qualident | 'sub' | 'xor' | 'ptroff' qualident | 'nop' | 'pcall' qualident | CondOp
 ConstExpression = qualident | number | string | hexstring
 ConstExpression2 = qualident [component_list] | number | string | hexstring
 constructor = NamedType component_list
@@ -3595,7 +3675,7 @@ ProcedureHeading     = (PROCEDURE | PROC) [Line]
 Binding              = ident '.'
 
 ProcedureBody        = [VAR { LocalDeclaration [';'] }]
-                       BEGIN StatementSequence END ident
+                       BEGIN StatementSequence [FINALLY StatementSequence] END ident
 LocalDeclaration     = [IdentList ':'] NamedType
 FormalParameters = '(' [ FPSection { ';' FPSection } ] ')'
                    [ ':' ReturnType ]
@@ -3604,7 +3684,7 @@ FPSection        = [ [Line] ident { [','] [Line] ident } ':'] NamedType
 StatementSequence = { Statement | ExpInstr | Line }
 Statement = SimpleStatement | CompoundStatement
 SimpleStatement = 'cli' | 'free'| 'exit' | 'goto' ident
-    | 'label' ident | 'pop' | 'putreg' unsigned | 'ret'
+    | 'label' ident | 'pop' | 'putreg' unsigned | 'raise' | 'ret'
     | ('starg'|'starg_s') (unsigned|ident)
     | 'stelem' qualident | 'stelem_i1' | 'stelem_i2' | 'stelem_i4' | 'stelem_i8'
     | 'stelem_r4' | 'stelem_r8' | 'stelem_ip' | 'stelem_ipp'
