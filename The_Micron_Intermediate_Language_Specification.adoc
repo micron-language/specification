@@ -14,7 +14,7 @@ The Micron Intermediate Language Specification
 
 === Version
 
-2026-10-26, work in progress
+2026-11-11, work in progress
 
 === Author
 
@@ -942,8 +942,8 @@ On a 32 bit architecture, an int64 value is truncated to 32 bits.
 
 `…, value1, value2 -> …, result`
 
-The ceq instruction compares ___value__1_ and
-__value__2_. If __value__1_ is equal to __value__2_, then 1 (of type int32)
+The ceq instruction compares _value1_ and
+_value2_. If _value1_ is equal to _value2_, then 1 (of type int32)
 is pushed on the stack. Otherwise, 0 (of type int32) is pushed on the
 stack. For floating-point numbers, ceq will return 0 if the numbers are
 unordered (either or both are NaN). The infinite values are equal to
@@ -2528,7 +2528,7 @@ result type.
 |Push the size, in bytes, of a type as an uint32.
 |===
 
-`…, -> …, size `
+`…, -> …, size`
 
 Returns the size, in bytes, of a given type
 as uint32. sizeof returns the total size that would be occupied by each
@@ -3594,7 +3594,7 @@ TODO: reconsider MetaParams
 TODO: type checking rules, structral
 compatibility, packing
 
-= Complete syntax of the textual representation
+== Complete syntax of the textual representation
 
 ....
 ident  = ( letter | '_' | '$' ) { letter | digit | '_' | '$' }
@@ -3718,6 +3718,6 @@ WhileDo = 'WHILE' Expression 'DO' StatementSequence 'END'
 
 ....
 
-= References
+== References
 
 TODO

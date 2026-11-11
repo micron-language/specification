@@ -14,7 +14,7 @@ The Micron Programming Language Specification
 
 === Version
 
-2026-10-26, work in progress
+2026-11-11, work in progress
 
 === Author
 
@@ -530,6 +530,7 @@ shown).
 |UINT64
 |UINT8
 |USIG
+|
 |===
 
 === Constant declarations
@@ -1202,7 +1203,7 @@ operation, where n is the bit width of the integer type). An
 implementation of the language may decide to also truncate the results
 of intermediate operations.
 
-The operator '`/`' applies to real
+The operator `/` applies to real
 operands only.
 
 The operators `DIV` and `MOD` apply to integer operands only.
